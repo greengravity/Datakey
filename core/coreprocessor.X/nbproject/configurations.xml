@@ -7,23 +7,24 @@
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
                      projectFiles="true">
-        <logicalFolder name="usb" displayName="usb" projectFiles="true">
-          <itemPath>mcc_generated_files/usb/usb_hal.h</itemPath>
-          <itemPath>mcc_generated_files/usb/usb_common.h</itemPath>
-          <itemPath>mcc_generated_files/usb/usb.h</itemPath>
-          <itemPath>mcc_generated_files/usb/usb_device_local.h</itemPath>
-          <itemPath>mcc_generated_files/usb/usb_device.h</itemPath>
-          <itemPath>mcc_generated_files/usb/usb_hal_pic24f.h</itemPath>
-          <itemPath>mcc_generated_files/usb/usb_device_cdc.h</itemPath>
-          <itemPath>mcc_generated_files/usb/usb_ch9.h</itemPath>
-          <itemPath>mcc_generated_files/usb/usb_device_config.h</itemPath>
-        </logicalFolder>
         <itemPath>mcc_generated_files/pin_manager.h</itemPath>
         <itemPath>mcc_generated_files/interrupt_manager.h</itemPath>
         <itemPath>mcc_generated_files/clock.h</itemPath>
         <itemPath>mcc_generated_files/system.h</itemPath>
         <itemPath>mcc_generated_files/mcc.h</itemPath>
         <itemPath>mcc_generated_files/traps.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f1" displayName="usb" projectFiles="true">
+        <itemPath>usb/usb.h</itemPath>
+        <itemPath>usb/usb_ch9.h</itemPath>
+        <itemPath>usb/usb_common.h</itemPath>
+        <itemPath>usb/usb_config.h</itemPath>
+        <itemPath>usb/usb_device.h</itemPath>
+        <itemPath>usb/usb_device_hid.h</itemPath>
+        <itemPath>usb/usb_device_local.h</itemPath>
+        <itemPath>usb/usb_hal.h</itemPath>
+        <itemPath>usb/usb_hal_pic24f.h</itemPath>
+        <itemPath>usb/usb_tasks.h</itemPath>
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
@@ -36,19 +37,20 @@
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
                      projectFiles="true">
-        <logicalFolder name="usb" displayName="usb" projectFiles="true">
-          <itemPath>mcc_generated_files/usb/usb_device_cdc.c</itemPath>
-          <itemPath>mcc_generated_files/usb/usb_device.c</itemPath>
-          <itemPath>mcc_generated_files/usb/usb_device_events.c</itemPath>
-          <itemPath>mcc_generated_files/usb/usb_hal_16bit.c</itemPath>
-          <itemPath>mcc_generated_files/usb/usb_descriptors.c</itemPath>
-        </logicalFolder>
         <itemPath>mcc_generated_files/pin_manager.c</itemPath>
         <itemPath>mcc_generated_files/clock.c</itemPath>
         <itemPath>mcc_generated_files/interrupt_manager.c</itemPath>
         <itemPath>mcc_generated_files/system.c</itemPath>
         <itemPath>mcc_generated_files/mcc.c</itemPath>
         <itemPath>mcc_generated_files/traps.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f1" displayName="usb" projectFiles="true">
+        <itemPath>usb/usb_descriptors.c</itemPath>
+        <itemPath>usb/usb_device.c</itemPath>
+        <itemPath>usb/usb_device_hid.c</itemPath>
+        <itemPath>usb/usb_events.c</itemPath>
+        <itemPath>usb/usb_hal_16bit.c</itemPath>
+        <itemPath>usb/usb_tasks.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
     </logicalFolder>
@@ -59,6 +61,9 @@
       <itemPath>coreprocessor.mc3</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>usb</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="default" type="2">

@@ -46,7 +46,9 @@
   Section: Included Files
 */
 #include "mcc_generated_files/system.h"
-
+#include "usb/usb.h"
+#include "usb/usb_device_hid.h"
+#include "usb/usb_tasks.h"
 /*
                          Main application
  */
@@ -54,10 +56,29 @@ int main(void)
 {
     // initialize the device
     SYSTEM_Initialize();
+    TRISBbits.TRISB6 = 1;
+    USBDeviceInit();
+    USBDeviceAttach();
 
     while (1)
     {
-        // Add your application code
+        #if defined(USB_POLLING)
+        /* Check bus status and service USB interrupts.  Interrupt or polling
+         * method.  If using polling, must call this function periodically.
+         * This function will take care of processing and responding to SETUP
+         * transactions (such as during the enumeration process when you first
+         * plug in).  USB hosts require that USB devices should accept and
+         * process SETUP packets in a timely fashion.  Therefore, when using
+         * polling, this function should be called regularly (such as once every
+         * 1.8ms or faster** [see inline code comments in usb_device.c for
+         * explanation when "or faster" applies])  In most cases, the
+         * USBDeviceTasks() function does not take very long to execute
+         * (ex: <100 instruction cycles) before it returns. */
+        USBDeviceTasks();
+        #endif
+
+        /* Run the keyboard demo tasks. */
+        USB_Interface_Tasks();
     }
 
     return 1;
@@ -66,3 +87,9 @@ int main(void)
  End of File
 */
 
+#if defined(USB_INTERRUPT)
+void __attribute__((interrupt,auto_psv)) _USB1Interrupt()
+{
+    USBDeviceTasks();
+}
+#endif

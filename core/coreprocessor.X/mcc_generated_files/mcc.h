@@ -51,7 +51,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "usb/usb.h"
 #include "interrupt_manager.h"
 #include "traps.h"
 
