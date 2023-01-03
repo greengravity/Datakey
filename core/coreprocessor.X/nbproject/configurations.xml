@@ -6,6 +6,11 @@
                    projectFiles="true">
       <logicalFolder name="f2" displayName="display" projectFiles="true">
         <itemPath>display/display_driver.h</itemPath>
+        <itemPath>spi_ext.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f3" displayName="images" projectFiles="true">
+        <itemPath>images/sysimages.h</itemPath>
+        <itemPath>images/systemfont.h</itemPath>
       </logicalFolder>
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
@@ -17,6 +22,7 @@
         <itemPath>mcc_generated_files/mcc.h</itemPath>
         <itemPath>mcc_generated_files/traps.h</itemPath>
         <itemPath>mcc_generated_files/spi1.h</itemPath>
+        <itemPath>mcc_generated_files/oc1.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="usb" projectFiles="true">
         <itemPath>usb/usb.h</itemPath>
@@ -42,6 +48,10 @@
       <logicalFolder name="f2" displayName="display" projectFiles="true">
         <itemPath>display/display_driver.c</itemPath>
       </logicalFolder>
+      <logicalFolder name="f3" displayName="images" projectFiles="true">
+        <itemPath>images/sysimages.c</itemPath>
+        <itemPath>images/systemfont.c</itemPath>
+      </logicalFolder>
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
                      projectFiles="true">
@@ -52,6 +62,7 @@
         <itemPath>mcc_generated_files/mcc.c</itemPath>
         <itemPath>mcc_generated_files/traps.c</itemPath>
         <itemPath>mcc_generated_files/spi1.c</itemPath>
+        <itemPath>mcc_generated_files/oc1.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="usb" projectFiles="true">
         <itemPath>usb/usb_descriptors.c</itemPath>
@@ -62,6 +73,7 @@
         <itemPath>usb/usb_tasks.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
+      <itemPath>spi_ext.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -325,7 +337,7 @@
         <property key="programoptions.testmodeentrymethod" value="VDDFirst"/>
         <property key="programoptions.usehighvoltageonmclr" value="false"/>
         <property key="programoptions.uselvpprogramming" value="false"/>
-        <property key="voltagevalue" value="3.25"/>
+        <property key="voltagevalue" value="3.0"/>
       </PICkit3PlatformTool>
       <Tool>
         <property key="ADC 1" value="true"/>
@@ -407,7 +419,7 @@
         <property key="programoptions.testmodeentrymethod" value="VDDFirst"/>
         <property key="programoptions.usehighvoltageonmclr" value="false"/>
         <property key="programoptions.uselvpprogramming" value="false"/>
-        <property key="voltagevalue" value="3.25"/>
+        <property key="voltagevalue" value="3.0"/>
       </Tool>
     </conf>
   </confs>

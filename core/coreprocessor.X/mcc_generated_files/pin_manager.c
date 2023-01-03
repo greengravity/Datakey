@@ -68,8 +68,8 @@ void PIN_MANAGER_Initialize (void)
     /****************************************************************************
      * Setting the GPIO Direction SFR(s)
      ***************************************************************************/
-    TRISA = 0x0317;
-    TRISB = 0x8CFF;
+    TRISA = 0x0797;
+    TRISB = 0xCCFB;
     TRISC = 0x007F;
 
     /****************************************************************************
@@ -78,9 +78,9 @@ void PIN_MANAGER_Initialize (void)
     CNPD1 = 0x0000;
     CNPD2 = 0x0000;
     CNPD3 = 0x0000;
-    CNPU1 = 0x0000;
+    CNPU1 = 0x0002;
     CNPU2 = 0x0000;
-    CNPU3 = 0x0000;
+    CNPU3 = 0x0004;
 
     /****************************************************************************
      * Setting the Open Drain SFR(s)
@@ -93,7 +93,7 @@ void PIN_MANAGER_Initialize (void)
      * Setting the Analog/Digital Configuration SFR(s)
      ***************************************************************************/
     ANSA = 0x0007;
-    ANSB = 0x800C;
+    ANSB = 0xC008;
     ANSC = 0x0007;
     
     /****************************************************************************
@@ -101,9 +101,10 @@ void PIN_MANAGER_Initialize (void)
      ***************************************************************************/
     __builtin_write_OSCCONL(OSCCON & 0xbf); // unlock PPS
 
-    RPINR20bits.SDI1R = 0x0016;    //RC6->SPI1:SDI1
-    RPOR4bits.RP9R = 0x0008;    //RB9->SPI1:SCK1OUT
     RPOR11bits.RP23R = 0x0007;    //RC7->SPI1:SDO1
+    RPINR20bits.SDI1R = 0x0016;    //RC6->SPI1:SDI1
+    RPOR1bits.RP2R = 0x000D;    //RB2->OC1:OC1
+    RPOR4bits.RP9R = 0x0008;    //RB9->SPI1:SCK1OUT
 
     __builtin_write_OSCCONL(OSCCON | 0x40); // lock PPS
 }

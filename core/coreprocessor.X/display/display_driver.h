@@ -12,6 +12,7 @@
 #include "../mcc_generated_files/system.h"
 #include "../mcc_generated_files/spi1.h"
 #include "../mcc_generated_files/pin_manager.h"
+#include "../images/sysimages.h"
 
 #define ST77XX_PIN_CS_HIGH   IO_RC8_SetHigh()
 #define ST77XX_PIN_CS_LOW    IO_RC8_SetLow()
@@ -21,8 +22,6 @@
 #define ST77XX_PIN_RES_LOW   IO_RB13_SetLow()
 #define ST77XX_PIN_LED_HIGH  IO_RB8_SetHigh()
 #define ST77XX_PIN_LED_LOW   IO_RB8_SetLow()
-
-
 
 #define ST77XX_NOP 0x00
 #define ST77XX_SWRESET 0x01
@@ -116,36 +115,21 @@
 #define ST7735_YELLOW ST77XX_YELLOW
 #define ST7735_ORANGE ST77XX_ORANGE
 
-#define ST7735_TFTWIDTH 128  // for 1.44 and mini
-#define ST7735_TFTHEIGHT 160 // for 1.8" and mini display
+
+#define ST7735_TFTWIDTH 160  // for 1.44 and mini
+#define ST7735_TFTHEIGHT 128 // for 1.8" and mini display
 
 #define ST_CMD_DELAY 0x80 // special signifier for command lists
 
 
-
-
-typedef struct {
-    uint8_t *graphicBuffer;
-    uint16_t xoff;
-    uint16_t bufferwidth;
-    uint8_t pinid;
-} SSD1306_DISPLAY;
-
-void setGraphicbuffer(uint8_t *graphicBuffer, uint16_t bufferwidth, uint16_t xoff );
-void setupDisplay( uint8_t options = INITR_GREENTAB );
-//void startDisplay();
+void setupDisplay( );
 void writeDisplay();
 
+void drawPixel(int16_t x, int16_t y, uint16_t color);
+void fillRect(int16_t x, int16_t y, int16_t x2, int16_t y2, uint16_t color);
+void clearScreen(uint16_t color);
+void drawImage(int16_t x, int16_t y, uint16_t colorvg, uint16_t colorbg, const GFXimage *image, const uint8_t *bitmap);
 
-void dispSetAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
-void dispSetRotation(uint8_t r);
-void dispEnable(boolean enable);
-void dispEnableTearing(boolean enable);
-void dispEnableSleep(boolean enable);
-
-
-
-/*void ssd1306_command(uint8_t command);*/
 
 #endif	/* DISPLAY_DRIVER_H */
 

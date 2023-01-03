@@ -56,13 +56,13 @@
 */
 /**
   @Summary
-    Sets the GPIO pin, RA10, high using LATA10.
+    Sets the GPIO pin, RA8, high using LATA8.
 
   @Description
-    Sets the GPIO pin, RA10, high using LATA10.
+    Sets the GPIO pin, RA8, high using LATA8.
 
   @Preconditions
-    The RA10 must be set to an output.
+    The RA8 must be set to an output.
 
   @Returns
     None.
@@ -72,21 +72,21 @@
 
   @Example
     <code>
-    // Set RA10 high (1)
-    IO_RA10_SetHigh();
+    // Set RA8 high (1)
+    IO_RA8_SetHigh();
     </code>
 
 */
-#define IO_RA10_SetHigh()          (_LATA10 = 1)
+#define IO_RA8_SetHigh()          (_LATA8 = 1)
 /**
   @Summary
-    Sets the GPIO pin, RA10, low using LATA10.
+    Sets the GPIO pin, RA8, low using LATA8.
 
   @Description
-    Sets the GPIO pin, RA10, low using LATA10.
+    Sets the GPIO pin, RA8, low using LATA8.
 
   @Preconditions
-    The RA10 must be set to an output.
+    The RA8 must be set to an output.
 
   @Returns
     None.
@@ -96,21 +96,21 @@
 
   @Example
     <code>
-    // Set RA10 low (0)
-    IO_RA10_SetLow();
+    // Set RA8 low (0)
+    IO_RA8_SetLow();
     </code>
 
 */
-#define IO_RA10_SetLow()           (_LATA10 = 0)
+#define IO_RA8_SetLow()           (_LATA8 = 0)
 /**
   @Summary
-    Toggles the GPIO pin, RA10, using LATA10.
+    Toggles the GPIO pin, RA8, using LATA8.
 
   @Description
-    Toggles the GPIO pin, RA10, using LATA10.
+    Toggles the GPIO pin, RA8, using LATA8.
 
   @Preconditions
-    The RA10 must be set to an output.
+    The RA8 must be set to an output.
 
   @Returns
     None.
@@ -120,18 +120,18 @@
 
   @Example
     <code>
-    // Toggle RA10
-    IO_RA10_Toggle();
+    // Toggle RA8
+    IO_RA8_Toggle();
     </code>
 
 */
-#define IO_RA10_Toggle()           (_LATA10 ^= 1)
+#define IO_RA8_Toggle()           (_LATA8 ^= 1)
 /**
   @Summary
-    Reads the value of the GPIO pin, RA10.
+    Reads the value of the GPIO pin, RA8.
 
   @Description
-    Reads the value of the GPIO pin, RA10.
+    Reads the value of the GPIO pin, RA8.
 
   @Preconditions
     None.
@@ -146,18 +146,18 @@
     <code>
     uint16_t portValue;
 
-    // Read RA10
-    postValue = IO_RA10_GetValue();
+    // Read RA8
+    postValue = IO_RA8_GetValue();
     </code>
 
 */
-#define IO_RA10_GetValue()         _RA10
+#define IO_RA8_GetValue()         _RA8
 /**
   @Summary
-    Configures the GPIO pin, RA10, as an input.
+    Configures the GPIO pin, RA8, as an input.
 
   @Description
-    Configures the GPIO pin, RA10, as an input.
+    Configures the GPIO pin, RA8, as an input.
 
   @Preconditions
     None.
@@ -170,18 +170,18 @@
 
   @Example
     <code>
-    // Sets the RA10 as an input
-    IO_RA10_SetDigitalInput();
+    // Sets the RA8 as an input
+    IO_RA8_SetDigitalInput();
     </code>
 
 */
-#define IO_RA10_SetDigitalInput()  (_TRISA10 = 1)
+#define IO_RA8_SetDigitalInput()  (_TRISA8 = 1)
 /**
   @Summary
-    Configures the GPIO pin, RA10, as an output.
+    Configures the GPIO pin, RA8, as an output.
 
   @Description
-    Configures the GPIO pin, RA10, as an output.
+    Configures the GPIO pin, RA8, as an output.
 
   @Preconditions
     None.
@@ -194,158 +194,12 @@
 
   @Example
     <code>
-    // Sets the RA10 as an output
-    IO_RA10_SetDigitalOutput();
+    // Sets the RA8 as an output
+    IO_RA8_SetDigitalOutput();
     </code>
 
 */
-#define IO_RA10_SetDigitalOutput() (_TRISA10 = 0)
-/**
-  @Summary
-    Sets the GPIO pin, RA7, high using LATA7.
-
-  @Description
-    Sets the GPIO pin, RA7, high using LATA7.
-
-  @Preconditions
-    The RA7 must be set to an output.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Set RA7 high (1)
-    IO_RA7_SetHigh();
-    </code>
-
-*/
-#define IO_RA7_SetHigh()          (_LATA7 = 1)
-/**
-  @Summary
-    Sets the GPIO pin, RA7, low using LATA7.
-
-  @Description
-    Sets the GPIO pin, RA7, low using LATA7.
-
-  @Preconditions
-    The RA7 must be set to an output.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Set RA7 low (0)
-    IO_RA7_SetLow();
-    </code>
-
-*/
-#define IO_RA7_SetLow()           (_LATA7 = 0)
-/**
-  @Summary
-    Toggles the GPIO pin, RA7, using LATA7.
-
-  @Description
-    Toggles the GPIO pin, RA7, using LATA7.
-
-  @Preconditions
-    The RA7 must be set to an output.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Toggle RA7
-    IO_RA7_Toggle();
-    </code>
-
-*/
-#define IO_RA7_Toggle()           (_LATA7 ^= 1)
-/**
-  @Summary
-    Reads the value of the GPIO pin, RA7.
-
-  @Description
-    Reads the value of the GPIO pin, RA7.
-
-  @Preconditions
-    None.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    uint16_t portValue;
-
-    // Read RA7
-    postValue = IO_RA7_GetValue();
-    </code>
-
-*/
-#define IO_RA7_GetValue()         _RA7
-/**
-  @Summary
-    Configures the GPIO pin, RA7, as an input.
-
-  @Description
-    Configures the GPIO pin, RA7, as an input.
-
-  @Preconditions
-    None.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Sets the RA7 as an input
-    IO_RA7_SetDigitalInput();
-    </code>
-
-*/
-#define IO_RA7_SetDigitalInput()  (_TRISA7 = 1)
-/**
-  @Summary
-    Configures the GPIO pin, RA7, as an output.
-
-  @Description
-    Configures the GPIO pin, RA7, as an output.
-
-  @Preconditions
-    None.
-
-  @Returns
-    None.
-
-  @Param
-    None.
-
-  @Example
-    <code>
-    // Sets the RA7 as an output
-    IO_RA7_SetDigitalOutput();
-    </code>
-
-*/
-#define IO_RA7_SetDigitalOutput() (_TRISA7 = 0)
+#define IO_RA8_SetDigitalOutput() (_TRISA8 = 0)
 /**
   @Summary
     Sets the GPIO pin, RB10, high using LATB10.
@@ -786,13 +640,13 @@
 #define IO_RB13_SetDigitalOutput() (_TRISB13 = 0)
 /**
   @Summary
-    Sets the GPIO pin, RB14, high using LATB14.
+    Sets the GPIO pin, RB4, high using LATB4.
 
   @Description
-    Sets the GPIO pin, RB14, high using LATB14.
+    Sets the GPIO pin, RB4, high using LATB4.
 
   @Preconditions
-    The RB14 must be set to an output.
+    The RB4 must be set to an output.
 
   @Returns
     None.
@@ -802,21 +656,21 @@
 
   @Example
     <code>
-    // Set RB14 high (1)
-    IO_RB14_SetHigh();
+    // Set RB4 high (1)
+    IO_RB4_SetHigh();
     </code>
 
 */
-#define IO_RB14_SetHigh()          (_LATB14 = 1)
+#define IO_RB4_SetHigh()          (_LATB4 = 1)
 /**
   @Summary
-    Sets the GPIO pin, RB14, low using LATB14.
+    Sets the GPIO pin, RB4, low using LATB4.
 
   @Description
-    Sets the GPIO pin, RB14, low using LATB14.
+    Sets the GPIO pin, RB4, low using LATB4.
 
   @Preconditions
-    The RB14 must be set to an output.
+    The RB4 must be set to an output.
 
   @Returns
     None.
@@ -826,21 +680,21 @@
 
   @Example
     <code>
-    // Set RB14 low (0)
-    IO_RB14_SetLow();
+    // Set RB4 low (0)
+    IO_RB4_SetLow();
     </code>
 
 */
-#define IO_RB14_SetLow()           (_LATB14 = 0)
+#define IO_RB4_SetLow()           (_LATB4 = 0)
 /**
   @Summary
-    Toggles the GPIO pin, RB14, using LATB14.
+    Toggles the GPIO pin, RB4, using LATB4.
 
   @Description
-    Toggles the GPIO pin, RB14, using LATB14.
+    Toggles the GPIO pin, RB4, using LATB4.
 
   @Preconditions
-    The RB14 must be set to an output.
+    The RB4 must be set to an output.
 
   @Returns
     None.
@@ -850,18 +704,18 @@
 
   @Example
     <code>
-    // Toggle RB14
-    IO_RB14_Toggle();
+    // Toggle RB4
+    IO_RB4_Toggle();
     </code>
 
 */
-#define IO_RB14_Toggle()           (_LATB14 ^= 1)
+#define IO_RB4_Toggle()           (_LATB4 ^= 1)
 /**
   @Summary
-    Reads the value of the GPIO pin, RB14.
+    Reads the value of the GPIO pin, RB4.
 
   @Description
-    Reads the value of the GPIO pin, RB14.
+    Reads the value of the GPIO pin, RB4.
 
   @Preconditions
     None.
@@ -876,18 +730,18 @@
     <code>
     uint16_t portValue;
 
-    // Read RB14
-    postValue = IO_RB14_GetValue();
+    // Read RB4
+    postValue = IO_RB4_GetValue();
     </code>
 
 */
-#define IO_RB14_GetValue()         _RB14
+#define IO_RB4_GetValue()         _RB4
 /**
   @Summary
-    Configures the GPIO pin, RB14, as an input.
+    Configures the GPIO pin, RB4, as an input.
 
   @Description
-    Configures the GPIO pin, RB14, as an input.
+    Configures the GPIO pin, RB4, as an input.
 
   @Preconditions
     None.
@@ -900,18 +754,18 @@
 
   @Example
     <code>
-    // Sets the RB14 as an input
-    IO_RB14_SetDigitalInput();
+    // Sets the RB4 as an input
+    IO_RB4_SetDigitalInput();
     </code>
 
 */
-#define IO_RB14_SetDigitalInput()  (_TRISB14 = 1)
+#define IO_RB4_SetDigitalInput()  (_TRISB4 = 1)
 /**
   @Summary
-    Configures the GPIO pin, RB14, as an output.
+    Configures the GPIO pin, RB4, as an output.
 
   @Description
-    Configures the GPIO pin, RB14, as an output.
+    Configures the GPIO pin, RB4, as an output.
 
   @Preconditions
     None.
@@ -924,12 +778,12 @@
 
   @Example
     <code>
-    // Sets the RB14 as an output
-    IO_RB14_SetDigitalOutput();
+    // Sets the RB4 as an output
+    IO_RB4_SetDigitalOutput();
     </code>
 
 */
-#define IO_RB14_SetDigitalOutput() (_TRISB14 = 0)
+#define IO_RB4_SetDigitalOutput() (_TRISB4 = 0)
 /**
   @Summary
     Sets the GPIO pin, RB6, high using LATB6.
