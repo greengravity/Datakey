@@ -51,9 +51,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "oc1.h"
+#include "spi1.h"
 #include "interrupt_manager.h"
 #include "traps.h"
-#include "spi1.h"
 
 #warning "This file will be removed in future MCC releases. Use system.h instead."
 

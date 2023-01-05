@@ -52,36 +52,64 @@
 #include "usb/usb_tasks.h"
 #include "display/display_driver.h"
 #include "mcc_generated_files/spi1.h"
+#include "mcc_generated_files/oc1.h"
+#include "images/sysimages.h"
 
 
-uint8_t graphicbuffer[1024];
 
 int main(void)
 {
+    uint16_t primvalue = 0x0088;
+    uint16_t secvalue = 0x00FF;
+    
     // initialize the device
     SYSTEM_Initialize();
     TRISBbits.TRISB6 = 1;
-    USBDeviceInit();
-    USBDeviceAttach();
+    //USBDeviceInit();
+    //USBDeviceAttach();
     SPI1_Initialize();
     
-
-    for ( int i=0;i<1024; i++) {
-        graphicbuffer[i] = 0x0F;
-    }
-    
-    setupDisplay( INITR_BLACKTAB );
+    setupDisplay( );
+    clearScreen(ST7735_BLACK );
+    OC1_Initialize();
+    OC1_Start();
+    OC1_SecondaryValueSet( secvalue );
 //    startDisplay();
-    setGraphicbuffer( (uint8_t*) &graphicbuffer, 128, 0 );
-    writeDisplay();
+//    setGraphicbuffer( (uint8_t*) &graphicbuffer, 128, 0 );
+//    writeDisplay();
     
     while (1)
     {
                                         
-        USB_Interface_Tasks();
-        writeDisplay(&display1);
-    }
+        //USB_Interface_Tasks();
+        
+        if ( IO_RA8_GetValue() == 0 ) {
+            primvalue++;
+            if ( primvalue > secvalue ) {
+                primvalue = secvalue;
+            }
+            OC1_PrimaryValueSet( primvalue );
+            __delay_ms(50);
+        }
 
+        if ( IO_RB4_GetValue() == 0 ) {
+            if ( primvalue > 0 ) {
+                primvalue--;                
+            }
+            OC1_PrimaryValueSet( primvalue );
+            __delay_ms(50);
+        }
+        
+        uint16_t len;
+        len = primvalue / 2;
+        
+        fillRect(10,10,140,1, ST7735_BLUE);        
+        fillRect(10,50,140,10, ST7735_BLACK);
+        fillRect(10,50,primvalue,10, ST7735_GREEN);
+                
+        //drawImage( 10, 70, ST7735_BLUE, ST7735_BLACK, &gfximages[SYSTEMSYMBOLS].image[5], gfximages[SYSTEMSYMBOLS].bitmap );
+    }
+    
     return 1;
 }
 /**

@@ -28,13 +28,16 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef XC_MAIN_H
-#define	XC_MAIN_H
+#ifndef SPI_EXTENSTION_H
+#define	SPI_EXTENSTION_H
 
-#include <xc.h> // include processor files - each processor file is guarded.  
-#define FCY    8000000UL
-#include <libpic30.h>
+#include "mcc_generated_files/spi1.h" 
 
+
+void SPI1_Transmit16bitRepeated( uint16_t data, int len );
+void SPI1_Transmit16bit(uint16_t i);
+void SPI1_Transmit32bit(uint32_t i);
+void SPI1_transmit16bitBuffer(uint16_t *dataTransmitted, uint16_t wordCount );
 
 #ifdef	__cplusplus
 extern "C" {
@@ -47,5 +50,5 @@ extern "C" {
 }
 #endif /* __cplusplus */
 
-#endif	/* XC_MAIN_H */
+#endif	/* SPI_EXTENSTION_H */
 
