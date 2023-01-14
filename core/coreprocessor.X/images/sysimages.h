@@ -76,13 +76,18 @@ extern int getEntryIndexTextCompareValue(uint8_t cval);
 extern const uint8_t systemsymb_Bitmaps[];
 extern const GFXimage systemsymb_Descriptors[];
 
-//Character bitmaps and describers for standard Systemfont
-extern const uint8_t systemfont_Bitmaps[];
-extern const GFXimage systemfont_Descriptors[];
 
 //Character bitmaps and describers for the keyboardlayout (images for patternreferences)
 extern const uint8_t keyboardpatternsymb_Bitmaps[];
 extern const GFXimage keyboardpatternsymb_Descriptors[];
+
+
+//Character bitmaps and describers for standard Systemfont
+extern const uint8_t systemfont_Bitmaps[];
+extern const GFXimage systemfont_Descriptors[];
+
+extern const uint8_t systemfont_Linebreak;
+extern const uint8_t systemfont_Space;
 
 /************** FONT SUMMARY ****************************/
 extern const GFXfont gfxfonts[];

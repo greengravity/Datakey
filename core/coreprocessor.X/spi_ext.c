@@ -7,6 +7,7 @@
 
 
 #include "spi_ext.h"
+#include "mcc_generated_files/spi1_driver.h"
 
 void SPI1_Transmit16bitRepeated( uint16_t data, int len ) {
 //    for (int i=0;i<len;i++) SPI1_Transmit16bit(data);   
@@ -48,16 +49,15 @@ void SPI1_Transmit16bitRepeated( uint16_t data, int len ) {
 }
 
 void SPI1_Transmit16bit(uint16_t i) {
-    SPI1_Exchange8bit((uint8_t)(i>>8));
-    SPI1_Exchange8bit((uint8_t)(i));
+    spi1_exchangeByte((uint8_t)(i>>8));
+    spi1_exchangeByte((uint8_t)(i));
 }
 
 void SPI1_Transmit32bit(uint32_t i) {
-    SPI1_Exchange8bit((uint8_t)(i>>24));    
-    SPI1_Exchange8bit((uint8_t)(i>>16));    
-    SPI1_Exchange8bit((uint8_t)(i>>8));    
-    SPI1_Exchange8bit((uint8_t)i);     
-
+    spi1_exchangeByte((uint8_t)(i>>24));    
+    spi1_exchangeByte((uint8_t)(i>>16));    
+    spi1_exchangeByte((uint8_t)(i>>8));    
+    spi1_exchangeByte((uint8_t)i);     
 }
 
 

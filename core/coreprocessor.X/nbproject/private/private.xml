@@ -3,16 +3,39 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/oc1.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/clock.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/main.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_tasks.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/clock.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/spi_ext.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/interrupt_manager.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/spi1_types.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/display/display_driver.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/interrupt_manager.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/fatfs/integer.h</file>
             <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/display/display_driver.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/spi1_driver.c</file>
             <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/main.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/oc1.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/main.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/oc1.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/fatfs/fatfs_demo.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/system.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/fatfs/fatfs_demo.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/interrupt_manager.h</file>
             <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/pin_manager.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/fatfs/ffconf.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/images/sysimages.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/clock.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/spi_ext.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/pin_manager.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/sd_spi/sd_spi.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/clock.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/sd_spi/sd_spi.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/system.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/spi_ext.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/images/sysimages.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/fatfs/ff.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/spi1_driver.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/nbproject/Makefile-default.mk</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_tasks.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/images/systemfont.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/mcc.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/images/systemfont.c</file>
         </group>
     </open-files>
 </project-private>

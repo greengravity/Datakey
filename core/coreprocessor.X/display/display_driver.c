@@ -162,7 +162,7 @@ const uint8_t
 
 void dispWriteCommand(uint8_t cmd) {
   ST77XX_PIN_DC_LOW;
-  SPI1_Exchange8bit(cmd);
+  spi1_exchangeByte(cmd);
   ST77XX_PIN_DC_HIGH;
 }
 
@@ -174,7 +174,7 @@ void dispSendCommand(uint8_t commandByte, uint8_t *dataBytes,
   dispWriteCommand(commandByte);
   
   for (int i = 0; i < numDataBytes; i++) {
-    SPI1_Exchange8bit(*dataBytes); // Send the data bytes 
+    spi1_exchangeByte(*dataBytes); // Send the data bytes 
     dataBytes++;
   }
   
@@ -188,7 +188,7 @@ void dispSendCommandC(uint8_t commandByte, const uint8_t *dataBytes,
   dispWriteCommand(commandByte);
   
   for (int i = 0; i < numDataBytes; i++) {
-    SPI1_Exchange8bit(*dataBytes); // Send the data bytes 
+    spi1_exchangeByte(*dataBytes); // Send the data bytes 
     dataBytes++;
   }
   
@@ -266,14 +266,13 @@ void setupDisplay( ) {
   __delay_ms(100);
   ST77XX_PIN_RES_HIGH;    
   __delay_ms(200);
-   
-    
+       
   dispCommonInit(Rcmd1);
   _width = ST7735_TFTWIDTH;
   _height = ST7735_TFTHEIGHT;
   dispInit(Rcmd2red);
   dispInit(Rcmd3);
-  dispSetRotation( 1 );
+  dispSetRotation( 1 );    
 }
 
 
@@ -365,42 +364,78 @@ void drawImage(int16_t x, int16_t y, uint16_t colorvg, uint16_t colorbg, const G
     int16_t gw = image->width;
     int16_t gh = image->height;
   
-    //check image out of screen
+    
     if ( ( ( x + gw ) <= 0 ) || 
         ( ( y + gh ) <= 0 ) ||           
         ( x >= _width ) ||           
-        ( y >= _height ) ) return;
+        ( y >= _height ) ) return; //check image offscreen
   
     
-    uint8_t pmask = 0x01;
-    uint8_t yd8 = 0x00;
+    uint8_t pmask = 0x80;
+    uint8_t _y = 0x00;
+    uint8_t _x = ( gh >> 3 ) + 1;
     
-    for ( int y=0;y<image->height;y++ ) {
-        int xoff = y*image->width;
+    for ( int iy=0;iy<gh;iy++ ) {
+        int xoff = iy*gw;
                 
-        for ( int x=0;x<image->width;x++ ) {                       
-            outbuffer[xoff+x] = ( bitmap[image->bitmapOffset + x + yd8 ] & pmask ) > 0x00 ? colorvg : colorbg;
+        for ( int ix=0;ix<gw;ix++ ) {                       
+            outbuffer[xoff+ix] = ( bitmap[image->bitmapOffset + ix * _x + _y ] & pmask ) > 0x00 ? colorvg : colorbg;
         }
         
-        pmask = pmask << 1;
+        pmask = pmask >> 1;
         if ( pmask == 0x00 ) {
-            yd8++;
-            pmask = 0x01;
+            _y += 1;
+            pmask = 0x80;
         }
     }
   
     dispStartWrite();
-    dispSetAddrWindow(x, y, x + ( gw - 1 ), y + ( gh - 1 ) );    
-    SPI1_transmit16bitBuffer(outbuffer, image->width * image->height );
+    
+    if ( x >= 0 && y >= 0 && ( x + gw ) < _width && ( y + gh ) < _height   ) {
+        //Image complete on screen, need no clipping
+        dispSetAddrWindow(x, y, x + ( gw - 1 ), y + ( gh - 1 ) );
+        SPI1_transmit16bitBuffer(outbuffer, gw * gh );
+        
+    } else {
+        //Image will be clipped before draw
+        uint8_t _w = gw;
+        uint8_t _h = gh;
+        uint8_t _xoff = 0;
+        uint8_t _yoff = 0;
+        
+        if ( x >= 0 ) {
+            _x = x;
+        } else {
+            _x = 0;
+            _xoff -= x;
+            _w += x;
+        }         
+        
+        if ( ( _x + _w ) > _width ) {
+            _w = _width - _x;
+        }
+
+        if ( y >= 0 ) {
+            _y = y;
+        } else {
+            _y = 0;
+            _yoff -= y;
+            _h += y;
+        }         
+        
+        if ( ( _y + _h ) > _height ) {
+            _h = _height - _y;
+        }
+
+        for ( int iy=0; iy<_h; iy++ ) {
+            dispSetAddrWindow(_x, _y + iy, _x + ( _w - 1 ), _y + iy );
+            SPI1_transmit16bitBuffer(outbuffer + _xoff + (_yoff+iy) * gw , _w );            
+        }
+        
+    }
     dispEndWrite();
  
 }
 
-/*
-
-  void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
-  void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
-  void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
-*/
 
 

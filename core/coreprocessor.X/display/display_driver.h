@@ -10,7 +10,8 @@
     
 #include "../main.h"
 #include "../mcc_generated_files/system.h"
-#include "../mcc_generated_files/spi1.h"
+#include "../spi_ext.h"
+#include "../mcc_generated_files/spi1_driver.h"
 #include "../mcc_generated_files/pin_manager.h"
 #include "../images/sysimages.h"
 

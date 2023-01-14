@@ -51,10 +51,14 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "oc1.h"
-#include "spi1.h"
+#include "fatfs/ff.h"
+#include "drivers/spi_master.h"
+#include "adc1.h"
 #include "interrupt_manager.h"
 #include "traps.h"
+#include "sd_spi/sd_spi.h"
+#include "oc1.h"
+#include "spi1_driver.h"
 
 #warning "This file will be removed in future MCC releases. Use system.h instead."
 

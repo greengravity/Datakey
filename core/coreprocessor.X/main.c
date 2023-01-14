@@ -46,69 +46,110 @@
   Section: Included Files
 */
 #include "mcc_generated_files/system.h"
+#include "mcc_generated_files/fatfs/fatfs_demo.h"
 #include "mcc_generated_files/pin_manager.h"
 #include "usb/usb.h"
 #include "usb/usb_device_hid.h"
 #include "usb/usb_tasks.h"
 #include "display/display_driver.h"
-#include "mcc_generated_files/spi1.h"
+#include "mcc_generated_files/spi1_driver.h"
 #include "mcc_generated_files/oc1.h"
 #include "images/sysimages.h"
+#include "mcc_generated_files/spi1_driver.h"
+#include "mcc_generated_files/spi1_types.h"
+#include "mcc_generated_files/adc1.h"
+#include "buttons.h"
 
 
 
 int main(void)
 {
-    uint16_t primvalue = 0x0088;
-    uint16_t secvalue = 0x00FF;
+    uint16_t primvalue = 0x6F00;
+    uint16_t secvalue = 0x7F00;
     
+    bool sw = false;
+        
     // initialize the device
     SYSTEM_Initialize();
-    TRISBbits.TRISB6 = 1;
-    //USBDeviceInit();
-    //USBDeviceAttach();
-    SPI1_Initialize();
     
+    IO_RB3_SetLow();
+    IO_RA7_SetLow();
+    __delay_ms(150);
+    
+    spi1_open( DISPLAY_CONFIG );
     setupDisplay( );
     clearScreen(ST7735_BLACK );
+    spi1_close();
+    
     OC1_Initialize();
     OC1_Start();
     OC1_SecondaryValueSet( secvalue );
-//    startDisplay();
-//    setGraphicbuffer( (uint8_t*) &graphicbuffer, 128, 0 );
-//    writeDisplay();
+    primvalue = 0x0000;
+    OC1_PrimaryValueSet( primvalue );
+    
+    ADC1_ChannelSelect( BATTERY_READ );
+    ADC1_Enable();
+    ADC1_SoftwareTriggerDisable();
+    //FatFsDemo_Tasks();
+    uint16_t lastval = 256;
     
     while (1)
     {
-                                        
+             
         //USB_Interface_Tasks();
         
-        if ( IO_RA8_GetValue() == 0 ) {
-            primvalue++;
-            if ( primvalue > secvalue ) {
-                primvalue = secvalue;
-            }
-            OC1_PrimaryValueSet( primvalue );
-            __delay_ms(50);
-        }
+        sw = !sw;
+        
+        spi1_open( DISPLAY_CONFIG );
 
-        if ( IO_RB4_GetValue() == 0 ) {
-            if ( primvalue > 0 ) {
-                primvalue--;                
-            }
-            OC1_PrimaryValueSet( primvalue );
-            __delay_ms(50);
+        uint8_t x = 0;
+        
+        fillRect(x,0, 10, 4, ST7735_WHITE);           
+        if ( isButtonDown( BUTTON_LEFT ) ) fillRect(x,10, 10, 10, ST7735_RED);
+        else fillRect(x,10, 10, 10, ST7735_BLACK);           
+
+        x += 15;
+        fillRect(x,0, 10, 4, ST7735_WHITE);           
+        if ( isButtonDown( BUTTON_UP ) ) fillRect(x,10, 10, 10, ST7735_RED);
+        else fillRect(x,10, 10, 10, ST7735_BLACK);           
+
+        x += 15;
+        fillRect(x,0, 10, 4, ST7735_WHITE);           
+        if ( isButtonDown( BUTTON_RIGHT ) ) fillRect(x,10, 10, 10, ST7735_RED);
+        else fillRect(x,10, 10, 10, ST7735_BLACK);           
+
+        x += 15;
+        fillRect(x,0, 10, 4, ST7735_WHITE);           
+        if ( isButtonDown( BUTTON_DOWN ) ) fillRect(x,10, 10, 10, ST7735_RED);
+        else fillRect(x,10, 10, 10, ST7735_BLACK);           
+
+        x += 15;
+        fillRect(x,0, 10, 4, ST7735_WHITE);           
+        if ( isButtonDown( BUTTON_A ) ) fillRect(x,10, 10, 10, ST7735_RED);
+        else fillRect(x,10, 10, 10, ST7735_BLACK);           
+
+        x += 15;
+        fillRect(x,0, 10, 4, ST7735_WHITE);           
+        if ( isButtonDown( BUTTON_B ) ) fillRect(x,10, 10, 10, ST7735_RED);
+        else fillRect(x,10, 10, 10, ST7735_BLACK);           
+          
+        if ( ADC1_IsConversionComplete( BATTERY_READ ) ) {
+            ADC1_SoftwareTriggerDisable();
+            uint16_t val = ADC1_ConversionResultGet( BATTERY_READ );
+            //if ( lastval != val ) {
+                lastval = val;
+                uint8_t len = ( lastval >> 4 ) + 1;
+                fillRect(len + 1,30, ( 159 - len ), 10, ST7735_BLACK);           
+                fillRect(0,30, len, 10, ST7735_BLUE);           
+            //}
         }
         
-        uint16_t len;
-        len = primvalue / 2;
+         
+        //drawImage( 10, 117, ST7735_BLUE, ST7735_BLACK, &gfximages[SYSTEMSYMBOLS].image[15], gfximages[SYSTEMSYMBOLS].bitmap );
+        spi1_close();
         
-        fillRect(10,10,140,1, ST7735_BLUE);        
-        fillRect(10,50,140,10, ST7735_BLACK);
-        fillRect(10,50,primvalue,10, ST7735_GREEN);
-                
-        //drawImage( 10, 70, ST7735_BLUE, ST7735_BLACK, &gfximages[SYSTEMSYMBOLS].image[5], gfximages[SYSTEMSYMBOLS].bitmap );
     }
+    
     
     return 1;
 }

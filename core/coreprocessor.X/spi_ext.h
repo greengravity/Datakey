@@ -31,7 +31,10 @@
 #ifndef SPI_EXTENSTION_H
 #define	SPI_EXTENSTION_H
 
-#include "mcc_generated_files/spi1.h" 
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "mcc_generated_files/system.h" 
 
 
 void SPI1_Transmit16bitRepeated( uint16_t data, int len );
