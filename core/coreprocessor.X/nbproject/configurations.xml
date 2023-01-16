@@ -4,12 +4,11 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <logicalFolder name="assets" displayName="assets" projectFiles="true">
+        <itemPath>assets/assets.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="f2" displayName="display" projectFiles="true">
         <itemPath>display/display_driver.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="f3" displayName="images" projectFiles="true">
-        <itemPath>images/sysimages.h</itemPath>
-        <itemPath>images/systemfont.h</itemPath>
       </logicalFolder>
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
@@ -62,12 +61,11 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="f3" displayName="assets" projectFiles="true">
+        <itemPath>assets/assets.c</itemPath>
+      </logicalFolder>
       <logicalFolder name="f2" displayName="display" projectFiles="true">
         <itemPath>display/display_driver.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="f3" displayName="images" projectFiles="true">
-        <itemPath>images/sysimages.c</itemPath>
-        <itemPath>images/systemfont.c</itemPath>
       </logicalFolder>
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
@@ -341,7 +339,6 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

@@ -44,11 +44,12 @@
 //#define SYSFONT_MINUS 12
 
 typedef struct { // Data stored PER GLYPH
+  const uint8_t color; // grey=0x00 or color=0x01
   const uint8_t width; // Bitmap width in pixels
   const uint8_t height; // Bitmap width in pixels
   const uint8_t xoff;
   const uint8_t xadv;
-  const uint16_t bitmapOffset;     // Pointer into GFXfont->bitmap  
+  const uint16_t bitmapOffset;     // Pointer into GFXfont->bitmap
 } GFXimage;
 
 typedef struct { // Data stored for FONT AS A WHOLE:  

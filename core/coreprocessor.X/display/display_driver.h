@@ -13,7 +13,7 @@
 #include "../spi_ext.h"
 #include "../mcc_generated_files/spi1_driver.h"
 #include "../mcc_generated_files/pin_manager.h"
-#include "../images/sysimages.h"
+#include "../assets/assets.h"
 
 #define ST77XX_PIN_CS_HIGH   IO_RC8_SetHigh()
 #define ST77XX_PIN_CS_LOW    IO_RC8_SetLow()
@@ -129,7 +129,7 @@ void writeDisplay();
 void drawPixel(int16_t x, int16_t y, uint16_t color);
 void fillRect(int16_t x, int16_t y, int16_t x2, int16_t y2, uint16_t color);
 void clearScreen(uint16_t color);
-void drawImage(int16_t x, int16_t y, uint16_t colorvg, uint16_t colorbg, const GFXimage *image, const uint8_t *bitmap);
+void drawImage(int16_t x, int16_t y, const GFXimage *image);
 
 
 #endif	/* DISPLAY_DRIVER_H */

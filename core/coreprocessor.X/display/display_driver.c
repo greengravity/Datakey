@@ -5,6 +5,8 @@
 #include "mcc_generated_files/spi1_driver.h" */
 #include "display_driver.h"
 #include "../spi_ext.h"
+#include <stdio.h>
+#include <string.h>
 
 uint8_t _height, _width, _rotation;
 
@@ -358,37 +360,22 @@ void clearScreen(uint16_t color) {
     fillRect(0,_height/2,_width, _height/2, color);
 }
 
-void drawImage(int16_t x, int16_t y, uint16_t colorvg, uint16_t colorbg, const GFXimage *image, const uint8_t *bitmap) {
+void drawImage(int16_t x, int16_t y, const GFXimage *image) {
            
     uint16_t outbuffer[MAX_IMAGE_BUFFER];
     int16_t gw = image->width;
     int16_t gh = image->height;
-  
+    uint16_t size = gw * gh;
     
     if ( ( ( x + gw ) <= 0 ) || 
         ( ( y + gh ) <= 0 ) ||           
         ( x >= _width ) ||           
         ( y >= _height ) ) return; //check image offscreen
-  
-    
-    uint8_t pmask = 0x80;
-    uint8_t _y = 0x00;
-    uint8_t _x = ( gh >> 3 ) + 1;
-    
-    for ( int iy=0;iy<gh;iy++ ) {
-        int xoff = iy*gw;
-                
-        for ( int ix=0;ix<gw;ix++ ) {                       
-            outbuffer[xoff+ix] = ( bitmap[image->bitmapOffset + ix * _x + _y ] & pmask ) > 0x00 ? colorvg : colorbg;
-        }
-        
-        pmask = pmask >> 1;
-        if ( pmask == 0x00 ) {
-            _y += 1;
-            pmask = 0x80;
-        }
+      
+    for (uint16_t i=0; i< size; i++) {
+        outbuffer[i] = bitmapdata[image->bitmapOffset + i];       
     }
-  
+    
     dispStartWrite();
     
     if ( x >= 0 && y >= 0 && ( x + gw ) < _width && ( y + gh ) < _height   ) {
@@ -398,6 +385,8 @@ void drawImage(int16_t x, int16_t y, uint16_t colorvg, uint16_t colorbg, const G
         
     } else {
         //Image will be clipped before draw
+        uint8_t _x;
+        uint8_t _y;        
         uint8_t _w = gw;
         uint8_t _h = gh;
         uint8_t _xoff = 0;

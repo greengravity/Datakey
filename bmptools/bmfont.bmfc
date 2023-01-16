@@ -5,7 +5,7 @@ fileVersion=1
 fontName=Tahoma
 fontFile=
 charSet=0
-fontSize=14
+fontSize=16
 aa=1
 scaleH=100
 useSmoothing=1
@@ -54,6 +54,6 @@ invB=0
 outlineThickness=0
 
 # selected chars
-chars=32-126,167,178-179,182,196,214,220,228,246,252
+chars=32-126,167,176,178-180,196,214,220,223,228,246,252
 
 # imported icon images

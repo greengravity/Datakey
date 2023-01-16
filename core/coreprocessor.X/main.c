@@ -59,8 +59,13 @@
 #include "mcc_generated_files/spi1_types.h"
 #include "mcc_generated_files/adc1.h"
 #include "buttons.h"
+#include "mcc_generated_files/fatfs/ff.h"
 
 
+static FATFS drive;
+static FIL file;
+
+#define C_PRIM_VALUE_STEP 300
 
 int main(void)
 {
@@ -74,7 +79,7 @@ int main(void)
     
     IO_RB3_SetLow();
     IO_RA7_SetLow();
-    __delay_ms(150);
+    __delay_ms(150);    
     
     spi1_open( DISPLAY_CONFIG );
     setupDisplay( );
@@ -93,6 +98,9 @@ int main(void)
     //FatFsDemo_Tasks();
     uint16_t lastval = 256;
     
+    uint8_t bp = false;
+    uint8_t writing = false;
+    
     while (1)
     {
              
@@ -105,18 +113,101 @@ int main(void)
         uint8_t x = 0;
         
         fillRect(x,0, 10, 4, ST7735_WHITE);           
-        if ( isButtonDown( BUTTON_LEFT ) ) fillRect(x,10, 10, 10, ST7735_RED);
+        if ( isButtonDown( BUTTON_LEFT ) ) {
+                          
+            spi1_close( );
+            
+            if ( !bp ) {
+                bp = true;
+/*                
+                __delay_ms(10);
+                
+                if (f_mount(&drive,"0:",1) == FR_OK)
+                {
+                    if (f_open(&file, "HELLO.TXT", FA_WRITE | FA_CREATE_NEW ) == FR_OK)
+                    {
+                        char data[] = "Next!";
+                        UINT actualLength;
+                        f_write(&file, data, sizeof(data)-1, &actualLength ); 
+                                             
+                        f_close(&file);  
+                        f_mount(0,"0:",0);                        
+                        
+                        writing = true;
+                        __delay_ms(10);
+                    } else {
+                        writing = false;
+                    }                  
+                } else {
+                    writing = false;
+                }
+  */                         
+            } else {
+                if  ( writing ) {
+/*                    
+                    char data[] = "Next!";
+                    UINT actualLength;
+                    f_write(&file, data, sizeof(data)-1, &actualLength ); 
+                    f_sync (&file);
+ */ 
+                }               
+            }
+
+            spi1_open( DISPLAY_CONFIG );
+            
+            if ( writing ) {
+                 fillRect(x,10, 10, 10, ST7735_YELLOW); 
+             } else {
+                 fillRect(x,10, 10, 10, ST7735_RED); 
+             }            
+            
+        }
+        else { 
+            
+            if ( bp ) {
+                bp = false;                
+                spi1_close( );
+                __delay_ms(10);
+                
+                if ( writing ) {
+/*                    
+                    f_close(&file);  
+                    f_mount(0,"0:",0);
+                    __delay_ms(10);
+ */
+                }
+                
+                spi1_open( DISPLAY_CONFIG );
+                
+                fillRect(x,10, 10, 10, ST7735_BLACK);    
+            }             
+                               
+        }
+
+        x += 15;
+        fillRect(x,0, 10, 4, ST7735_WHITE);           
+        if ( isButtonDown( BUTTON_UP ) ) {
+            
+            if ( primvalue > C_PRIM_VALUE_STEP ) {
+                primvalue -= C_PRIM_VALUE_STEP;                
+            } else primvalue = 0;
+            OC1_PrimaryValueSet( primvalue );
+            
+            fillRect(x,10, 10, 10, ST7735_RED);            
+        }
         else fillRect(x,10, 10, 10, ST7735_BLACK);           
 
         x += 15;
         fillRect(x,0, 10, 4, ST7735_WHITE);           
-        if ( isButtonDown( BUTTON_UP ) ) fillRect(x,10, 10, 10, ST7735_RED);
-        else fillRect(x,10, 10, 10, ST7735_BLACK);           
-
-        x += 15;
-        fillRect(x,0, 10, 4, ST7735_WHITE);           
-        if ( isButtonDown( BUTTON_RIGHT ) ) fillRect(x,10, 10, 10, ST7735_RED);
-        else fillRect(x,10, 10, 10, ST7735_BLACK);           
+        if ( isButtonDown( BUTTON_RIGHT ) ) {
+            
+            if ( primvalue < secvalue - C_PRIM_VALUE_STEP ) {
+                primvalue += C_PRIM_VALUE_STEP;                
+            } else primvalue = secvalue;
+            OC1_PrimaryValueSet( primvalue );            
+            
+            fillRect(x,10, 10, 10, ST7735_RED);
+        } else fillRect(x,10, 10, 10, ST7735_BLACK);           
 
         x += 15;
         fillRect(x,0, 10, 4, ST7735_WHITE);           
@@ -145,7 +236,7 @@ int main(void)
         }
         
          
-        //drawImage( 10, 117, ST7735_BLUE, ST7735_BLACK, &gfximages[SYSTEMSYMBOLS].image[15], gfximages[SYSTEMSYMBOLS].bitmap );
+        drawImage( 10, 80, &bitmaps[SYSICON_OK] );
         spi1_close();
         
     }
