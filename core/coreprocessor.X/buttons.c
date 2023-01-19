@@ -6,48 +6,75 @@
  */
 #include <xc.h>
 #include "buttons.h"
+#include "mcc_generated_files/tmr2.h"
 
-void updateButtons() {
+#define UPDATE_PERIOD 156 // 5 millisecs
 
-}
+uint8_t currButtonmap = 0x00;
+uint8_t prevButtonmap = 0x00;
+uint32_t lastupdate = 0x00;
 
-bool isButtonPressed(uint8_t button) {
+//Mainfunction which makes indrect assignment of buttons to pins
+bool readButtonDown(uint8_t button) {
+
+    if (button == BUTTON_LEFT) {
+        return !BTN1_GetValue();
+    }
+    if (button == BUTTON_UP) {
+        return !BTN2_GetValue();
+    }
+    if (button == BUTTON_RIGHT) {
+        return !BTN3_GetValue();
+    }
+    if (button == BUTTON_DOWN) {
+        return !BTN4_GetValue();
+    }
+    if (button == BUTTON_A) {
+        return !BTN5_GetValue();
+    }
+    if (button == BUTTON_B) {
+        return !BTN6_GetValue();
+    }
+    if (button == BUTTON_CASE) {
+        return !SENSE_CASE_GetValue();
+    }    
 
     return false;
 }
 
-bool isButtonReleased(uint8_t button) {
 
-    return false;
+void updateButtons(bool force) {
+    uint32_t time = TMR2_Counter32BitGet();
+    if ( time > ( lastupdate + UPDATE_PERIOD ) || force ) {
+        lastupdate = time;
+        
+        prevButtonmap = currButtonmap;
+        currButtonmap = 0x00;
+        for (int i=0;i< BUTTON_COUNT; i++) {
+            if ( readButtonDown( i ) ) {  
+                currButtonmap |= ( 0x01 << i );
+            }       
+        }
+    }
 }
 
 bool isButtonDown(uint8_t button) {
-
-    if (button == BUTTON_LEFT) {
-        return !IO_RA9_GetValue();
-    }
-    if (button == BUTTON_UP) {
-        return !IO_RA8_GetValue();
-    }
-    if (button == BUTTON_RIGHT) {
-        return !IO_RA2_GetValue();
-    }
-    if (button == BUTTON_DOWN) {
-        return !IO_RC2_GetValue();
-    }
-    if (button == BUTTON_A) {
-        return !IO_RC1_GetValue();
-    }
-    if (button == BUTTON_B) {
-        return !IO_RC0_GetValue();
-    }
-
-
-    return false;
+    return ( ( currButtonmap & ( 0x01 << button ) ) > 0x00 );
 }
 
 bool isButtonUp(uint8_t button) {
-
-    return false;
+    return ( ( currButtonmap & ( 0x01 << button ) ) == 0x00 );    
 }
+
+bool isButtonPressed(uint8_t button) {
+    return ( isButtonDown( button ) && ( ( prevButtonmap & ( 0x01 << button ) ) == 0x00 ) );
+}
+
+bool isButtonReleased(uint8_t button) {
+    return ( isButtonUp( button ) && ( ( prevButtonmap & ( 0x01 << button ) ) > 0x00 ) );    
+}
+
+
+
+
 

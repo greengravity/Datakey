@@ -1,17 +1,14 @@
 [
     { 
         "name": "DELETE",
-        "icon": "delete.png",
-        "color": false
+        "icon": "delete.png"
     },
     { 
         "name": "SPACE",
-        "icon": "space.png",
-        "color": false
+        "icon": "space.png"
     },
     { 
         "name": "OK",
-        "icon": "ok.png",
-        "color": true
-    }
+        "icon": "ok.png"   
+    }   
 ]

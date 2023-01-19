@@ -3,13 +3,21 @@
 #include "display.h"
 #include "mcc_generated_files/pin_manager.h"
 #include "mcc_generated_files/spi1_driver.h" */
+#include "mcc_generated_files/system.h"
+#include "mcc_generated_files/spi1_driver.h"
+#include "mcc_generated_files/pin_manager.h"
+#include "mcc_generated_files/oc1.h"
+#include "mcc_ext.h"
+#include "main.h"
 #include "display_driver.h"
-#include "../spi_ext.h"
 #include <stdio.h>
 #include <string.h>
 
-uint8_t _height, _width, _rotation;
+#define OC1_TOPVALUE 0x3F80 
 
+uint8_t _height, _width, _rotation;
+uint8_t _charx=0, _chary=0;
+uint8_t _brightness = 100;
 
 const uint8_t
   Bcmd[] = {                        // Init commands for 7735B screens
@@ -257,7 +265,21 @@ void dispSetRotation(uint8_t m) {
   dispSendCommand(ST77XX_MADCTL, &madctl, 1);
 }
 
-void setupDisplay( ) {
+void dispSetBrightness(uint8_t brightness ) {
+    if ( brightness > 100 ) brightness = 100;
+    _brightness = brightness;
+    uint32_t b = OC1_TOPVALUE;
+    b = ( b * ((uint32_t)brightness) ) / 100ul;
+    OC1_PrimaryValueSet( OC1_TOPVALUE - ( (uint16_t)b ) );
+}
+
+uint8_t dispGetBrightness() {    
+    return _brightness;
+}       
+
+
+
+void dispStart( ) {
        
   ST77XX_PIN_CS_HIGH;
   ST77XX_PIN_DC_HIGH;
@@ -274,7 +296,22 @@ void setupDisplay( ) {
   _height = ST7735_TFTHEIGHT;
   dispInit(Rcmd2red);
   dispInit(Rcmd3);
-  dispSetRotation( 1 );    
+  dispSetRotation( 1 );  
+  
+  clearScreen(ST7735_BLACK);
+  
+  OC1_SecondaryValueSet(OC1_TOPVALUE);
+  dispSetBrightness(100);
+  OC1_Start();
+}
+
+
+void dispStop() {
+    //while ( OC1_IsCompareCycleComplete( ) );
+    ST77XX_PIN_CS_HIGH;
+    ST77XX_PIN_DC_HIGH;
+    OC1_Stop();    
+    ST77XX_PIN_BACKLIGHT_HIGH;      
 }
 
 
@@ -426,5 +463,52 @@ void drawImage(int16_t x, int16_t y, const GFXimage *image) {
  
 }
 
+uint8_t unicodeLookup(uint16_t ct) {
+    for ( uint8_t c=0;c<TOTAL_CHAR_COUNT;c++ ) {
+        if ( unicodes[c].uccp == ct ) {
+            return unicodes[c].cid;
+        }
+    }
+    
+    int16_t low = 0;
+    int16_t high = TOTAL_CHAR_COUNT - 1;
+    while ( true ) {
+        uint8_t offs = ( high - low ) / 2;
+        if ( unicodes[ offs ].uccp > ct ) {
+            high = offs - 1;            
+            if ( low > high ) return ENCODING_ERROR_CHAR;
+        } else if ( unicodes[ offs ].uccp < ct ) {
+            low = offs + 1;
+            if ( low > high ) return ENCODING_ERROR_CHAR;
+        } else return unicodes[ offs ].cid;
+    }           
+}
 
+//Setting Writecursor
+void locate( uint8_t x, uint8_t y ) {
+    _charx = x;
+    _chary = y;
+}
+
+//Writing Characters with intern codepage
+void writeChars( const GFXChar *chars, uint16_t len ) {
+    for (uint16_t i=0;i<len;i++ ) {
+        if ( ( _charx + chars[i].xadv ) > ST7735_TFTWIDTH ) {
+            _charx = 0;
+            _chary += CHAR_HEIGHT;
+        }
+        drawImage( _charx, _chary, &bitmaps[ chars[i].id ] );
+        _charx += chars[i].xadv;
+    }    
+}
+
+//Writing possible Characters from ASCII Codepage
+void writeText( const char *text ) {
+    
+    uint16_t len = strlen( text );
+    for ( uint16_t i=0;i<len;i++) {
+        uint16_t ct = (uint16_t)text[i];        
+        writeChars( &gfxchars[ unicodeLookup(ct) ], 1 );
+    }    
+}
 

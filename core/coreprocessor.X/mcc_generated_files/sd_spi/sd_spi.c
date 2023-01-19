@@ -23,7 +23,7 @@
 #define SD_SPI_exchangeBlock(data, length) spiMaster[SDFAST].exchangeBlock(data, length)
 #define SD_SPI_master_open(config) spiMaster[config].spiOpen()
 #define SD_SPI_close() spiMaster[SDFAST].spiClose()
-#define SD_SPI_GetCardDetect() SDCard_CD_GetValue()
+#define SD_SPI_GetCardDetect() !(SDCard_CD_GetValue())
 #define SD_SPI_GetWriteProtect() 0
 
 /*****************************************************************************/

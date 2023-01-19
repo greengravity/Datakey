@@ -4,12 +4,6 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <logicalFolder name="assets" displayName="assets" projectFiles="true">
-        <itemPath>assets/assets.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="f2" displayName="display" projectFiles="true">
-        <itemPath>display/display_driver.h</itemPath>
-      </logicalFolder>
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
                      projectFiles="true">
@@ -37,22 +31,14 @@
         <itemPath>mcc_generated_files/spi1_types.h</itemPath>
         <itemPath>mcc_generated_files/adc_module_features.h</itemPath>
         <itemPath>mcc_generated_files/adc1.h</itemPath>
-      </logicalFolder>
-      <logicalFolder name="f1" displayName="usb" projectFiles="true">
-        <itemPath>usb/usb.h</itemPath>
-        <itemPath>usb/usb_ch9.h</itemPath>
-        <itemPath>usb/usb_common.h</itemPath>
-        <itemPath>usb/usb_config.h</itemPath>
-        <itemPath>usb/usb_device.h</itemPath>
-        <itemPath>usb/usb_device_hid.h</itemPath>
-        <itemPath>usb/usb_device_local.h</itemPath>
-        <itemPath>usb/usb_hal.h</itemPath>
-        <itemPath>usb/usb_hal_pic24f.h</itemPath>
-        <itemPath>usb/usb_tasks.h</itemPath>
+        <itemPath>mcc_generated_files/tmr2.h</itemPath>
+        <itemPath>mcc_generated_files/ext_int.h</itemPath>
       </logicalFolder>
       <itemPath>main.h</itemPath>
-      <itemPath>spi_ext.h</itemPath>
       <itemPath>buttons.h</itemPath>
+      <itemPath>display_driver.h</itemPath>
+      <itemPath>assets.h</itemPath>
+      <itemPath>mcc_ext.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -61,12 +47,6 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <logicalFolder name="f3" displayName="assets" projectFiles="true">
-        <itemPath>assets/assets.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="f2" displayName="display" projectFiles="true">
-        <itemPath>display/display_driver.c</itemPath>
-      </logicalFolder>
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
                      projectFiles="true">
@@ -96,18 +76,14 @@
         <itemPath>mcc_generated_files/oc1.c</itemPath>
         <itemPath>mcc_generated_files/spi1_driver.c</itemPath>
         <itemPath>mcc_generated_files/adc1.c</itemPath>
-      </logicalFolder>
-      <logicalFolder name="f1" displayName="usb" projectFiles="true">
-        <itemPath>usb/usb_descriptors.c</itemPath>
-        <itemPath>usb/usb_device.c</itemPath>
-        <itemPath>usb/usb_device_hid.c</itemPath>
-        <itemPath>usb/usb_events.c</itemPath>
-        <itemPath>usb/usb_hal_16bit.c</itemPath>
-        <itemPath>usb/usb_tasks.c</itemPath>
+        <itemPath>mcc_generated_files/tmr2.c</itemPath>
+        <itemPath>mcc_generated_files/ext_int.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
-      <itemPath>spi_ext.c</itemPath>
       <itemPath>buttons.c</itemPath>
+      <itemPath>display_driver.c</itemPath>
+      <itemPath>assets.c</itemPath>
+      <itemPath>mcc_ext.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -339,6 +315,7 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

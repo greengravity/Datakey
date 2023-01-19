@@ -3,14 +3,14 @@
 #include	<xc.h>
 #include	<stdbool.h>
 
-#define MAX_IMAGE_BUFFER 208
-#define IMAGE_COUNT 110
-#define COLOR_GREY 0x00
-#define COLOR_RGB 0x01
+#define MAX_IMAGE_BUFFER 240
+#define TOTAL_IMAGE_COUNT 111
+#define TOTAL_CHAR_COUNT 109
+#define CHAR_HEIGHT 14
+#define ENCODING_ERROR_CHAR 0
 
-// bmpsize: 12748Bytes
+// bmpsize: 12988Bytes
 typedef struct {
-  const uint8_t color; // grey=0x00 or color=0x01
   const uint8_t width; // Bitmap width in pixels
   const uint8_t height; // Bitmap width in pixels
   const uint16_t bitmapOffset; // offset in bitmaparray
@@ -24,7 +24,7 @@ typedef struct {
 } GFXChar;
 
 typedef struct {
-  const uint16_t cp; // Image id
+  const uint16_t uccp; // Image id
   const uint8_t cid;
 } Unicodelist;
 
@@ -55,8 +55,8 @@ extern const Keylayout keylayouts[];
 #define KEYCOMMAND_BACK 4
 #define KEYCOMMAND_EMPTY 5
 
-#define SYSICON_DELETE 107
-#define SYSICON_SPACE 108
-#define SYSICON_OK 109
+#define SYSICON_DELETE 108
+#define SYSICON_SPACE 109
+#define SYSICON_OK 110
 
 #endif

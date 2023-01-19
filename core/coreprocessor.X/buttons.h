@@ -41,9 +41,12 @@
 #define BUTTON_DOWN 3
 #define BUTTON_A 4
 #define BUTTON_B 5
+#define BUTTON_CASE 6
+
+#define BUTTON_COUNT 7
 
 
-void updateButtons();
+void updateButtons(bool force);
 bool isButtonPressed(uint8_t button);
 bool isButtonReleased(uint8_t button);
 bool isButtonDown(uint8_t button);

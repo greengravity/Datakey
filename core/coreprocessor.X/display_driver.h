@@ -7,22 +7,19 @@
 
 #ifndef DISPLAY_DRIVER_H
 #define	DISPLAY_DRIVER_H
-    
-#include "../main.h"
-#include "../mcc_generated_files/system.h"
-#include "../spi_ext.h"
-#include "../mcc_generated_files/spi1_driver.h"
-#include "../mcc_generated_files/pin_manager.h"
-#include "../assets/assets.h"
 
-#define ST77XX_PIN_CS_HIGH   IO_RC8_SetHigh()
-#define ST77XX_PIN_CS_LOW    IO_RC8_SetLow()
-#define ST77XX_PIN_DC_HIGH  IO_RC9_SetHigh()
-#define ST77XX_PIN_DC_LOW    IO_RC9_SetLow()
-#define ST77XX_PIN_RES_HIGH  IO_RB13_SetHigh()
-#define ST77XX_PIN_RES_LOW   IO_RB13_SetLow()
-#define ST77XX_PIN_LED_HIGH  IO_RB8_SetHigh()
-#define ST77XX_PIN_LED_LOW   IO_RB8_SetLow()
+#include "assets.h"
+
+#define ST77XX_PIN_CS_HIGH   CS_D_SetHigh()
+#define ST77XX_PIN_CS_LOW    CS_D_SetLow()
+#define ST77XX_PIN_DC_HIGH   RS_D_SetHigh()
+#define ST77XX_PIN_DC_LOW    RS_D_SetLow()
+#define ST77XX_PIN_RES_HIGH  RES_D_SetHigh()
+#define ST77XX_PIN_RES_LOW   RES_D_SetLow()
+#define ST77XX_PIN_BACKLIGHT_HIGH  (_LATB2=1)
+
+//#define ST77XX_PIN_LED_HIGH  IO_RB8_SetHigh()
+//#define ST77XX_PIN_LED_LOW   IO_RB8_SetLow()
 
 #define ST77XX_NOP 0x00
 #define ST77XX_SWRESET 0x01
@@ -123,14 +120,21 @@
 #define ST_CMD_DELAY 0x80 // special signifier for command lists
 
 
-void setupDisplay( );
+void dispStart( );
+void dispStop();
+
 void writeDisplay();
+
+void dispSetBrightness(uint8_t brightness );
+uint8_t dispGetBrightness();
 
 void drawPixel(int16_t x, int16_t y, uint16_t color);
 void fillRect(int16_t x, int16_t y, int16_t x2, int16_t y2, uint16_t color);
 void clearScreen(uint16_t color);
 void drawImage(int16_t x, int16_t y, const GFXimage *image);
-
+void locate( uint8_t x, uint8_t y );
+void writeChars( const GFXChar *chars, uint16_t len );
+void writeText( const char *text );
 
 #endif	/* DISPLAY_DRIVER_H */
 

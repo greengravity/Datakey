@@ -307,7 +307,7 @@ Promise.all(readpromises).then((values) => {
   outdatac.push('{')
   imglist.forEach((img, index, arr) => {
     let betweenkomma = (index < (arr.length - 1) ? ',' : '')
-    outdatac.push('  ' + '{ ' + ( img.color ? '0x01' : '0x00' ) + ',' + img.width + ', ' + img.height + ', ' + img.imgoffs + ' }' + betweenkomma )
+    outdatac.push('  ' + '{ ' + img.width + ', ' + img.height + ', ' + img.imgoffs + ' }' + betweenkomma )
   })  
   outdatac.push('};')  
   outdatac.push('')
@@ -315,10 +315,14 @@ Promise.all(readpromises).then((values) => {
   outdatac.push('const GFXChar gfxchars[] = ')
   outdatac.push('{')
   charlist.unshift( { imgid: 0, xoffset:0, xadvance:0, id:0, charval: "zero" } ) //dummy zero Character for zero terminated strings'
+  
+  let enc_error_char = 0
   charlist.forEach((ch, index, arr) => {
     ch.charid = index
     let betweenkomma = (index < (arr.length - 1) ? ',' : '')
     outdatac.push('  ' + '{ ' + ch.imgid + ',' + ch.xoffset + ', ' + ch.xadvance + ', ' + ch.id + ' }' + betweenkomma + ' // ' + escapeOutCharval( ch.charval ) )
+
+    if ( ch.charval == '�' ) enc_error_char = ch.charid
   })  
   outdatac.push('};')  
   outdatac.push('')
@@ -443,13 +447,13 @@ Promise.all(readpromises).then((values) => {
   outdatah.push('#include	<stdbool.h>')
   outdatah.push('')  
   outdatah.push('#define MAX_IMAGE_BUFFER ' + maximgbuffer)
-  outdatah.push('#define IMAGE_COUNT ' + imgcount)
-  outdatah.push('#define COLOR_GREY 0x00')
-  outdatah.push('#define COLOR_RGB 0x01')
+  outdatah.push('#define TOTAL_IMAGE_COUNT ' + imgcount)
+  outdatah.push('#define TOTAL_CHAR_COUNT ' + charlist.length )
+  outdatah.push('#define CHAR_HEIGHT 14' )
+  outdatah.push('#define ENCODING_ERROR_CHAR ' + enc_error_char )
   outdatah.push('')  
   outdatah.push('// bmpsize: ' + pos + 'Bytes')
   outdatah.push('typedef struct {')
-  outdatah.push('  const uint8_t color; // grey=0x00 or color=0x01')
   outdatah.push('  const uint8_t width; // Bitmap width in pixels')
   outdatah.push('  const uint8_t height; // Bitmap width in pixels')
   outdatah.push('  const uint16_t bitmapOffset; // offset in bitmaparray')
@@ -463,7 +467,7 @@ Promise.all(readpromises).then((values) => {
   outdatah.push('} GFXChar;')
   outdatah.push('')  
   outdatah.push('typedef struct {')
-  outdatah.push('  const uint16_t cp; // Image id')
+  outdatah.push('  const uint16_t uccp; // Image id')
   outdatah.push('  const uint8_t cid;' )    
   outdatah.push('} Unicodelist;')
   outdatah.push('')   

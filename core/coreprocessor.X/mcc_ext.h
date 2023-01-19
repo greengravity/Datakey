@@ -28,30 +28,24 @@
 
 // This is a guard condition so that contents of this file are not included
 // more than once.  
-#ifndef SPI_EXTENSTION_H
-#define	SPI_EXTENSTION_H
+#ifndef XC_MCC_EXT_H
+#define	XC_MCC_EXT_H
 
-#include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include "mcc_generated_files/system.h" 
+#include "mcc_generated_files/fatfs/ff.h"
 
+// ********* Extend OC1 Functions *********
+uint16_t OC1_PrimaryValueGet();
 
+// ********* Extend Filesystem Functions *********
+void fs_standby();
+void fs_standby_file(FIL* fp);
+void fs_resume();
+
+// ********* Extend SPI-Functions *********
 void SPI1_Transmit16bitRepeated( uint16_t data, int len );
-void SPI1_Transmit16bit(uint16_t i);
-void SPI1_Transmit32bit(uint32_t i);
-void SPI1_transmit16bitBuffer(uint16_t *dataTransmitted, uint16_t wordCount );
+void SPI1_Transmit16bit(uint16_t data);
+void SPI1_Transmit32bit(uint32_t data);
+void SPI1_transmit16bitBuffer(uint16_t *data, uint16_t wordCount );
 
-#ifdef	__cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-    // TODO If C++ is being used, regular C code needs function names to have C 
-    // linkage so the functions can be used by the c code. 
-
-#ifdef	__cplusplus
-}
-#endif /* __cplusplus */
-
-#endif	/* SPI_EXTENSTION_H */
+#endif	/* XC_MCC_EXT_H */
 
