@@ -24,7 +24,7 @@ typedef struct {
 } GFXChar;
 
 typedef struct {
-  const uint16_t uccp; // Image id
+  const uint16_t uccp;
   const uint8_t cid;
 } Unicodelist;
 
@@ -47,6 +47,9 @@ extern const GFXChar gfxchars[];
 extern const Unicodelist unicodes[];
 extern const Keyboardmaps keymaps[];
 extern const Keylayout keylayouts[];
+extern const uint8_t textdata[];
+extern const uint16_t texte[];
+extern const uint8_t hexchars[];
 
 #define KEYCOMMAND_CHAR 0
 #define KEYCOMMAND_SPACE 1
@@ -58,5 +61,7 @@ extern const Keylayout keylayouts[];
 #define SYSICON_DELETE 108
 #define SYSICON_SPACE 109
 #define SYSICON_OK 110
+
+#define TEXT_ENTER_PIN 0
 
 #endif

@@ -5,16 +5,71 @@
  * Created on January 17, 2023, 11:08 PM
  */
 
-
+#include "main.h"
 #include "xc.h"
 #include <stdio.h>
+#include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
+
 #include "mcc_ext.h"
 #include "mcc_generated_files/system.h" 
 #include "mcc_generated_files/spi1_driver.h"
 #include "mcc_generated_files/fatfs/ff.h"
 #include "mcc_generated_files/pin_manager.h"
+#include "mcc_generated_files/ext_int.h"
+#include "mcc_generated_files/adc1.h"
+
+#include "display_driver.h"
+#include "buttons.h"
+
+// ********** Standard functions *******
+void bootPeripherals() {
+    EX_INT0_InterruptDisable();
+    PER_PWR_SetLow();
+    VOLT_PWR_SetLow();
+    __delay_ms(150);
+
+    spi1_open(DISPLAY_CONFIG);
+    dispStart();
+    spi1_close();
+  
+    
+    ADC1_ChannelSelect(VOLT_READ);
+    ADC1_Enable();
+    ADC1_SoftwareTriggerDisable();
+
+    
+    updateButtons(true);
+    __delay_ms(50);
+    updateButtons(true);
+}
+
+void shutdownPeripherals() {   
+    dispStop();
+    spi1_close();
+    SDCard_CS_SetHigh();
+    PER_PWR_SetHigh(); //Unpower Peripherie
+    VOLT_PWR_SetHigh();   //Unpower Voltagedivider
+    //ADC1_Disable();    //Stop Analogconverter    
+}
+
+
+void setSleep() {
+    //Shutdown all Peripherals
+    shutdownPeripherals();
+    _LATB2 = 1;
+    EX_INT0_InterruptFlagClear();
+    EX_INT0_InterruptEnable();
+    Sleep();
+    Nop();            
+    EX_INT0_InterruptDisable();
+    EX_INT0_InterruptFlagClear();
+    __delay_ms(100);
+    
+    bootPeripherals();
+}
+
 
 
 // ********* Extend OC1 Functions *********
@@ -147,4 +202,108 @@ void SPI1_transmit16bitBuffer(uint16_t *dataTransmitted, uint16_t wordCount ) {
     for (uint16_t i=0;i<wordCount;i++ ) {
         SPI1_Transmit16bit( dataTransmitted[i] );        
     }    
+}
+
+
+
+// AES-Encryption and Decryption functions
+static uint8_t masterkey[16];
+static bool keyset=false;
+
+//128bit AES key
+bool isKeySet( ) {
+    return keyset;
+}
+
+void setMasterKey(uint8_t *key) {
+    keyset = true;
+    memcpy( masterkey, key, 16 );
+}
+
+void swipeKeys() {    
+    keyset = false;
+    memset( masterkey, 0x00, 16);
+    memcpy( (void*)&CRYKEY0, masterkey, 16); 
+}
+
+bool verifyMasterKey() {
+    return true;    
+}
+
+
+void prepareAES128BitCBC() {
+    CRYCONLbits.CRYON = 1;
+    CRYCONHbits.KEYSRC = 0b0000; //RAM crykey  
+    CRYCONLbits.CPHRSEL = 1;     //AES-engine
+    CRYCONHbits.KEYMOD = 0;      //128 bit key
+    CRYCONLbits.CPHRMOD = 1;
+}
+
+
+//prepare for 128bit decryption by setting iv and masterkey with current setup
+bool prepare128bitEncryption( uint8_t *iv ) {
+    if ( !keyset ) return false;
+    
+    CRYCONLbits.CPHRMOD = 1;
+    CRYCONLbits.OPMOD = 0b0000;  //Operation mode encryption
+    
+    memcpy( (void*)&CRYKEY0, masterkey, 16);   //Set Masterkey
+    memcpy( (void*)&CRYTXTB, iv, 16 );        //Set initialization Vector     
+    
+    return true;
+}
+
+
+//prepare for 128bit decryption by setting iv and masterkey with current setup
+bool prepare128bitDecryption( uint8_t *iv ) {
+    if ( !keyset ) return false;
+    
+    //Generate decryption key via AES-Keyexpand
+    CRYCONLbits.OPMOD = 0b0010;  //Key Expand mode    
+    memcpy( (void*)&CRYKEY0, masterkey, 16);   //Set Masterkey
+    CRYCONLbits.CRYGO = 0b1;    //Start keygeneration
+    while (CRYCONLbits.CRYGO == 0b1 );
+    
+    CRYCONLbits.OPMOD = 0b0001;  //Operation mode decryption        
+    memcpy( (void*)&CRYTXTA, iv, 16);   //Set initialization Vector     
+    
+    return true;
+}
+
+
+//encrypt a block of 128 bit with the current setup
+void encrypt128bit( uint8_t *plaintext, uint8_t* ciphertext ) {
+    memcpy((void*)&CRYTXTA, plaintext, 16);
+    CRYCONLbits.CRYGO = 1;
+    while ( CRYCONLbits.CRYGO == 1 );    
+    memcpy(ciphertext, (void*)&CRYTXTB, 16);
+}
+
+//decrypt a block of 128 bit with the current setup
+void decrypt128bit( uint8_t* ciphertext, uint8_t *plaintext ) {
+    memcpy((void*)&CRYTXTB, ciphertext, 16);
+    CRYCONLbits.CRYGO = 1;
+    while ( CRYCONLbits.CRYGO == 1 );    
+    memcpy(plaintext, (void*)&CRYTXTC, 16);
+}
+
+//clear keyram and stop engine
+void endEncryption( ) {        
+    for ( int i= 0;i<16;i++) ((uint8_t*)&CRYKEY0)[i] = 0x00;
+    CRYCONLbits.CRYON = 0;
+}
+
+//Generate 16bit random bytes
+void generateRND(uint8_t *rnd) { 
+    uint8_t con = CRYCONLbits.CRYON;
+    
+    CRYCONLbits.CRYON = 0b1; /* Turn module on */
+    CRYCONLbits.OPMOD = 0b1010; /* Select to generate a random number */
+    CRYCONLbits.CRYGO = 1; /* Start the process */
+    while(CRYCONLbits.CRYGO == 1){} /* Wait until the module is done */
+    memcpy(rnd, (void*)&CRYTXTA, 16);
+    
+    /* The random number is now located in CRYTXTA. */    
+    
+    CRYCONLbits.CRYON = con;
 }

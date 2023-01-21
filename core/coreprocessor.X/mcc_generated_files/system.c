@@ -89,16 +89,16 @@
 #include "pin_manager.h"
 #include "clock.h"
 #include "system.h"
-#include "fatfs/ff.h"
 #include "ext_int.h"
+#include "tmr2.h"
+#include "drivers/spi_master.h"
 #include "oc1.h"
 #include "interrupt_manager.h"
 #include "traps.h"
-#include "spi1_driver.h"
-#include "adc1.h"
-#include "tmr2.h"
-#include "drivers/spi_master.h"
+#include "fatfs/ff.h"
 #include "sd_spi/sd_spi.h"
+#include "adc1.h"
+#include "spi1_driver.h"
 
 void SYSTEM_Initialize(void)
 {

@@ -45,10 +45,9 @@ bool readButtonDown(uint8_t button) {
 
 void updateButtons(bool force) {
     uint32_t time = TMR2_Counter32BitGet();
+    prevButtonmap = currButtonmap;
     if ( time > ( lastupdate + UPDATE_PERIOD ) || force ) {
-        lastupdate = time;
-        
-        prevButtonmap = currButtonmap;
+        lastupdate = time;                
         currButtonmap = 0x00;
         for (int i=0;i< BUTTON_COUNT; i++) {
             if ( readButtonDown( i ) ) {  

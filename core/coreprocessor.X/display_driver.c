@@ -491,7 +491,7 @@ void locate( uint8_t x, uint8_t y ) {
 }
 
 //Writing Characters with intern codepage
-void writeChars( const GFXChar *chars, uint16_t len ) {
+void writeChars( const GFXChar *chars, uint16_t len ) {    
     for (uint16_t i=0;i<len;i++ ) {
         if ( ( _charx + chars[i].xadv ) > ST7735_TFTWIDTH ) {
             _charx = 0;
@@ -502,8 +502,25 @@ void writeChars( const GFXChar *chars, uint16_t len ) {
     }    
 }
 
+
+//Writing text from intern Codepage
+void cWriteTextIntern( const uint8_t *text ) {    
+    uint16_t len = strlen( (char*)text );
+    for ( uint16_t i=0;i<len;i++) {        
+        writeChars( &gfxchars[ text[i] ], 1 );
+    }
+}
+
+void writeTextIntern( uint8_t *text ) {    
+    uint16_t len = strlen( (char*)text );
+    for ( uint16_t i=0;i<len;i++) {        
+        writeChars( &gfxchars[ text[i] ], 1 );
+    }
+}
+
+
 //Writing possible Characters from ASCII Codepage
-void writeText( const char *text ) {
+void cWriteText( const char *text ) {
     
     uint16_t len = strlen( text );
     for ( uint16_t i=0;i<len;i++) {
@@ -512,3 +529,10 @@ void writeText( const char *text ) {
     }    
 }
 
+void writeText( char *text ) {    
+    uint16_t len = strlen( text );
+    for ( uint16_t i=0;i<len;i++) {
+        uint16_t ct = (uint16_t)text[i];        
+        writeChars( &gfxchars[ unicodeLookup(ct) ], 1 );
+    }    
+}

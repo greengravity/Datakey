@@ -31,7 +31,13 @@
 #ifndef XC_MCC_EXT_H
 #define	XC_MCC_EXT_H
 
+#include <stdbool.h>
 #include "mcc_generated_files/fatfs/ff.h"
+
+// ********** Standard functions *******
+void bootPeripherals();
+void shutdownPeripherals();
+void setSleep();
 
 // ********* Extend OC1 Functions *********
 uint16_t OC1_PrimaryValueGet();
@@ -47,5 +53,22 @@ void SPI1_Transmit16bit(uint16_t data);
 void SPI1_Transmit32bit(uint32_t data);
 void SPI1_transmit16bitBuffer(uint16_t *data, uint16_t wordCount );
 
+
+// AES-Encryption and Decryption functions
+bool isKeySet( );
+void setMasterKey(uint8_t *key);
+void swipeKeys();
+bool verifyMasterKey();
+
+
+void prepareAES128BitCBC();
+bool prepare128bitEncryption( uint8_t *iv );
+bool prepare128bitDecryption( uint8_t *iv );
+void encrypt128bit( uint8_t *plaintext, uint8_t* ciphertext );
+void decrypt128bit( uint8_t* ciphertext, uint8_t *plaintext );
+void endEncryption( );
+void generateRND(uint8_t *rnd);
+
 #endif	/* XC_MCC_EXT_H */
+
 

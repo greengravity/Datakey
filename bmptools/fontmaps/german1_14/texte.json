@@ -1,0 +1,6 @@
+{
+    "texte": [
+        { "name":"ENTER_PIN", "text": "Pin eingeben:" }
+    ],
+    "hexchars": "0123456789abcdef"
+}

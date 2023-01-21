@@ -90,7 +90,8 @@
  */
 typedef enum 
 {
-    VOLTAGE,//Channel Name:AN6   Assigned to:Shared Channel
+    VOLT_READ,//Channel Name:AN6   Assigned to:Shared Channel
+    HALL_READ,//Channel Name:AN7   Assigned to:Shared Channel
     CHANNEL_CTMU_temperature_sensor_input,//Channel Name:CTMU temperature sensor input   Assigned to:Shared Channel
     CHANNEL_CTMU,//Channel Name:CTMU   Assigned to:Shared Channel
     CHANNEL_VBG_DIV_2,//Channel Name:VBG/2   Assigned to:Shared Channel
@@ -341,8 +342,11 @@ inline static void ADC1_ChannelSelect( ADC1_CHANNEL channel )
 {
     switch(channel)
     {
-        case VOLTAGE:
+        case VOLT_READ:
                 AD1CHSbits.CH0SA= 0x6;
+                break;
+        case HALL_READ:
+                AD1CHSbits.CH0SA= 0x7;
                 break;
         case CHANNEL_CTMU_temperature_sensor_input:
                 AD1CHSbits.CH0SA= 0xD;

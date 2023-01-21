@@ -134,7 +134,10 @@ void clearScreen(uint16_t color);
 void drawImage(int16_t x, int16_t y, const GFXimage *image);
 void locate( uint8_t x, uint8_t y );
 void writeChars( const GFXChar *chars, uint16_t len );
-void writeText( const char *text );
+void cWriteTextIntern( const uint8_t *text );
+void writeTextIntern( uint8_t *text );
+void cWriteText( const char *text );
+void writeText( char *text );
 
 #endif	/* DISPLAY_DRIVER_H */
 

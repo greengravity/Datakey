@@ -15,8 +15,9 @@ const icondir =      './icons'
 const fontfile =     './fontmaps/' + fontdir + '/font.fnt';
 const fontmap =      './fontmaps/' + fontdir + '/font_0.png';
 const patternfile =  './fontmaps/' + fontdir + '/patterns.json';
-const outfilec =     './assets/' + fontdir + '/assets.c'
-const outfileh =     './assets/' + fontdir + '/assets.h'
+const textfile =     './fontmaps/' + fontdir + '/texte.json';
+const outfilec =     './assets/'   + fontdir + '/assets.c'
+const outfileh =     './assets/'   + fontdir + '/assets.h'
 
 let content = fs.readFileSync(fontfile, 'utf8');
 let clines = content.split('\r\n')
@@ -62,12 +63,10 @@ clines.forEach(ln => {
 
 
 // Reading icondescription
-const iconjsondata = fs.readFileSync(path.resolve(icondir, 'icons.js'), { encoding: "utf-8" })
-const iconjson = JSON.parse(iconjsondata)
+const iconjson = JSON.parse( fs.readFileSync(path.resolve(icondir, 'icons.js'), { encoding: "utf-8" }) )
 
 // Reading patterndescription
-const patternjsondata = fs.readFileSync( patternfile, { encoding: "utf-8" })
-const patterns = JSON.parse(patternjsondata)
+const patterns = JSON.parse( fs.readFileSync( patternfile, { encoding: "utf-8" }) )
 
 if ( patterns.patternmap.length == 25 ) {
   let syspattern =  {
@@ -104,6 +103,9 @@ if ( patterns.patternmap.length == 25 ) {
   }) 
 }
 
+
+// Reading Textinfos
+const textdata = JSON.parse( fs.readFileSync( textfile, { encoding: "utf-8" }) )
 
 
 // Reading imagefiles
@@ -439,7 +441,66 @@ Promise.all(readpromises).then((values) => {
   outdatac.push('{')
   outdatac.push( keymap.join(', ') )
   outdatac.push('};')
+  outdatac.push('')
 
+  outdatac.push('const uint8_t textdata[] = ')
+  outdatac.push('{')
+  {
+    let bytelist = []
+    let tpos = 0
+    textdata.texte.forEach(td=>{        
+      td.pos = tpos;
+      for (let i=0; i<td.text.length;i++) {
+        let c = td.text.charAt(i);
+        let c2 = charlist.find( cl=>cl.charval == c );      
+        if ( c2 ) {
+          bytelist.push( getHexByteVal( c2.charid ) )                
+        } else {
+          bytelist.push( '0x00' )
+        }  
+        tpos++
+      }
+      bytelist.push( '0x00' )
+      tpos++
+    })
+
+    outdatac.push(bytelist.join(","))  
+  }  
+  outdatac.push('};')
+
+  outdatac.push('const uint16_t texte[] = ')
+  outdatac.push('{')
+
+  {
+    let bytelist = []
+    textdata.texte.forEach(td=>{      
+      bytelist.push( td.pos )
+    })
+
+    outdatac.push(bytelist.join(","))  
+  }
+
+  outdatac.push('};')
+  outdatac.push('')
+  outdatac.push('const uint8_t hexchars[] = ')
+  outdatac.push('{')
+
+  {
+    let bytelist = []
+    for (let i=0;i<textdata.hexchars.length; i++) {
+      let c = textdata.hexchars.charAt(i);
+      let c2 = charlist.find( cl=>cl.charval == c );      
+      if ( c2 ) {
+        bytelist.push( getHexByteVal( c2.charid ) )                
+      } else {
+        bytelist.push( '0x00' )
+      }        
+    }
+
+    outdatac.push(bytelist.join(","))  
+  }
+  outdatac.push('};')
+  outdatac.push('')
 
   outdatah.push('#ifndef SYSIMAGES_H')
   outdatah.push('#define	SYSIMAGES_H')
@@ -467,7 +528,7 @@ Promise.all(readpromises).then((values) => {
   outdatah.push('} GFXChar;')
   outdatah.push('')  
   outdatah.push('typedef struct {')
-  outdatah.push('  const uint16_t uccp; // Image id')
+  outdatah.push('  const uint16_t uccp;' )
   outdatah.push('  const uint8_t cid;' )    
   outdatah.push('} Unicodelist;')
   outdatah.push('')   
@@ -490,6 +551,9 @@ Promise.all(readpromises).then((values) => {
   outdatah.push('extern const Unicodelist unicodes[];')
   outdatah.push('extern const Keyboardmaps keymaps[];')
   outdatah.push('extern const Keylayout keylayouts[];')
+  outdatah.push('extern const uint8_t textdata[];')
+  outdatah.push('extern const uint16_t texte[];')
+  outdatah.push('extern const uint8_t hexchars[];')
   outdatah.push('')  
 
   keyfunctions.forEach( ( kf, index )=>{
@@ -501,6 +565,13 @@ Promise.all(readpromises).then((values) => {
     outdatah.push('#define SYSICON_' + ic.name + ' ' + ic.imgid )  
   })
   outdatah.push('')  
+
+  textdata.texte.forEach(( td, ind )=>{    
+    outdatah.push('#define TEXT_' + td.name + ' ' + ind )  
+  })
+  outdatah.push('')  
+
+
 
   outdatah.push('#endif')
 

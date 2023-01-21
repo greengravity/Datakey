@@ -43,6 +43,7 @@
 #define BUTTON_B 5
 #define BUTTON_CASE 6
 
+#define BUTTON_COUNT_PRESSABLE 6
 #define BUTTON_COUNT 7
 
 
