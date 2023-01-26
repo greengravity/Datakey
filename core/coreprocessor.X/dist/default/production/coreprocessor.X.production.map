@@ -110,14 +110,14 @@ Default Scalar Model: Small
 section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200               0x5d6           0x8c1  (2241)
-.const                       0x7d6              0x7152          0xa9fb  (43515)
-.text                       0x7928              0x6178          0x9234  (37428)
-.dinit                      0xdaa0                0x74            0xae  (174)
-.text                       0xdb14               0x154           0x1fe  (510)
-.init.delay32               0xdc68                0x1c            0x2a  (42)
-.text                       0xdc84                0x4e            0x75  (117)
+.const                       0x7d6              0x68b2          0x9d0b  (40203)
+.text                       0x7088              0x6f68          0xa71c  (42780)
+.dinit                      0xdff0                0x7a            0xb7  (183)
+.text                       0xe06a               0x11a           0x1a7  (423)
+.init.delay32               0xe184                0x1c            0x2a  (42)
+.text                       0xe1a0                0x4e            0x75  (117)
 
-                 Total "program" memory used (bytes):        0x1483b  (84027) 63%
+                 Total "program" memory used (bytes):        0x14fe5  (85989) 65%
 
 
 "data" Memory  [Origin = 0x800, Length = 0x2000]
@@ -128,11 +128,12 @@ section                    address      alignment gaps    total length  (dec)
 .ndata                       0x828                   0             0x2  (2)
 .nbss                        0x82a                   0             0x6  (6)
 .ndata                       0x830                   0             0x2  (2)
-.bss                         0x832                   0           0x49a  (1178)
-.data                        0xccc                   0             0xc  (12)
-.bss                         0xcd8                   0             0x8  (8)
+.nbss                        0x832                   0             0x2  (2)
+.bss                         0x834                   0           0x49a  (1178)
+.data                        0xcce                   0             0xc  (12)
+.bss                         0xcda                   0             0x8  (8)
 
-                 Total "data" memory used (bytes):          0x4e0  (1248) 15%
+                 Total "data" memory used (bytes):          0x4e2  (1250) 15%
 
 
 Dynamic Memory Usage
@@ -140,9 +141,9 @@ Dynamic Memory Usage
 region                     address                      maximum length  (dec)
 ------                     -------                      ---------------------
 heap                             0                                   0  (0)
-stack                        0xce0                              0x1b20  (6944)
+stack                        0xce2                              0x1b1e  (6942)
 
-                 Maximum dynamic memory (bytes):         0x1b20  (6944)
+                 Maximum dynamic memory (bytes):         0x1b1e  (6942)
 
 Info: Project is using a large data memory model when small data memory model is sufficient.
 
@@ -152,22 +153,10 @@ External Symbols in Data Memory (by address):
                     0x0818                  _currButtonmap
                     0x0819                  _prevButtonmap
                     0x081a                  _lastupdate
-                    0x081e                  __height
-                    0x081f                  __width
-                    0x0820                  __rotation
-                    0x0821                  __charx
-                    0x0822                  __chary
                     0x082c                  _spi1_interruptHandler
-                    0x0830                  __brightness
 
 External Symbols in Data Memory (by name):
 
-                    0x0830                  __brightness
-                    0x0821                  __charx
-                    0x0822                  __chary
-                    0x081e                  __height
-                    0x0820                  __rotation
-                    0x081f                  __width
                     0x0818                  _currButtonmap
                     0x081a                  _lastupdate
                     0x0819                  _prevButtonmap
@@ -197,234 +186,249 @@ External Symbols in Program Memory (by address):
                   0x0006c6                  _memcpy
                   0x0006d4                  _memset
                   0x00079a                  _strlen
-                  0x0007ca                  ___mulsi3
                   0x0007ca                  ___mulp32eds3
                   0x0007ca                  ___mulp32peds3
+                  0x0007ca                  ___mulsi3
                   0x0007d6                  _bitmapdata
-                  0x006d4e                  _bitmaps
-                  0x006f0a                  _gfxchars
-                  0x007198                  _unicodes
-                  0x00734c                  _keymaps
-                  0x007414                  _keylayouts
-                  0x00766c                  _textdata
-                  0x00767a                  _texte
-                  0x00767c                  _Bcmd
-                  0x0076e3                  _Rcmd1
-                  0x00771e                  _Rcmd2green
-                  0x00772b                  _Rcmd2red
-                  0x007738                  _Rcmd2green144
-                  0x007745                  _Rcmd2green160x80
-                  0x007752                  _Rcmd3
-                  0x0078b8                  _spiMaster
-                  0x00994a                  _f_mount
-                  0x0099cc                  _f_open
-                  0x009ddc                  _f_read
-                  0x00a16e                  _f_write
-                  0x00a5a4                  _f_sync
-                  0x00a6c6                  _f_close
-                  0x00a6fc                  _f_chdrive
-                  0x00a71e                  _f_chdir
-                  0x00a7ac                  _f_lseek
-                  0x00ab98                  _f_opendir
-                  0x00ac52                  _f_closedir
-                  0x00ac7a                  _f_readdir
-                  0x00acea                  _f_stat
-                  0x00ad46                  _f_getfree
-                  0x00af4a                  _f_truncate
-                  0x00b0d4                  _f_unlink
-                  0x00b20e                  _f_mkdir
-                  0x00b3ea                  _f_rename
-                  0x00b5c8                  _SD_SPI_IsMediaPresent
-                  0x00b5dc                  _SD_SPI_GetSectorSize
-                  0x00b5e4                  _SD_SPI_GetSectorCount
-                  0x00b5ee                  _SD_SPI_SectorRead
-                  0x00b698                  _SD_SPI_SectorWrite
-                  0x00b742                  _SD_SPI_IsMediaInitialized
-                  0x00b754                  _SD_SPI_IsWriteProtected
-                  0x00b790                  _SD_SPI_MediaInitialize
-                  0x00c194                  _dispWriteCommand
-                  0x00c1a4                  _dispSendCommand
-                  0x00c1e4                  _dispSendCommandC
-                  0x00c224                  _dispInit
-                  0x00c2f4                  _dispCommonInit
-                  0x00c306                  _dispSetRotation
-                  0x00c358                  _dispSetBrightness
-                  0x00c3b0                  _dispGetBrightness
-                  0x00c3b8                  _dispStart
-                  0x00c400                  _dispStop
-                  0x00c40e                  _dispStartWrite
-                  0x00c416                  _dispEndWrite
-                  0x00c41e                  _dispSetAddrWindow
-                  0x00c476                  _drawPixel
-                  0x00c4c0                  _fillRect
-                  0x00c60a                  _drawFastHLine
-                  0x00c632                  _drawFastVLine
-                  0x00c658                  _clearScreen
-                  0x00c69e                  _drawImage
-                  0x00c94c                  _unicodeLookup
-                  0x00ca24                  _locate
-                  0x00ca3e                  _writeChars
-                  0x00cab8                  _cWriteTextIntern
-                  0x00caf6                  _writeTextIntern
-                  0x00cb34                  _cWriteText
-                  0x00cb7e                  _writeText
-                  0x00cc62                  _bootPeripherals
-                  0x00cc92                  _shutdownPeripherals
-                  0x00cca2                  _setSleep
-                  0x00ccc0                  _OC1_PrimaryValueGet
-                  0x00ccc8                  _fs_standby
-                  0x00cd00                  _fs_standby_file
-                  0x00cd0e                  _fs_resume
-                  0x00cd44                  _SPI1_Transmit16bitRepeated
-                  0x00cdbe                  _SPI1_Transmit16bit
-                  0x00ce1c                  _SPI1_Transmit32bit
-                  0x00cedc                  _SPI1_transmit16bitBuffer
-                  0x00cf0a                  _isKeySet
-                  0x00cf12                  _setMasterKey
-                  0x00cf26                  _swipeKeys
-                  0x00cf3e                  _prepareAES128BitCBC
-                  0x00cf62                  _prepare128bitEncryption
-                  0x00cf9a                  _prepare128bitDecryption
-                  0x00cfe2                  _encrypt128bit
-                  0x00d00e                  _decrypt128bit
-                  0x00d03a                  _endEncryption
-                  0x00d05a                  _generateRND
-                  0x00d0a2                  _getContextTypeLen
-                  0x00d0c6                  _removeContext
-                  0x00d132                  _pushContext
-                  0x00d1e8                  _replaceContext
-                  0x00d200                  _setContext
-                  0x00d23a                  _setInitialContext
-                  0x00d258                  _updateContext
-                  0x00d326                  _readButtonDown
-                  0x00d3d0                  _updateButtons
-                  0x00d430                  _isButtonDown
-                  0x00d44c                  _isButtonUp
-                  0x00d468                  _isButtonPressed
-                  0x00d48e                  _isButtonReleased
-                  0x00d4b6                  _spi1_close
-                  0x00d4be                  _spi1_open
-                  0x00d514                  _spi1_exchangeByte
-                  0x00d52e                  _spi1_exchangeBlock
-                  0x00d56a                  _spi1_writeBlock
-                  0x00d5a2                  _spi1_readBlock
-                  0x00d5dc                  _spi1_writeByte
-                  0x00d5e8                  _spi1_readByte
-                  0x00d5f2                  _spi1_isr
-                  0x00d60e                  _spi1_setSpiISR
-                  0x00d61a                  _OC1_Initialize
-                  0x00d640                  _OC1_Tasks
-                  0x00d652                  _OC1_Start
-                  0x00d66c                  _OC1_Stop
-                  0x00d67a                  _OC1_SecondaryValueSet
-                  0x00d686                  _OC1_PrimaryValueSet
-                  0x00d692                  _OC1_IsCompareCycleComplete
-                  0x00d6aa                  _OC1_FaultStatusGet
-                  0x00d704                  _OC1_FaultStatusClear
-                  0x00d728                  _OC1_ManualTriggerSet
-                  0x00d730                  _OC1_TriggerStatusGet
-                  0x00d748                  _OC1_TriggerStatusClear
-                  0x00d750                  _disk_status
-                  0x00d790                  _disk_initialize
-                  0x00d7be                  _disk_read
-                  0x00d804                  _disk_write
-                  0x00d84a                  _disk_ioctl
-                  0x00d870                  _TMR2_Initialize
-                  0x00d88c                  _TMR2_Tasks_32BitOperation
-                  0x00d8ae                  _TMR2_Period32BitSet
-                  0x00d8c2                  _TMR2_Period32BitGet
-                  0x00d8e0                  _TMR2_Counter32BitSet
-                  0x00d8f4                  _TMR2_Counter32BitGet
-                  0x00d922                  _TMR2_Start
-                  0x00d930                  _TMR2_Stop
-                  0x00d938                  _TMR2_GetElapsedThenClear
-                  0x00d950                  _TMR2_SoftwareCounterGet
-                  0x00d95c                  _TMR2_SoftwareCounterClear
-                  0x00d968                  _ADC1_Initialize
-                  0x00d994                  _ADC1_SetInterruptHandler
-                  0x00d9bc                  _ADC1_Start
-                  0x00d9c4                  _ADC1_Stop
-                  0x00d9cc                  _ADC1_ConversionResultBufferGet
-                  0x00da18                  _PIN_MANAGER_Initialize
-                  0x00db14                  _CLOCK_Initialize
-                  0x00db66                  _renderUI
-                  0x00dbb4                  _FatFsDemo_Tasks
-                  0x00dbfe                  _DISPLAY_open
-                  0x00dc08                  _SDFAST_open
-                  0x00dc12                  _SDSLOW_open
-                  0x00dc1c                  _spi_master_open
-                  0x00dc42                  _main
-                  0x00dc68                  ___delay32
-                  0x00dc9c                  _SYSTEM_Initialize
-                  0x00dcb6                  _EXT_INT_Initialize
-                  0x00dcc2                  _INTERRUPT_Initialize
+                  0x00639e                  _bitmaps
+                  0x00655a                  _gfxchars
+                  0x0067e8                  _unicodes
+                  0x00699c                  _keymaps
+                  0x006a64                  _keylayouts
+                  0x006cbc                  _textdata
+                  0x006d9c                  _texte
+                  0x006db0                  _hexchars
+                  0x006dc0                  _Bcmd
+                  0x006e27                  _Rcmd1
+                  0x006e62                  _Rcmd2green
+                  0x006e6f                  _Rcmd2red
+                  0x006e7c                  _Rcmd2green144
+                  0x006e89                  _Rcmd2green160x80
+                  0x006e96                  _Rcmd3
+                  0x006ffc                  _spiMaster
+                  0x0090aa                  _f_mount
+                  0x00912c                  _f_open
+                  0x00953c                  _f_read
+                  0x0098ce                  _f_write
+                  0x009d04                  _f_sync
+                  0x009e26                  _f_close
+                  0x009e5c                  _f_chdrive
+                  0x009e7e                  _f_chdir
+                  0x009f0c                  _f_lseek
+                  0x00a2f8                  _f_opendir
+                  0x00a3b2                  _f_closedir
+                  0x00a3da                  _f_readdir
+                  0x00a44a                  _f_stat
+                  0x00a4a6                  _f_getfree
+                  0x00a6aa                  _f_truncate
+                  0x00a834                  _f_unlink
+                  0x00a96e                  _f_mkdir
+                  0x00ab4a                  _f_rename
+                  0x00ad28                  _SD_SPI_IsMediaPresent
+                  0x00ad3c                  _SD_SPI_GetSectorSize
+                  0x00ad44                  _SD_SPI_GetSectorCount
+                  0x00ad4e                  _SD_SPI_SectorRead
+                  0x00adf8                  _SD_SPI_SectorWrite
+                  0x00aea2                  _SD_SPI_IsMediaInitialized
+                  0x00aeb4                  _SD_SPI_IsWriteProtected
+                  0x00aef0                  _SD_SPI_MediaInitialize
+                  0x00b8f4                  _dispWriteCommand
+                  0x00b904                  _dispSendCommand
+                  0x00b944                  _dispSendCommandC
+                  0x00b984                  _dispInit
+                  0x00ba54                  _dispCommonInit
+                  0x00ba66                  _dispSetRotation
+                  0x00bab8                  _dispSetBrightness
+                  0x00bb10                  _dispGetBrightness
+                  0x00bb18                  _dispStart
+                  0x00bb60                  _dispStartWrite
+                  0x00bb68                  _dispEndWrite
+                  0x00bb70                  _dispSetAddrWindow
+                  0x00bbc8                  _drawPixel
+                  0x00bc12                  _fillRect
+                  0x00bd5c                  _drawFastHLine
+                  0x00bd82                  _drawFastVLine
+                  0x00bda8                  _drawRect
+                  0x00be0c                  _clearScreen
+                  0x00be52                  _drawImage
+                  0x00c100                  _unicodeLookup
+                  0x00c1d8                  _locate
+                  0x00c1f2                  _getLocationX
+                  0x00c1fa                  _getLocationY
+                  0x00c202                  _unwriteChars
+                  0x00c27e                  _writeChars
+                  0x00c2f8                  _cWriteTextIntern
+                  0x00c336                  _writeTextIntern
+                  0x00c374                  _cWriteText
+                  0x00c3be                  _writeText
+                  0x00c408                  _isKeySet
+                  0x00c410                  _setMasterKey
+                  0x00c424                  _getMasterKey
+                  0x00c42c                  _swipeKeys
+                  0x00c44e                  _verifyMasterKey
+                  0x00c64c                  _getContextTypeLen
+                  0x00c680                  _removeContext
+                  0x00c6ec                  _pushContext
+                  0x00c7a2                  _replaceContext
+                  0x00c7ba                  _setContext
+                  0x00c7f4                  _setInitialContext
+                  0x00c812                  _hctxPinInput
+                  0x00c9aa                  _hctxKeyInput
+                  0x00cca0                  _hctxKeyOverview
+                  0x00cd26                  _updateContext
+                  0x00ce06                  _rndKeyInput
+                  0x00d17a                  _rndPinInput
+                  0x00d262                  _rndKeyOverview
+                  0x00d29a                  _rndError
+                  0x00d2c4                  _renderUI
+                  0x00d404                  _disableVoltPower
+                  0x00d40c                  _enableVoltPower
+                  0x00d416                  _bootPeripherals
+                  0x00d448                  _shutdownPeripherals
+                  0x00d49c                  _setSleep
+                  0x00d4c0                  _OC1_PrimaryValueGet
+                  0x00d4c8                  _fs_standby
+                  0x00d50c                  _fs_standby_file
+                  0x00d522                  _fs_resume
+                  0x00d560                  _SPI1_Transmit16bitRepeated
+                  0x00d5da                  _SPI1_Transmit16bit
+                  0x00d638                  _SPI1_Transmit32bit
+                  0x00d6f8                  _SPI1_transmit16bitBuffer
+                  0x00d726                  _prepareAES128BitCBC
+                  0x00d74a                  _prepare128bitEncryption
+                  0x00d784                  _prepare128bitDecryption
+                  0x00d7ce                  _encrypt128bit
+                  0x00d7fa                  _decrypt128bit
+                  0x00d826                  _endEncryption
+                  0x00d846                  _generateRND
+                  0x00d88e                  _readButtonDown
+                  0x00d920                  _updateButtons
+                  0x00d980                  _isButtonDown
+                  0x00d99c                  _isButtonUp
+                  0x00d9b8                  _isButtonPressed
+                  0x00d9de                  _isButtonReleased
+                  0x00da06                  _spi1_close
+                  0x00da0e                  _spi1_open
+                  0x00da64                  _spi1_exchangeByte
+                  0x00da7e                  _spi1_exchangeBlock
+                  0x00daba                  _spi1_writeBlock
+                  0x00daf2                  _spi1_readBlock
+                  0x00db2c                  _spi1_writeByte
+                  0x00db38                  _spi1_readByte
+                  0x00db42                  _spi1_isr
+                  0x00db5e                  _spi1_setSpiISR
+                  0x00db6a                  _OC1_Initialize
+                  0x00db90                  _OC1_Tasks
+                  0x00dba2                  _OC1_Start
+                  0x00dbbc                  _OC1_Stop
+                  0x00dbca                  _OC1_SecondaryValueSet
+                  0x00dbd6                  _OC1_PrimaryValueSet
+                  0x00dbe2                  _OC1_IsCompareCycleComplete
+                  0x00dbfa                  _OC1_FaultStatusGet
+                  0x00dc54                  _OC1_FaultStatusClear
+                  0x00dc78                  _OC1_ManualTriggerSet
+                  0x00dc80                  _OC1_TriggerStatusGet
+                  0x00dc98                  _OC1_TriggerStatusClear
+                  0x00dca0                  _disk_status
+                  0x00dce0                  _disk_initialize
+                  0x00dd0e                  _disk_read
+                  0x00dd54                  _disk_write
+                  0x00dd9a                  _disk_ioctl
+                  0x00ddc0                  _TMR2_Initialize
+                  0x00dddc                  _TMR2_Tasks_32BitOperation
+                  0x00ddfe                  _TMR2_Period32BitSet
+                  0x00de12                  _TMR2_Period32BitGet
+                  0x00de30                  _TMR2_Counter32BitSet
+                  0x00de44                  _TMR2_Counter32BitGet
+                  0x00de72                  _TMR2_Start
+                  0x00de80                  _TMR2_Stop
+                  0x00de88                  _TMR2_GetElapsedThenClear
+                  0x00dea0                  _TMR2_SoftwareCounterGet
+                  0x00deac                  _TMR2_SoftwareCounterClear
+                  0x00deb8                  _ADC1_Initialize
+                  0x00dee4                  _ADC1_SetInterruptHandler
+                  0x00df0c                  _ADC1_Start
+                  0x00df14                  _ADC1_Stop
+                  0x00df1c                  _ADC1_ConversionResultBufferGet
+                  0x00df68                  _PIN_MANAGER_Initialize
+                  0x00e06a                  _CLOCK_Initialize
+                  0x00e0bc                  _FatFsDemo_Tasks
+                  0x00e106                  _DISPLAY_open
+                  0x00e110                  _SDFAST_open
+                  0x00e11a                  _SDSLOW_open
+                  0x00e124                  _spi_master_open
+                  0x00e14a                  _main
+                  0x00e184                  ___delay32
+                  0x00e1b8                  _SYSTEM_Initialize
+                  0x00e1d2                  _EXT_INT_Initialize
+                  0x00e1de                  _INTERRUPT_Initialize
 
 External Symbols in Program Memory (by name):
 
-                  0x00d9cc                  _ADC1_ConversionResultBufferGet
-                  0x00d968                  _ADC1_Initialize
-                  0x00d994                  _ADC1_SetInterruptHandler
-                  0x00d9bc                  _ADC1_Start
-                  0x00d9c4                  _ADC1_Stop
-                  0x00767c                  _Bcmd
-                  0x00db14                  _CLOCK_Initialize
-                  0x00dbfe                  _DISPLAY_open
-                  0x00dcb6                  _EXT_INT_Initialize
-                  0x00dbb4                  _FatFsDemo_Tasks
-                  0x00dcc2                  _INTERRUPT_Initialize
-                  0x00d704                  _OC1_FaultStatusClear
-                  0x00d6aa                  _OC1_FaultStatusGet
-                  0x00d61a                  _OC1_Initialize
-                  0x00d692                  _OC1_IsCompareCycleComplete
-                  0x00d728                  _OC1_ManualTriggerSet
-                  0x00ccc0                  _OC1_PrimaryValueGet
-                  0x00d686                  _OC1_PrimaryValueSet
-                  0x00d67a                  _OC1_SecondaryValueSet
-                  0x00d652                  _OC1_Start
-                  0x00d66c                  _OC1_Stop
-                  0x00d640                  _OC1_Tasks
-                  0x00d748                  _OC1_TriggerStatusClear
-                  0x00d730                  _OC1_TriggerStatusGet
-                  0x00da18                  _PIN_MANAGER_Initialize
-                  0x0076e3                  _Rcmd1
-                  0x00771e                  _Rcmd2green
-                  0x007738                  _Rcmd2green144
-                  0x007745                  _Rcmd2green160x80
-                  0x00772b                  _Rcmd2red
-                  0x007752                  _Rcmd3
-                  0x00dc08                  _SDFAST_open
-                  0x00dc12                  _SDSLOW_open
-                  0x00b5e4                  _SD_SPI_GetSectorCount
-                  0x00b5dc                  _SD_SPI_GetSectorSize
-                  0x00b742                  _SD_SPI_IsMediaInitialized
-                  0x00b5c8                  _SD_SPI_IsMediaPresent
-                  0x00b754                  _SD_SPI_IsWriteProtected
-                  0x00b790                  _SD_SPI_MediaInitialize
-                  0x00b5ee                  _SD_SPI_SectorRead
-                  0x00b698                  _SD_SPI_SectorWrite
-                  0x00cdbe                  _SPI1_Transmit16bit
-                  0x00cd44                  _SPI1_Transmit16bitRepeated
-                  0x00ce1c                  _SPI1_Transmit32bit
-                  0x00cedc                  _SPI1_transmit16bitBuffer
-                  0x00dc9c                  _SYSTEM_Initialize
-                  0x00d8f4                  _TMR2_Counter32BitGet
-                  0x00d8e0                  _TMR2_Counter32BitSet
-                  0x00d938                  _TMR2_GetElapsedThenClear
-                  0x00d870                  _TMR2_Initialize
-                  0x00d8c2                  _TMR2_Period32BitGet
-                  0x00d8ae                  _TMR2_Period32BitSet
-                  0x00d95c                  _TMR2_SoftwareCounterClear
-                  0x00d950                  _TMR2_SoftwareCounterGet
-                  0x00d922                  _TMR2_Start
-                  0x00d930                  _TMR2_Stop
-                  0x00d88c                  _TMR2_Tasks_32BitOperation
+                  0x00df1c                  _ADC1_ConversionResultBufferGet
+                  0x00deb8                  _ADC1_Initialize
+                  0x00dee4                  _ADC1_SetInterruptHandler
+                  0x00df0c                  _ADC1_Start
+                  0x00df14                  _ADC1_Stop
+                  0x006dc0                  _Bcmd
+                  0x00e06a                  _CLOCK_Initialize
+                  0x00e106                  _DISPLAY_open
+                  0x00e1d2                  _EXT_INT_Initialize
+                  0x00e0bc                  _FatFsDemo_Tasks
+                  0x00e1de                  _INTERRUPT_Initialize
+                  0x00dc54                  _OC1_FaultStatusClear
+                  0x00dbfa                  _OC1_FaultStatusGet
+                  0x00db6a                  _OC1_Initialize
+                  0x00dbe2                  _OC1_IsCompareCycleComplete
+                  0x00dc78                  _OC1_ManualTriggerSet
+                  0x00d4c0                  _OC1_PrimaryValueGet
+                  0x00dbd6                  _OC1_PrimaryValueSet
+                  0x00dbca                  _OC1_SecondaryValueSet
+                  0x00dba2                  _OC1_Start
+                  0x00dbbc                  _OC1_Stop
+                  0x00db90                  _OC1_Tasks
+                  0x00dc98                  _OC1_TriggerStatusClear
+                  0x00dc80                  _OC1_TriggerStatusGet
+                  0x00df68                  _PIN_MANAGER_Initialize
+                  0x006e27                  _Rcmd1
+                  0x006e62                  _Rcmd2green
+                  0x006e7c                  _Rcmd2green144
+                  0x006e89                  _Rcmd2green160x80
+                  0x006e6f                  _Rcmd2red
+                  0x006e96                  _Rcmd3
+                  0x00e110                  _SDFAST_open
+                  0x00e11a                  _SDSLOW_open
+                  0x00ad44                  _SD_SPI_GetSectorCount
+                  0x00ad3c                  _SD_SPI_GetSectorSize
+                  0x00aea2                  _SD_SPI_IsMediaInitialized
+                  0x00ad28                  _SD_SPI_IsMediaPresent
+                  0x00aeb4                  _SD_SPI_IsWriteProtected
+                  0x00aef0                  _SD_SPI_MediaInitialize
+                  0x00ad4e                  _SD_SPI_SectorRead
+                  0x00adf8                  _SD_SPI_SectorWrite
+                  0x00d5da                  _SPI1_Transmit16bit
+                  0x00d560                  _SPI1_Transmit16bitRepeated
+                  0x00d638                  _SPI1_Transmit32bit
+                  0x00d6f8                  _SPI1_transmit16bitBuffer
+                  0x00e1b8                  _SYSTEM_Initialize
+                  0x00de44                  _TMR2_Counter32BitGet
+                  0x00de30                  _TMR2_Counter32BitSet
+                  0x00de88                  _TMR2_GetElapsedThenClear
+                  0x00ddc0                  _TMR2_Initialize
+                  0x00de12                  _TMR2_Period32BitGet
+                  0x00ddfe                  _TMR2_Period32BitSet
+                  0x00deac                  _TMR2_SoftwareCounterClear
+                  0x00dea0                  _TMR2_SoftwareCounterGet
+                  0x00de72                  _TMR2_Start
+                  0x00de80                  _TMR2_Stop
+                  0x00dddc                  _TMR2_Tasks_32BitOperation
                   0x00037a                  __AddressError
                   0x0003d8                  __DefaultInterrupt
                   0x0003ba                  __INT0Interrupt
                   0x00039a                  __MathError
                   0x000338                  __OscillatorFail
                   0x000358                  __StackError
-                  0x00dc68                  ___delay32
+                  0x00e184                  ___delay32
                   0x000558                  ___divdi3
                   0x0005b8                  ___moddi3
                   0x000614                  ___muldi3
@@ -441,109 +445,124 @@ External Symbols in Program Memory (by name):
                   0x00023c                  __psv_init
                   0x000200                  __resetPRI
                   0x0007d6                  _bitmapdata
-                  0x006d4e                  _bitmaps
-                  0x00cc62                  _bootPeripherals
-                  0x00cb34                  _cWriteText
-                  0x00cab8                  _cWriteTextIntern
-                  0x00c658                  _clearScreen
-                  0x00d00e                  _decrypt128bit
-                  0x00d790                  _disk_initialize
-                  0x00d84a                  _disk_ioctl
-                  0x00d7be                  _disk_read
-                  0x00d750                  _disk_status
-                  0x00d804                  _disk_write
-                  0x00c2f4                  _dispCommonInit
-                  0x00c416                  _dispEndWrite
-                  0x00c3b0                  _dispGetBrightness
-                  0x00c224                  _dispInit
-                  0x00c1a4                  _dispSendCommand
-                  0x00c1e4                  _dispSendCommandC
-                  0x00c41e                  _dispSetAddrWindow
-                  0x00c358                  _dispSetBrightness
-                  0x00c306                  _dispSetRotation
-                  0x00c3b8                  _dispStart
-                  0x00c40e                  _dispStartWrite
-                  0x00c400                  _dispStop
-                  0x00c194                  _dispWriteCommand
-                  0x00c60a                  _drawFastHLine
-                  0x00c632                  _drawFastVLine
-                  0x00c69e                  _drawImage
-                  0x00c476                  _drawPixel
-                  0x00cfe2                  _encrypt128bit
-                  0x00d03a                  _endEncryption
-                  0x00a71e                  _f_chdir
-                  0x00a6fc                  _f_chdrive
-                  0x00a6c6                  _f_close
-                  0x00ac52                  _f_closedir
-                  0x00ad46                  _f_getfree
-                  0x00a7ac                  _f_lseek
-                  0x00b20e                  _f_mkdir
-                  0x00994a                  _f_mount
-                  0x0099cc                  _f_open
-                  0x00ab98                  _f_opendir
-                  0x009ddc                  _f_read
-                  0x00ac7a                  _f_readdir
-                  0x00b3ea                  _f_rename
-                  0x00acea                  _f_stat
-                  0x00a5a4                  _f_sync
-                  0x00af4a                  _f_truncate
-                  0x00b0d4                  _f_unlink
-                  0x00a16e                  _f_write
-                  0x00c4c0                  _fillRect
-                  0x00cd0e                  _fs_resume
-                  0x00ccc8                  _fs_standby
-                  0x00cd00                  _fs_standby_file
-                  0x00d05a                  _generateRND
-                  0x00d0a2                  _getContextTypeLen
-                  0x006f0a                  _gfxchars
-                  0x00d430                  _isButtonDown
-                  0x00d468                  _isButtonPressed
-                  0x00d48e                  _isButtonReleased
-                  0x00d44c                  _isButtonUp
-                  0x00cf0a                  _isKeySet
-                  0x007414                  _keylayouts
-                  0x00734c                  _keymaps
-                  0x00ca24                  _locate
-                  0x00dc42                  _main
+                  0x00639e                  _bitmaps
+                  0x00d416                  _bootPeripherals
+                  0x00c374                  _cWriteText
+                  0x00c2f8                  _cWriteTextIntern
+                  0x00be0c                  _clearScreen
+                  0x00d7fa                  _decrypt128bit
+                  0x00d404                  _disableVoltPower
+                  0x00dce0                  _disk_initialize
+                  0x00dd9a                  _disk_ioctl
+                  0x00dd0e                  _disk_read
+                  0x00dca0                  _disk_status
+                  0x00dd54                  _disk_write
+                  0x00ba54                  _dispCommonInit
+                  0x00bb68                  _dispEndWrite
+                  0x00bb10                  _dispGetBrightness
+                  0x00b984                  _dispInit
+                  0x00b904                  _dispSendCommand
+                  0x00b944                  _dispSendCommandC
+                  0x00bb70                  _dispSetAddrWindow
+                  0x00bab8                  _dispSetBrightness
+                  0x00ba66                  _dispSetRotation
+                  0x00bb18                  _dispStart
+                  0x00bb60                  _dispStartWrite
+                  0x00b8f4                  _dispWriteCommand
+                  0x00bd5c                  _drawFastHLine
+                  0x00bd82                  _drawFastVLine
+                  0x00be52                  _drawImage
+                  0x00bbc8                  _drawPixel
+                  0x00bda8                  _drawRect
+                  0x00d40c                  _enableVoltPower
+                  0x00d7ce                  _encrypt128bit
+                  0x00d826                  _endEncryption
+                  0x009e7e                  _f_chdir
+                  0x009e5c                  _f_chdrive
+                  0x009e26                  _f_close
+                  0x00a3b2                  _f_closedir
+                  0x00a4a6                  _f_getfree
+                  0x009f0c                  _f_lseek
+                  0x00a96e                  _f_mkdir
+                  0x0090aa                  _f_mount
+                  0x00912c                  _f_open
+                  0x00a2f8                  _f_opendir
+                  0x00953c                  _f_read
+                  0x00a3da                  _f_readdir
+                  0x00ab4a                  _f_rename
+                  0x00a44a                  _f_stat
+                  0x009d04                  _f_sync
+                  0x00a6aa                  _f_truncate
+                  0x00a834                  _f_unlink
+                  0x0098ce                  _f_write
+                  0x00bc12                  _fillRect
+                  0x00d522                  _fs_resume
+                  0x00d4c8                  _fs_standby
+                  0x00d50c                  _fs_standby_file
+                  0x00d846                  _generateRND
+                  0x00c64c                  _getContextTypeLen
+                  0x00c1f2                  _getLocationX
+                  0x00c1fa                  _getLocationY
+                  0x00c424                  _getMasterKey
+                  0x00655a                  _gfxchars
+                  0x00c9aa                  _hctxKeyInput
+                  0x00cca0                  _hctxKeyOverview
+                  0x00c812                  _hctxPinInput
+                  0x006db0                  _hexchars
+                  0x00d980                  _isButtonDown
+                  0x00d9b8                  _isButtonPressed
+                  0x00d9de                  _isButtonReleased
+                  0x00d99c                  _isButtonUp
+                  0x00c408                  _isKeySet
+                  0x006a64                  _keylayouts
+                  0x00699c                  _keymaps
+                  0x00c1d8                  _locate
+                  0x00e14a                  _main
                   0x0006aa                  _memcmp
                   0x0006c6                  _memcpy
                   0x0006d4                  _memset
-                  0x00cf9a                  _prepare128bitDecryption
-                  0x00cf62                  _prepare128bitEncryption
-                  0x00cf3e                  _prepareAES128BitCBC
-                  0x00d132                  _pushContext
-                  0x00d326                  _readButtonDown
-                  0x00d0c6                  _removeContext
-                  0x00db66                  _renderUI
-                  0x00d1e8                  _replaceContext
-                  0x00d200                  _setContext
-                  0x00d23a                  _setInitialContext
-                  0x00cf12                  _setMasterKey
-                  0x00cca2                  _setSleep
-                  0x00cc92                  _shutdownPeripherals
-                  0x00d4b6                  _spi1_close
-                  0x00d52e                  _spi1_exchangeBlock
-                  0x00d514                  _spi1_exchangeByte
-                  0x00d5f2                  _spi1_isr
-                  0x00d4be                  _spi1_open
-                  0x00d5a2                  _spi1_readBlock
-                  0x00d5e8                  _spi1_readByte
-                  0x00d60e                  _spi1_setSpiISR
-                  0x00d56a                  _spi1_writeBlock
-                  0x00d5dc                  _spi1_writeByte
-                  0x0078b8                  _spiMaster
-                  0x00dc1c                  _spi_master_open
+                  0x00d784                  _prepare128bitDecryption
+                  0x00d74a                  _prepare128bitEncryption
+                  0x00d726                  _prepareAES128BitCBC
+                  0x00c6ec                  _pushContext
+                  0x00d88e                  _readButtonDown
+                  0x00c680                  _removeContext
+                  0x00d2c4                  _renderUI
+                  0x00c7a2                  _replaceContext
+                  0x00d29a                  _rndError
+                  0x00ce06                  _rndKeyInput
+                  0x00d262                  _rndKeyOverview
+                  0x00d17a                  _rndPinInput
+                  0x00c7ba                  _setContext
+                  0x00c7f4                  _setInitialContext
+                  0x00c410                  _setMasterKey
+                  0x00d49c                  _setSleep
+                  0x00d448                  _shutdownPeripherals
+                  0x00da06                  _spi1_close
+                  0x00da7e                  _spi1_exchangeBlock
+                  0x00da64                  _spi1_exchangeByte
+                  0x00db42                  _spi1_isr
+                  0x00da0e                  _spi1_open
+                  0x00daf2                  _spi1_readBlock
+                  0x00db38                  _spi1_readByte
+                  0x00db5e                  _spi1_setSpiISR
+                  0x00daba                  _spi1_writeBlock
+                  0x00db2c                  _spi1_writeByte
+                  0x006ffc                  _spiMaster
+                  0x00e124                  _spi_master_open
                   0x00079a                  _strlen
-                  0x00cf26                  _swipeKeys
-                  0x00766c                  _textdata
-                  0x00767a                  _texte
-                  0x00c94c                  _unicodeLookup
-                  0x007198                  _unicodes
-                  0x00d3d0                  _updateButtons
-                  0x00d258                  _updateContext
-                  0x00ca3e                  _writeChars
-                  0x00cb7e                  _writeText
-                  0x00caf6                  _writeTextIntern
+                  0x00c42c                  _swipeKeys
+                  0x006cbc                  _textdata
+                  0x006d9c                  _texte
+                  0x00c100                  _unicodeLookup
+                  0x0067e8                  _unicodes
+                  0x00c202                  _unwriteChars
+                  0x00d920                  _updateButtons
+                  0x00cd26                  _updateContext
+                  0x00c44e                  _verifyMasterKey
+                  0x00c27e                  _writeChars
+                  0x00c3be                  _writeText
+                  0x00c336                  _writeTextIntern
 
 Memory Configuration
 
@@ -694,7 +713,7 @@ __CONFIG1
 .comment
  *(.comment)
 
-.debug_info       0x000000       0xf5c7
+.debug_info       0x000000      0x10f6c
  *(.debug_info)
  .debug_info      0x000000        0x430 build/default/production/mcc_generated_files/drivers/spi_master.o
  .debug_info      0x000430        0x148 build/default/production/mcc_generated_files/fatfs/ffunicode.o
@@ -713,19 +732,19 @@ __CONFIG1
  .debug_info      0x0085d5        0xe92 build/default/production/mcc_generated_files/adc1.o
  .debug_info      0x009467        0x822 build/default/production/mcc_generated_files/tmr2.o
  .debug_info      0x009c89        0x578 build/default/production/mcc_generated_files/ext_int.o
- .debug_info      0x00a201        0x2b3 build/default/production/main.o
- .debug_info      0x00a4b4        0x65b build/default/production/buttons.o
- .debug_info      0x00ab0f       0x10cc build/default/production/display_driver.o
- .debug_info      0x00bbdb        0x44d build/default/production/assets.o
- .debug_info      0x00c028       0x214d build/default/production/mcc_ext.o
- .debug_info      0x00e175        0xf47 build/default/production/logic.o
- .debug_info      0x00f0bc        0x365 build/default/production/ui.o
- .debug_info      0x00f421         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.DA_o)
- .debug_info      0x00f4ae         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(umuldi3.DA_o)
- .debug_info      0x00f53b         0x8c e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
+ .debug_info      0x00a201        0x5f8 build/default/production/main.o
+ .debug_info      0x00a7f9        0x4fe build/default/production/buttons.o
+ .debug_info      0x00acf7       0x116c build/default/production/display_driver.o
+ .debug_info      0x00be63        0x47a build/default/production/assets.o
+ .debug_info      0x00c2dd       0x2393 build/default/production/mcc_ext.o
+ .debug_info      0x00e670       0x1bd2 build/default/production/logic.o
+ .debug_info      0x010242        0xb84 build/default/production/ui.o
+ .debug_info      0x010dc6         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.DA_o)
+ .debug_info      0x010e53         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(umuldi3.DA_o)
+ .debug_info      0x010ee0         0x8c e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev     0x000000       0x18e4
+.debug_abbrev     0x000000       0x19e4
  *(.debug_abbrev)
  .debug_abbrev    0x000000        0x102 build/default/production/mcc_generated_files/drivers/spi_master.o
  .debug_abbrev    0x000102         0x1f build/default/production/mcc_generated_files/fatfs/ffunicode.o
@@ -745,18 +764,18 @@ __CONFIG1
  .debug_abbrev    0x000d5a        0x12a build/default/production/mcc_generated_files/adc1.o
  .debug_abbrev    0x000e84        0x148 build/default/production/mcc_generated_files/tmr2.o
  .debug_abbrev    0x000fcc         0x8a build/default/production/mcc_generated_files/ext_int.o
- .debug_abbrev    0x001056         0x9f build/default/production/main.o
- .debug_abbrev    0x0010f5         0xfd build/default/production/buttons.o
- .debug_abbrev    0x0011f2        0x1ee build/default/production/display_driver.o
- .debug_abbrev    0x0013e0         0x8c build/default/production/assets.o
- .debug_abbrev    0x00146c        0x235 build/default/production/mcc_ext.o
- .debug_abbrev    0x0016a1        0x143 build/default/production/logic.o
- .debug_abbrev    0x0017e4         0xc4 build/default/production/ui.o
- .debug_abbrev    0x0018a8         0x14 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.DA_o)
- .debug_abbrev    0x0018bc         0x14 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(umuldi3.DA_o)
- .debug_abbrev    0x0018d0         0x14 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
+ .debug_abbrev    0x001056         0xb5 build/default/production/main.o
+ .debug_abbrev    0x00110b         0xfd build/default/production/buttons.o
+ .debug_abbrev    0x001208        0x1ee build/default/production/display_driver.o
+ .debug_abbrev    0x0013f6         0x8c build/default/production/assets.o
+ .debug_abbrev    0x001482        0x219 build/default/production/mcc_ext.o
+ .debug_abbrev    0x00169b        0x1f8 build/default/production/logic.o
+ .debug_abbrev    0x001893        0x115 build/default/production/ui.o
+ .debug_abbrev    0x0019a8         0x14 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.DA_o)
+ .debug_abbrev    0x0019bc         0x14 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(umuldi3.DA_o)
+ .debug_abbrev    0x0019d0         0x14 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
 
-.debug_line       0x000000       0x2308
+.debug_line       0x000000       0x255b
  *(.debug_line)
  .debug_line      0x000000         0xf4 build/default/production/mcc_generated_files/drivers/spi_master.o
  .debug_line      0x0000f4         0x1a build/default/production/mcc_generated_files/fatfs/ffunicode.o
@@ -776,18 +795,18 @@ __CONFIG1
  .debug_line      0x001551        0x142 build/default/production/mcc_generated_files/adc1.o
  .debug_line      0x001693        0x14d build/default/production/mcc_generated_files/tmr2.o
  .debug_line      0x0017e0        0x135 build/default/production/mcc_generated_files/ext_int.o
- .debug_line      0x001915         0x95 build/default/production/main.o
- .debug_line      0x0019aa        0x135 build/default/production/buttons.o
- .debug_line      0x001adf        0x259 build/default/production/display_driver.o
- .debug_line      0x001d38         0x81 build/default/production/assets.o
- .debug_line      0x001db9        0x24a build/default/production/mcc_ext.o
- .debug_line      0x002003        0x162 build/default/production/logic.o
- .debug_line      0x002165         0xcd build/default/production/ui.o
- .debug_line      0x002232         0x45 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.DA_o)
- .debug_line      0x002277         0x57 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(umuldi3.DA_o)
- .debug_line      0x0022ce         0x3a e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
+ .debug_line      0x001915         0xc7 build/default/production/main.o
+ .debug_line      0x0019dc        0x134 build/default/production/buttons.o
+ .debug_line      0x001b10        0x274 build/default/production/display_driver.o
+ .debug_line      0x001d84         0x81 build/default/production/assets.o
+ .debug_line      0x001e05        0x263 build/default/production/mcc_ext.o
+ .debug_line      0x002068        0x28c build/default/production/logic.o
+ .debug_line      0x0022f4        0x191 build/default/production/ui.o
+ .debug_line      0x002485         0x45 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.DA_o)
+ .debug_line      0x0024ca         0x57 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(umuldi3.DA_o)
+ .debug_line      0x002521         0x3a e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
 
-.debug_frame      0x000000       0x1680
+.debug_frame      0x000000       0x1804
  *(.debug_frame)
  .debug_frame     0x000000         0x7c build/default/production/mcc_generated_files/drivers/spi_master.o
  .debug_frame     0x00007c         0x96 build/default/production/mcc_generated_files/fatfs/diskio.o
@@ -806,12 +825,12 @@ __CONFIG1
  .debug_frame     0x000ee0         0x86 build/default/production/mcc_generated_files/ext_int.o
  .debug_frame     0x000f66         0x2e build/default/production/main.o
  .debug_frame     0x000f94         0xb0 build/default/production/buttons.o
- .debug_frame     0x001044        0x2b8 build/default/production/display_driver.o
- .debug_frame     0x0012fc        0x284 build/default/production/mcc_ext.o
- .debug_frame     0x001580         0xd2 build/default/production/logic.o
- .debug_frame     0x001652         0x2e build/default/production/ui.o
+ .debug_frame     0x001044        0x306 build/default/production/display_driver.o
+ .debug_frame     0x00134a        0x26a build/default/production/mcc_ext.o
+ .debug_frame     0x0015b4        0x1b2 build/default/production/logic.o
+ .debug_frame     0x001766         0x9e build/default/production/ui.o
 
-.debug_str        0x000000        0x4cc
+.debug_str        0x000000        0x4ee
  *(.debug_str)
  .debug_str       0x000000          0xf build/default/production/mcc_generated_files/fatfs/ff.o
  .debug_str       0x00000f         0xb4 build/default/production/mcc_generated_files/sd_spi/sd_spi.o
@@ -825,11 +844,11 @@ __CONFIG1
  .debug_str       0x00024d         0x64 build/default/production/mcc_generated_files/adc1.o
  .debug_str       0x0002b1         0x13 build/default/production/mcc_generated_files/tmr2.o
  .debug_str       0x0002c4         0x1e build/default/production/mcc_generated_files/ext_int.o
- .debug_str       0x0002e2         0x4c build/default/production/buttons.o
- .debug_str       0x00032e         0x77 build/default/production/display_driver.o
- .debug_str       0x0003a5         0xd7 build/default/production/mcc_ext.o
- .debug_str       0x00047c         0x47 build/default/production/logic.o
- .debug_str       0x0004c3          0x9 build/default/production/ui.o
+ .debug_str       0x0002e2         0x42 build/default/production/buttons.o
+ .debug_str       0x000324         0x61 build/default/production/display_driver.o
+ .debug_str       0x000385         0xe1 build/default/production/mcc_ext.o
+ .debug_str       0x000466         0x64 build/default/production/logic.o
+ .debug_str       0x0004ca         0x24 build/default/production/ui.o
 
 .debug_loc
  *(.debug_loc)
@@ -838,7 +857,7 @@ __CONFIG1
  *(.debug_macinfo)
 
 .debug_pubnames
-                  0x000000        0xe31
+                  0x000000        0xeea
  *(.debug_pubnames)
  .debug_pubnames
                   0x000000         0x65 build/default/production/mcc_generated_files/drivers/spi_master.o
@@ -875,15 +894,15 @@ __CONFIG1
  .debug_pubnames
                   0x000813         0xb3 build/default/production/buttons.o
  .debug_pubnames
-                  0x0008c6        0x27f build/default/production/display_driver.o
+                  0x0008c6        0x267 build/default/production/display_driver.o
  .debug_pubnames
-                  0x000b45         0x79 build/default/production/assets.o
+                  0x000b2d         0x86 build/default/production/assets.o
  .debug_pubnames
-                  0x000bbe        0x1c0 build/default/production/mcc_ext.o
+                  0x000bb3        0x1bd build/default/production/mcc_ext.o
  .debug_pubnames
-                  0x000d7e         0x94 build/default/production/logic.o
+                  0x000d70        0x11b build/default/production/logic.o
  .debug_pubnames
-                  0x000e12         0x1f build/default/production/ui.o
+                  0x000e8b         0x5f build/default/production/ui.o
 
 .debug_ranges
  *(.debug_ranges)
@@ -2398,7 +2417,7 @@ LOAD default_isr
 LOAD data_init
 
 .debug_pubtypes
-                  0x000240        0xfb0
+                  0x000240       0x117e
  .debug_pubtypes
                   0x000240         0x64 build/default/production/mcc_generated_files/drivers/spi_master.o
  .debug_pubtypes
@@ -2434,96 +2453,96 @@ LOAD data_init
  .debug_pubtypes
                   0x000b99         0x7c build/default/production/mcc_generated_files/ext_int.o
  .debug_pubtypes
-                  0x000c15         0x4b build/default/production/main.o
+                  0x000c15         0x91 build/default/production/main.o
  .debug_pubtypes
-                  0x000c60         0x95 build/default/production/buttons.o
+                  0x000ca6         0x76 build/default/production/buttons.o
  .debug_pubtypes
-                  0x000cf5         0xa7 build/default/production/display_driver.o
+                  0x000d1c         0xa7 build/default/production/display_driver.o
  .debug_pubtypes
-                  0x000d9c         0x73 build/default/production/assets.o
+                  0x000dc3         0x73 build/default/production/assets.o
  .debug_pubtypes
-                  0x000e0f        0x26a build/default/production/mcc_ext.o
+                  0x000e36        0x2a9 build/default/production/mcc_ext.o
  .debug_pubtypes
-                  0x001079        0x12c build/default/production/logic.o
+                  0x0010df        0x1ef build/default/production/logic.o
  .debug_pubtypes
-                  0x0011a5         0x4b build/default/production/ui.o
+                  0x0012ce         0xf0 build/default/production/ui.o
 
 __c30_signature
-                  0x0011f0         0xde
+                  0x0013be         0xde
  __c30_signature
-                  0x0011f0          0x6 build/default/production/mcc_generated_files/drivers/spi_master.o
+                  0x0013be          0x6 build/default/production/mcc_generated_files/drivers/spi_master.o
  __c30_signature
-                  0x0011f6          0x6 build/default/production/mcc_generated_files/fatfs/ffunicode.o
+                  0x0013c4          0x6 build/default/production/mcc_generated_files/fatfs/ffunicode.o
  __c30_signature
-                  0x0011fc          0x6 build/default/production/mcc_generated_files/fatfs/diskio.o
+                  0x0013ca          0x6 build/default/production/mcc_generated_files/fatfs/diskio.o
  __c30_signature
-                  0x001202          0x6 build/default/production/mcc_generated_files/fatfs/ff.o
+                  0x0013d0          0x6 build/default/production/mcc_generated_files/fatfs/ff.o
  __c30_signature
-                  0x001208          0x6 build/default/production/mcc_generated_files/fatfs/ffsystem.o
+                  0x0013d6          0x6 build/default/production/mcc_generated_files/fatfs/ffsystem.o
  __c30_signature
-                  0x00120e          0x6 build/default/production/mcc_generated_files/fatfs/fatfs_demo.o
+                  0x0013dc          0x6 build/default/production/mcc_generated_files/fatfs/fatfs_demo.o
  __c30_signature
-                  0x001214          0x6 build/default/production/mcc_generated_files/sd_spi/sd_spi.o
+                  0x0013e2          0x6 build/default/production/mcc_generated_files/sd_spi/sd_spi.o
  __c30_signature
-                  0x00121a          0x6 build/default/production/mcc_generated_files/pin_manager.o
+                  0x0013e8          0x6 build/default/production/mcc_generated_files/pin_manager.o
  __c30_signature
-                  0x001220          0x6 build/default/production/mcc_generated_files/clock.o
+                  0x0013ee          0x6 build/default/production/mcc_generated_files/clock.o
  __c30_signature
-                  0x001226          0x6 build/default/production/mcc_generated_files/interrupt_manager.o
+                  0x0013f4          0x6 build/default/production/mcc_generated_files/interrupt_manager.o
  __c30_signature
-                  0x00122c          0x6 build/default/production/mcc_generated_files/system.o
+                  0x0013fa          0x6 build/default/production/mcc_generated_files/system.o
  __c30_signature
-                  0x001232          0x6 build/default/production/mcc_generated_files/mcc.o
+                  0x001400          0x6 build/default/production/mcc_generated_files/mcc.o
  __c30_signature
-                  0x001238          0x6 build/default/production/mcc_generated_files/traps.o
+                  0x001406          0x6 build/default/production/mcc_generated_files/traps.o
  __c30_signature
-                  0x00123e          0x6 build/default/production/mcc_generated_files/oc1.o
+                  0x00140c          0x6 build/default/production/mcc_generated_files/oc1.o
  __c30_signature
-                  0x001244          0x6 build/default/production/mcc_generated_files/spi1_driver.o
+                  0x001412          0x6 build/default/production/mcc_generated_files/spi1_driver.o
  __c30_signature
-                  0x00124a          0x6 build/default/production/mcc_generated_files/adc1.o
+                  0x001418          0x6 build/default/production/mcc_generated_files/adc1.o
  __c30_signature
-                  0x001250          0x6 build/default/production/mcc_generated_files/tmr2.o
+                  0x00141e          0x6 build/default/production/mcc_generated_files/tmr2.o
  __c30_signature
-                  0x001256          0x6 build/default/production/mcc_generated_files/ext_int.o
+                  0x001424          0x6 build/default/production/mcc_generated_files/ext_int.o
  __c30_signature
-                  0x00125c          0x6 build/default/production/main.o
+                  0x00142a          0x6 build/default/production/main.o
  __c30_signature
-                  0x001262          0x6 build/default/production/buttons.o
+                  0x001430          0x6 build/default/production/buttons.o
  __c30_signature
-                  0x001268          0x6 build/default/production/display_driver.o
+                  0x001436          0x6 build/default/production/display_driver.o
  __c30_signature
-                  0x00126e          0x6 build/default/production/assets.o
+                  0x00143c          0x6 build/default/production/assets.o
  __c30_signature
-                  0x001274          0x6 build/default/production/mcc_ext.o
+                  0x001442          0x6 build/default/production/mcc_ext.o
  __c30_signature
-                  0x00127a          0x6 build/default/production/logic.o
+                  0x001448          0x6 build/default/production/logic.o
  __c30_signature
-                  0x001280          0x6 build/default/production/ui.o
+                  0x00144e          0x6 build/default/production/ui.o
  __c30_signature
-                  0x001286          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(crt0_extended24.o)
+                  0x001454          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(crt0_extended24.o)
  __c30_signature
-                  0x00128c          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(data_init_24.o)
+                  0x00145a          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(data_init_24.o)
  __c30_signature
-                  0x001292          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(delay32da.Meo)
+                  0x001460          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(delay32da.Meo)
  __c30_signature
-                  0x001298          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.DA_o)
+                  0x001466          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.DA_o)
  __c30_signature
-                  0x00129e          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(divmoddi3.DA_o)
+                  0x00146c          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(divmoddi3.DA_o)
  __c30_signature
-                  0x0012a4          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(muldi3.DA_o)
+                  0x001472          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(muldi3.DA_o)
  __c30_signature
-                  0x0012aa          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(umuldi3.DA_o)
+                  0x001478          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(umuldi3.DA_o)
  __c30_signature
-                  0x0012b0          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-elf.a(memcmp.DA_o)
+                  0x00147e          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-elf.a(memcmp.DA_o)
  __c30_signature
-                  0x0012b6          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-elf.a(memcpy.DA_o)
+                  0x001484          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-elf.a(memcpy.DA_o)
  __c30_signature
-                  0x0012bc          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-elf.a(memset.DA_o)
+                  0x00148a          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-elf.a(memset.DA_o)
  __c30_signature
-                  0x0012c2          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-elf.a(strlen.DA_o)
+                  0x001490          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-elf.a(strlen.DA_o)
  __c30_signature
-                  0x0012c8          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
+                  0x001496          0x6 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
 
 .nbss               0x0800         0x28
  .nbss              0x0800         0x12 build/default/production/mcc_generated_files/sd_spi/sd_spi.o
@@ -2533,11 +2552,6 @@ __c30_signature
                     0x0819                  _prevButtonmap
                     0x081a                  _lastupdate
  .nbss              0x081e          0x6 build/default/production/display_driver.o
-                    0x081e                  __height
-                    0x081f                  __width
-                    0x0820                  __rotation
-                    0x0821                  __charx
-                    0x0822                  __chary
  .nbss              0x0824          0x4 build/default/production/mcc_ext.o
 
 .ndata              0x0828          0x2
@@ -2551,20 +2565,22 @@ __c30_signature
 
 .ndata              0x0830          0x2
  .ndata             0x0830          0x2 build/default/production/display_driver.o
-                    0x0830                  __brightness
 
-.bss                0x0832        0x49a
- .bss               0x0832        0x456 build/default/production/mcc_generated_files/fatfs/fatfs_demo.o
- .bss               0x0c88         0x20 build/default/production/mcc_generated_files/traps.o
- .bss               0x0ca8         0x16 build/default/production/mcc_ext.o
- .bss               0x0cbe          0xe build/default/production/mcc_generated_files/sd_spi/sd_spi.o
+.nbss               0x0832          0x2
+ .nbss              0x0832          0x2 build/default/production/logic.o
 
-.data               0x0ccc          0xc
- .data              0x0ccc          0xc build/default/production/mcc_generated_files/sd_spi/sd_spi.o
+.bss                0x0834        0x49a
+ .bss               0x0834        0x456 build/default/production/mcc_generated_files/fatfs/fatfs_demo.o
+ .bss               0x0c8a         0x20 build/default/production/mcc_generated_files/traps.o
+ .bss               0x0caa         0x16 build/default/production/logic.o
+ .bss               0x0cc0          0xe build/default/production/mcc_generated_files/sd_spi/sd_spi.o
 
-.bss                0x0cd8          0x8
- .bss               0x0cd8          0x6 build/default/production/logic.o
- .bss               0x0cde          0x2 build/default/production/mcc_generated_files/tmr2.o
+.data               0x0cce          0xc
+ .data              0x0cce          0xc build/default/production/mcc_generated_files/sd_spi/sd_spi.o
+
+.bss                0x0cda          0x8
+ .bss               0x0cda          0x6 build/default/production/mcc_ext.o
+ .bss               0x0ce0          0x2 build/default/production/mcc_generated_files/tmr2.o
 
 .config_JTAGEN    0x0157fe          0x2
  .config_JTAGEN
@@ -2606,208 +2622,225 @@ __c30_signature
  .ivt._INT0Interrupt
                   0x000014          0x2 build/default/production/mcc_generated_files/ext_int.o
 
-.const              0x87d6       0x7152 load address 0x0007d6  
- .const             0x87d6       0x6ea6 build/default/production/assets.o
+.const              0x87d6       0x68b2 load address 0x0007d6  
+ .const             0x87d6       0x65ea build/default/production/assets.o
                     0x87d6                  _bitmapdata
-                    0xed4e                  _bitmaps
-                    0xef0a                  _gfxchars
-                    0xf198                  _unicodes
-                    0xf34c                  _keymaps
-                    0xf414                  _keylayouts
-                    0xf66c                  _textdata
-                    0xf67a                  _texte
- .const             0xf67c        0x102 build/default/production/display_driver.o
-                    0xf67c                  _Bcmd
-                    0xf6e3                  _Rcmd1
-                    0xf71e                  _Rcmd2green
-                    0xf72b                  _Rcmd2red
-                    0xf738                  _Rcmd2green144
-                    0xf745                  _Rcmd2green160x80
-                    0xf752                  _Rcmd3
- .const             0xf77e         0xa0 build/default/production/mcc_generated_files/sd_spi/sd_spi.o
- .const             0xf81e         0x9a build/default/production/mcc_generated_files/fatfs/ff.o
- .const             0xf8b8         0x3c build/default/production/mcc_generated_files/drivers/spi_master.o
-                    0xf8b8                  _spiMaster
- .const             0xf8f4         0x1a build/default/production/mcc_generated_files/fatfs/fatfs_demo.o
- .const             0xf90e         0x18 build/default/production/mcc_generated_files/spi1_driver.o
- .const             0xf926          0x2 build/default/production/ui.o
+                    0xe39e                  _bitmaps
+                    0xe55a                  _gfxchars
+                    0xe7e8                  _unicodes
+                    0xe99c                  _keymaps
+                    0xea64                  _keylayouts
+                    0xecbc                  _textdata
+                    0xed9c                  _texte
+                    0xedb0                  _hexchars
+ .const             0xedc0        0x102 build/default/production/display_driver.o
+                    0xedc0                  _Bcmd
+                    0xee27                  _Rcmd1
+                    0xee62                  _Rcmd2green
+                    0xee6f                  _Rcmd2red
+                    0xee7c                  _Rcmd2green144
+                    0xee89                  _Rcmd2green160x80
+                    0xee96                  _Rcmd3
+ .const             0xeec2         0xa0 build/default/production/mcc_generated_files/sd_spi/sd_spi.o
+ .const             0xef62         0x9a build/default/production/mcc_generated_files/fatfs/ff.o
+ .const             0xeffc         0x3c build/default/production/mcc_generated_files/drivers/spi_master.o
+                    0xeffc                  _spiMaster
+ .const             0xf038         0x1a build/default/production/mcc_generated_files/fatfs/fatfs_demo.o
+ .const             0xf052         0x18 build/default/production/mcc_generated_files/spi1_driver.o
+ .const             0xf06a         0x18 build/default/production/logic.o
+ .const             0xf082          0x4 build/default/production/mcc_ext.o
+ .const             0xf086          0x2 build/default/production/ui.o
 
-.text             0x007928       0x6178
- .text            0x007928       0x3ca0 build/default/production/mcc_generated_files/fatfs/ff.o
-                  0x00994a                  _f_mount
-                  0x0099cc                  _f_open
-                  0x009ddc                  _f_read
-                  0x00a16e                  _f_write
-                  0x00a5a4                  _f_sync
-                  0x00a6c6                  _f_close
-                  0x00a6fc                  _f_chdrive
-                  0x00a71e                  _f_chdir
-                  0x00a7ac                  _f_lseek
-                  0x00ab98                  _f_opendir
-                  0x00ac52                  _f_closedir
-                  0x00ac7a                  _f_readdir
-                  0x00acea                  _f_stat
-                  0x00ad46                  _f_getfree
-                  0x00af4a                  _f_truncate
-                  0x00b0d4                  _f_unlink
-                  0x00b20e                  _f_mkdir
-                  0x00b3ea                  _f_rename
- .text            0x00b5c8        0xbcc build/default/production/mcc_generated_files/sd_spi/sd_spi.o
-                  0x00b5c8                  _SD_SPI_IsMediaPresent
-                  0x00b5dc                  _SD_SPI_GetSectorSize
-                  0x00b5e4                  _SD_SPI_GetSectorCount
-                  0x00b5ee                  _SD_SPI_SectorRead
-                  0x00b698                  _SD_SPI_SectorWrite
-                  0x00b742                  _SD_SPI_IsMediaInitialized
-                  0x00b754                  _SD_SPI_IsWriteProtected
-                  0x00b790                  _SD_SPI_MediaInitialize
- .text            0x00c194        0xa34 build/default/production/display_driver.o
-                  0x00c194                  _dispWriteCommand
-                  0x00c1a4                  _dispSendCommand
-                  0x00c1e4                  _dispSendCommandC
-                  0x00c224                  _dispInit
-                  0x00c2f4                  _dispCommonInit
-                  0x00c306                  _dispSetRotation
-                  0x00c358                  _dispSetBrightness
-                  0x00c3b0                  _dispGetBrightness
-                  0x00c3b8                  _dispStart
-                  0x00c400                  _dispStop
-                  0x00c40e                  _dispStartWrite
-                  0x00c416                  _dispEndWrite
-                  0x00c41e                  _dispSetAddrWindow
-                  0x00c476                  _drawPixel
-                  0x00c4c0                  _fillRect
-                  0x00c60a                  _drawFastHLine
-                  0x00c632                  _drawFastVLine
-                  0x00c658                  _clearScreen
-                  0x00c69e                  _drawImage
-                  0x00c94c                  _unicodeLookup
-                  0x00ca24                  _locate
-                  0x00ca3e                  _writeChars
-                  0x00cab8                  _cWriteTextIntern
-                  0x00caf6                  _writeTextIntern
-                  0x00cb34                  _cWriteText
-                  0x00cb7e                  _writeText
- .text            0x00cbc8        0x4da build/default/production/mcc_ext.o
-                  0x00cc62                  _bootPeripherals
-                  0x00cc92                  _shutdownPeripherals
-                  0x00cca2                  _setSleep
-                  0x00ccc0                  _OC1_PrimaryValueGet
-                  0x00ccc8                  _fs_standby
-                  0x00cd00                  _fs_standby_file
-                  0x00cd0e                  _fs_resume
-                  0x00cd44                  _SPI1_Transmit16bitRepeated
-                  0x00cdbe                  _SPI1_Transmit16bit
-                  0x00ce1c                  _SPI1_Transmit32bit
-                  0x00cedc                  _SPI1_transmit16bitBuffer
-                  0x00cf0a                  _isKeySet
-                  0x00cf12                  _setMasterKey
-                  0x00cf26                  _swipeKeys
-                  0x00cf3e                  _prepareAES128BitCBC
-                  0x00cf62                  _prepare128bitEncryption
-                  0x00cf9a                  _prepare128bitDecryption
-                  0x00cfe2                  _encrypt128bit
-                  0x00d00e                  _decrypt128bit
-                  0x00d03a                  _endEncryption
-                  0x00d05a                  _generateRND
- .text            0x00d0a2        0x284 build/default/production/logic.o
-                  0x00d0a2                  _getContextTypeLen
-                  0x00d0c6                  _removeContext
-                  0x00d132                  _pushContext
-                  0x00d1e8                  _replaceContext
-                  0x00d200                  _setContext
-                  0x00d23a                  _setInitialContext
-                  0x00d258                  _updateContext
- .text            0x00d326        0x190 build/default/production/buttons.o
-                  0x00d326                  _readButtonDown
-                  0x00d3d0                  _updateButtons
-                  0x00d430                  _isButtonDown
-                  0x00d44c                  _isButtonUp
-                  0x00d468                  _isButtonPressed
-                  0x00d48e                  _isButtonReleased
- .text            0x00d4b6        0x164 build/default/production/mcc_generated_files/spi1_driver.o
-                  0x00d4b6                  _spi1_close
-                  0x00d4be                  _spi1_open
-                  0x00d514                  _spi1_exchangeByte
-                  0x00d52e                  _spi1_exchangeBlock
-                  0x00d56a                  _spi1_writeBlock
-                  0x00d5a2                  _spi1_readBlock
-                  0x00d5dc                  _spi1_writeByte
-                  0x00d5e8                  _spi1_readByte
-                  0x00d5f2                  _spi1_isr
-                  0x00d60e                  _spi1_setSpiISR
- .text            0x00d61a        0x136 build/default/production/mcc_generated_files/oc1.o
-                  0x00d61a                  _OC1_Initialize
-                  0x00d63a                  _OC1_CallBack
-                  0x00d640                  _OC1_Tasks
-                  0x00d652                  _OC1_Start
-                  0x00d66c                  _OC1_Stop
-                  0x00d67a                  _OC1_SecondaryValueSet
-                  0x00d686                  _OC1_PrimaryValueSet
-                  0x00d692                  _OC1_IsCompareCycleComplete
-                  0x00d6aa                  _OC1_FaultStatusGet
-                  0x00d704                  _OC1_FaultStatusClear
-                  0x00d728                  _OC1_ManualTriggerSet
-                  0x00d730                  _OC1_TriggerStatusGet
-                  0x00d748                  _OC1_TriggerStatusClear
- .text            0x00d750        0x120 build/default/production/mcc_generated_files/fatfs/diskio.o
-                  0x00d750                  _disk_status
-                  0x00d790                  _disk_initialize
-                  0x00d7be                  _disk_read
-                  0x00d804                  _disk_write
-                  0x00d84a                  _disk_ioctl
- .text            0x00d870         0xf8 build/default/production/mcc_generated_files/tmr2.o
-                  0x00d870                  _TMR2_Initialize
-                  0x00d88c                  _TMR2_Tasks_32BitOperation
-                  0x00d8ae                  _TMR2_Period32BitSet
-                  0x00d8c2                  _TMR2_Period32BitGet
-                  0x00d8e0                  _TMR2_Counter32BitSet
-                  0x00d8f4                  _TMR2_Counter32BitGet
-                  0x00d922                  _TMR2_Start
-                  0x00d930                  _TMR2_Stop
-                  0x00d938                  _TMR2_GetElapsedThenClear
-                  0x00d950                  _TMR2_SoftwareCounterGet
-                  0x00d95c                  _TMR2_SoftwareCounterClear
- .text            0x00d968         0xb0 build/default/production/mcc_generated_files/adc1.o
-                  0x00d968                  _ADC1_Initialize
-                  0x00d98e                  _ADC1_CallBack
-                  0x00d994                  _ADC1_SetInterruptHandler
-                  0x00d9a0                  _ADC1_Tasks
-                  0x00d9bc                  _ADC1_Start
-                  0x00d9c4                  _ADC1_Stop
-                  0x00d9cc                  _ADC1_ConversionResultBufferGet
- .text            0x00da18         0x88 build/default/production/mcc_generated_files/pin_manager.o
-                  0x00da18                  _PIN_MANAGER_Initialize
+.text             0x007088       0x6f68
+ .text            0x007088       0x3ca0 build/default/production/mcc_generated_files/fatfs/ff.o
+                  0x0090aa                  _f_mount
+                  0x00912c                  _f_open
+                  0x00953c                  _f_read
+                  0x0098ce                  _f_write
+                  0x009d04                  _f_sync
+                  0x009e26                  _f_close
+                  0x009e5c                  _f_chdrive
+                  0x009e7e                  _f_chdir
+                  0x009f0c                  _f_lseek
+                  0x00a2f8                  _f_opendir
+                  0x00a3b2                  _f_closedir
+                  0x00a3da                  _f_readdir
+                  0x00a44a                  _f_stat
+                  0x00a4a6                  _f_getfree
+                  0x00a6aa                  _f_truncate
+                  0x00a834                  _f_unlink
+                  0x00a96e                  _f_mkdir
+                  0x00ab4a                  _f_rename
+ .text            0x00ad28        0xbcc build/default/production/mcc_generated_files/sd_spi/sd_spi.o
+                  0x00ad28                  _SD_SPI_IsMediaPresent
+                  0x00ad3c                  _SD_SPI_GetSectorSize
+                  0x00ad44                  _SD_SPI_GetSectorCount
+                  0x00ad4e                  _SD_SPI_SectorRead
+                  0x00adf8                  _SD_SPI_SectorWrite
+                  0x00aea2                  _SD_SPI_IsMediaInitialized
+                  0x00aeb4                  _SD_SPI_IsWriteProtected
+                  0x00aef0                  _SD_SPI_MediaInitialize
+ .text            0x00b8f4        0xb14 build/default/production/display_driver.o
+                  0x00b8f4                  _dispWriteCommand
+                  0x00b904                  _dispSendCommand
+                  0x00b944                  _dispSendCommandC
+                  0x00b984                  _dispInit
+                  0x00ba54                  _dispCommonInit
+                  0x00ba66                  _dispSetRotation
+                  0x00bab8                  _dispSetBrightness
+                  0x00bb10                  _dispGetBrightness
+                  0x00bb18                  _dispStart
+                  0x00bb60                  _dispStartWrite
+                  0x00bb68                  _dispEndWrite
+                  0x00bb70                  _dispSetAddrWindow
+                  0x00bbc8                  _drawPixel
+                  0x00bc12                  _fillRect
+                  0x00bd5c                  _drawFastHLine
+                  0x00bd82                  _drawFastVLine
+                  0x00bda8                  _drawRect
+                  0x00be0c                  _clearScreen
+                  0x00be52                  _drawImage
+                  0x00c100                  _unicodeLookup
+                  0x00c1d8                  _locate
+                  0x00c1f2                  _getLocationX
+                  0x00c1fa                  _getLocationY
+                  0x00c202                  _unwriteChars
+                  0x00c27e                  _writeChars
+                  0x00c2f8                  _cWriteTextIntern
+                  0x00c336                  _writeTextIntern
+                  0x00c374                  _cWriteText
+                  0x00c3be                  _writeText
+ .text            0x00c408        0x9fe build/default/production/logic.o
+                  0x00c408                  _isKeySet
+                  0x00c410                  _setMasterKey
+                  0x00c424                  _getMasterKey
+                  0x00c42c                  _swipeKeys
+                  0x00c44e                  _verifyMasterKey
+                  0x00c64c                  _getContextTypeLen
+                  0x00c680                  _removeContext
+                  0x00c6ec                  _pushContext
+                  0x00c7a2                  _replaceContext
+                  0x00c7ba                  _setContext
+                  0x00c7f4                  _setInitialContext
+                  0x00c812                  _hctxPinInput
+                  0x00c9aa                  _hctxKeyInput
+                  0x00cca0                  _hctxKeyOverview
+                  0x00cd26                  _updateContext
+ .text            0x00ce06        0x564 build/default/production/ui.o
+                  0x00ce06                  _rndKeyInput
+                  0x00d17a                  _rndPinInput
+                  0x00d262                  _rndKeyOverview
+                  0x00d29a                  _rndError
+                  0x00d2c4                  _renderUI
+ .text            0x00d36a        0x524 build/default/production/mcc_ext.o
+                  0x00d404                  _disableVoltPower
+                  0x00d40c                  _enableVoltPower
+                  0x00d416                  _bootPeripherals
+                  0x00d448                  _shutdownPeripherals
+                  0x00d49c                  _setSleep
+                  0x00d4c0                  _OC1_PrimaryValueGet
+                  0x00d4c8                  _fs_standby
+                  0x00d50c                  _fs_standby_file
+                  0x00d522                  _fs_resume
+                  0x00d560                  _SPI1_Transmit16bitRepeated
+                  0x00d5da                  _SPI1_Transmit16bit
+                  0x00d638                  _SPI1_Transmit32bit
+                  0x00d6f8                  _SPI1_transmit16bitBuffer
+                  0x00d726                  _prepareAES128BitCBC
+                  0x00d74a                  _prepare128bitEncryption
+                  0x00d784                  _prepare128bitDecryption
+                  0x00d7ce                  _encrypt128bit
+                  0x00d7fa                  _decrypt128bit
+                  0x00d826                  _endEncryption
+                  0x00d846                  _generateRND
+ .text            0x00d88e        0x178 build/default/production/buttons.o
+                  0x00d88e                  _readButtonDown
+                  0x00d920                  _updateButtons
+                  0x00d980                  _isButtonDown
+                  0x00d99c                  _isButtonUp
+                  0x00d9b8                  _isButtonPressed
+                  0x00d9de                  _isButtonReleased
+ .text            0x00da06        0x164 build/default/production/mcc_generated_files/spi1_driver.o
+                  0x00da06                  _spi1_close
+                  0x00da0e                  _spi1_open
+                  0x00da64                  _spi1_exchangeByte
+                  0x00da7e                  _spi1_exchangeBlock
+                  0x00daba                  _spi1_writeBlock
+                  0x00daf2                  _spi1_readBlock
+                  0x00db2c                  _spi1_writeByte
+                  0x00db38                  _spi1_readByte
+                  0x00db42                  _spi1_isr
+                  0x00db5e                  _spi1_setSpiISR
+ .text            0x00db6a        0x136 build/default/production/mcc_generated_files/oc1.o
+                  0x00db6a                  _OC1_Initialize
+                  0x00db8a                  _OC1_CallBack
+                  0x00db90                  _OC1_Tasks
+                  0x00dba2                  _OC1_Start
+                  0x00dbbc                  _OC1_Stop
+                  0x00dbca                  _OC1_SecondaryValueSet
+                  0x00dbd6                  _OC1_PrimaryValueSet
+                  0x00dbe2                  _OC1_IsCompareCycleComplete
+                  0x00dbfa                  _OC1_FaultStatusGet
+                  0x00dc54                  _OC1_FaultStatusClear
+                  0x00dc78                  _OC1_ManualTriggerSet
+                  0x00dc80                  _OC1_TriggerStatusGet
+                  0x00dc98                  _OC1_TriggerStatusClear
+ .text            0x00dca0        0x120 build/default/production/mcc_generated_files/fatfs/diskio.o
+                  0x00dca0                  _disk_status
+                  0x00dce0                  _disk_initialize
+                  0x00dd0e                  _disk_read
+                  0x00dd54                  _disk_write
+                  0x00dd9a                  _disk_ioctl
+ .text            0x00ddc0         0xf8 build/default/production/mcc_generated_files/tmr2.o
+                  0x00ddc0                  _TMR2_Initialize
+                  0x00dddc                  _TMR2_Tasks_32BitOperation
+                  0x00ddfe                  _TMR2_Period32BitSet
+                  0x00de12                  _TMR2_Period32BitGet
+                  0x00de30                  _TMR2_Counter32BitSet
+                  0x00de44                  _TMR2_Counter32BitGet
+                  0x00de72                  _TMR2_Start
+                  0x00de80                  _TMR2_Stop
+                  0x00de88                  _TMR2_GetElapsedThenClear
+                  0x00dea0                  _TMR2_SoftwareCounterGet
+                  0x00deac                  _TMR2_SoftwareCounterClear
+ .text            0x00deb8         0xb0 build/default/production/mcc_generated_files/adc1.o
+                  0x00deb8                  _ADC1_Initialize
+                  0x00dede                  _ADC1_CallBack
+                  0x00dee4                  _ADC1_SetInterruptHandler
+                  0x00def0                  _ADC1_Tasks
+                  0x00df0c                  _ADC1_Start
+                  0x00df14                  _ADC1_Stop
+                  0x00df1c                  _ADC1_ConversionResultBufferGet
+ .text            0x00df68         0x88 build/default/production/mcc_generated_files/pin_manager.o
+                  0x00df68                  _PIN_MANAGER_Initialize
 
-.dinit            0x00daa0         0x74
- .dinit           0x00daa0         0x74 data_init
+.dinit            0x00dff0         0x7a
+ .dinit           0x00dff0         0x7a data_init
 
-.text             0x00db14        0x154
- .text            0x00db14         0x52 build/default/production/mcc_generated_files/clock.o
-                  0x00db14                  _CLOCK_Initialize
- .text            0x00db66         0x4e build/default/production/ui.o
-                  0x00db66                  _renderUI
- .text            0x00dbb4         0x4a build/default/production/mcc_generated_files/fatfs/fatfs_demo.o
-                  0x00dbb4                  _FatFsDemo_Tasks
- .text            0x00dbfe         0x44 build/default/production/mcc_generated_files/drivers/spi_master.o
-                  0x00dbfe                  _DISPLAY_open
-                  0x00dc08                  _SDFAST_open
-                  0x00dc12                  _SDSLOW_open
-                  0x00dc1c                  _spi_master_open
- .text            0x00dc42         0x26 build/default/production/main.o
-                  0x00dc42                  _main
+.text             0x00e06a        0x11a
+ .text            0x00e06a         0x52 build/default/production/mcc_generated_files/clock.o
+                  0x00e06a                  _CLOCK_Initialize
+ .text            0x00e0bc         0x4a build/default/production/mcc_generated_files/fatfs/fatfs_demo.o
+                  0x00e0bc                  _FatFsDemo_Tasks
+ .text            0x00e106         0x44 build/default/production/mcc_generated_files/drivers/spi_master.o
+                  0x00e106                  _DISPLAY_open
+                  0x00e110                  _SDFAST_open
+                  0x00e11a                  _SDSLOW_open
+                  0x00e124                  _spi_master_open
+ .text            0x00e14a         0x3a build/default/production/main.o
+                  0x00e14a                  _main
 
-.init.delay32     0x00dc68         0x1c
- .init.delay32    0x00dc68         0x1c e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(delay32da.Meo)
-                  0x00dc68                  ___delay32
+.init.delay32     0x00e184         0x1c
+ .init.delay32    0x00e184         0x1c e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(delay32da.Meo)
+                  0x00e184                  ___delay32
 
-.text             0x00dc84         0x4e
- .text            0x00dc84         0x18 build/default/production/mcc_generated_files/traps.o
-                  0x00dc84                  _TRAPS_halt_on_error
- .text            0x00dc9c         0x14 build/default/production/mcc_generated_files/system.o
-                  0x00dc9c                  _SYSTEM_Initialize
- .text            0x00dcb0         0x12 build/default/production/mcc_generated_files/ext_int.o
-                  0x00dcb0                  _EX_INT0_CallBack
-                  0x00dcb6                  _EXT_INT_Initialize
- .text            0x00dcc2         0x10 build/default/production/mcc_generated_files/interrupt_manager.o
-                  0x00dcc2                  _INTERRUPT_Initialize
+.text             0x00e1a0         0x4e
+ .text            0x00e1a0         0x18 build/default/production/mcc_generated_files/traps.o
+                  0x00e1a0                  _TRAPS_halt_on_error
+ .text            0x00e1b8         0x14 build/default/production/mcc_generated_files/system.o
+                  0x00e1b8                  _SYSTEM_Initialize
+ .text            0x00e1cc         0x12 build/default/production/mcc_generated_files/ext_int.o
+                  0x00e1cc                  _EX_INT0_CallBack
+                  0x00e1d2                  _EXT_INT_Initialize
+ .text            0x00e1de         0x10 build/default/production/mcc_generated_files/interrupt_manager.o
+                  0x00e1de                  _INTERRUPT_Initialize

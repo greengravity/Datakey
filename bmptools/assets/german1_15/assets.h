@@ -3,13 +3,13 @@
 #include	<xc.h>
 #include	<stdbool.h>
 
-#define MAX_IMAGE_BUFFER 240
+#define MAX_IMAGE_BUFFER 210
 #define TOTAL_IMAGE_COUNT 111
 #define TOTAL_CHAR_COUNT 109
 #define CHAR_HEIGHT 14
 #define ENCODING_ERROR_CHAR 0
 
-// bmpsize: 12988Bytes
+// bmpsize: 11748Bytes
 typedef struct {
   const uint8_t width; // Bitmap width in pixels
   const uint8_t height; // Bitmap width in pixels
@@ -63,5 +63,10 @@ extern const uint8_t hexchars[];
 #define SYSICON_OK 110
 
 #define TEXT_ENTER_PIN 0
+#define TEXT_ENTER_NEW_PIN1 1
+#define TEXT_ENTER_NEW_PIN2 2
+#define TEXT_ENTER_NEW_PIN_ERROR 3
+#define TEXT_ENTER_NEW_KEY 4
+#define TEXT_ENTER_NEW_KEY_ERROR 5
 
 #endif

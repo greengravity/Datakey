@@ -6,18 +6,22 @@ const { resolve } = require('path');
 const { getSystemErrorMap } = require('util');
 
 
-const glyphheight = 13;
 const codepage = 1252;
 
-const fontdir = 'german1_14'
+
+const assetfolder = '../core/coreprocessor.X'
+const fontdir = 'german1_15'
 
 const icondir =      './icons'
 const fontfile =     './fontmaps/' + fontdir + '/font.fnt';
 const fontmap =      './fontmaps/' + fontdir + '/font_0.png';
 const patternfile =  './fontmaps/' + fontdir + '/patterns.json';
 const textfile =     './fontmaps/' + fontdir + '/texte.json';
-const outfilec =     './assets/'   + fontdir + '/assets.c'
-const outfileh =     './assets/'   + fontdir + '/assets.h'
+//const outfilec =     './assets/'   + fontdir + '/assets.c'
+//const outfileh =     './assets/'   + fontdir + '/assets.h'
+
+const outfilec =     assetfolder + '/assets.c'
+const outfileh =     assetfolder + '/assets.h'
 
 let content = fs.readFileSync(fontfile, 'utf8');
 let clines = content.split('\r\n')

@@ -1,8 +1,7 @@
 /* 
- * File:   display.h
- * Author: Ronald
+ * File:   display_driver.h
+ * Author: greengravity
  *
- * Created on March 23, 2018, 12:11 PM
  */
 
 #ifndef DISPLAY_DRIVER_H
@@ -16,7 +15,7 @@
 #define ST77XX_PIN_DC_LOW    RS_D_SetLow()
 #define ST77XX_PIN_RES_HIGH  RES_D_SetHigh()
 #define ST77XX_PIN_RES_LOW   RES_D_SetLow()
-#define ST77XX_PIN_BACKLIGHT_HIGH  (_LATB2=1)
+/*#define ST77XX_PIN_BACKLIGHT_HIGH  (_LATB2=1) */
 
 //#define ST77XX_PIN_LED_HIGH  IO_RB8_SetHigh()
 //#define ST77XX_PIN_LED_LOW   IO_RB8_SetLow()
@@ -114,11 +113,24 @@
 #define ST7735_ORANGE ST77XX_ORANGE
 
 
+#define COLOR_BLACK ST77XX_BLACK
+#define COLOR_WHITE ST77XX_WHITE
+#define COLOR_RED ST77XX_RED
+#define COLOR_GREEN ST77XX_GREEN
+#define COLOR_BLUE ST77XX_BLUE
+#define COLOR_CYAN ST77XX_CYAN
+#define COLOR_MAGENTA ST77XX_MAGENTA
+#define COLOR_YELLOW ST77XX_YELLOW
+#define COLOR_ORANGE ST77XX_ORANGE
+
+
 #define ST7735_TFTWIDTH 160  // for 1.44 and mini
 #define ST7735_TFTHEIGHT 128 // for 1.8" and mini display
 
 #define ST_CMD_DELAY 0x80 // special signifier for command lists
 
+#define DISPLAY_WIDTH ST7735_TFTWIDTH
+#define DISPLAY_HEIGHT ST7735_TFTHEIGHT // for 1.8" and mini display
 
 void dispStart( );
 void dispStop();
@@ -129,10 +141,16 @@ void dispSetBrightness(uint8_t brightness );
 uint8_t dispGetBrightness();
 
 void drawPixel(int16_t x, int16_t y, uint16_t color);
+void drawFastHLine(int16_t x, int16_t y, int16_t length, uint16_t color);
+void drawFastVLine(int16_t x, int16_t y, int16_t length, uint16_t color);
+void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
 void fillRect(int16_t x, int16_t y, int16_t x2, int16_t y2, uint16_t color);
 void clearScreen(uint16_t color);
 void drawImage(int16_t x, int16_t y, const GFXimage *image);
 void locate( uint8_t x, uint8_t y );
+uint8_t getLocationX();
+uint8_t getLocationY();
+void unwriteChars( const GFXChar *chars, uint16_t len );
 void writeChars( const GFXChar *chars, uint16_t len );
 void cWriteTextIntern( const uint8_t *text );
 void writeTextIntern( uint8_t *text );
