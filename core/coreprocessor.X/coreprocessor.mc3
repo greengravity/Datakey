@@ -71,9 +71,9 @@
       </entry>
    </usedClasses>
    <usedLibraries class="java.util.ArrayList">
-      <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.fatfs.FatFsLibrary" version="1.1.0"/>
       <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.mcu16.Mcu16PeripheralLibrary" version="1.171.1"/>
       <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.foundationservices.library.FoundationServicesLibrary" version="0.2.3"/>
+      <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.fatfs.FatFsLibrary" version="1.1.0"/>
       <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.sdcard.SDCardLibrary" version="1.1.0"/>
    </usedLibraries>
    <tokenMap class="java.util.TreeMap">
@@ -1883,7 +1883,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_FS_RPATH"/>
-         <value>1</value>
+         <value>0</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_FS_TIMEOUT"/>
@@ -1947,11 +1947,11 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_USE_CHMOD"/>
-         <value>0</value>
+         <value>1</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_USE_EXPAND"/>
-         <value>0</value>
+         <value>1</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_USE_FASTSEEK"/>
@@ -6771,7 +6771,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="Pin Module" registerAlias="CNPU2"/>
-         <value>20608</value>
+         <value>20612</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="Pin Module" registerAlias="CNPU3"/>
@@ -7367,7 +7367,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="Pin Module" registerAlias="CNPU2" settingAlias="CN18PUE"/>
-         <value>disabled</value>
+         <value>enabled</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="Pin Module" registerAlias="CNPU2" settingAlias="CN19PUE"/>
@@ -9071,11 +9071,11 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SPIMASTER" name="pubSubSPIMASTERConfigurations"/>
-         <value>1831.1882041336723</value>
+         <value>9269.945876514379</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SPIMASTER" name="pubSubspiSubscriber"/>
-         <value>3301.4592317798174</value>
+         <value>3659.682112050723</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SPIMASTER" name="spiSubscriber"/>
@@ -9087,7 +9087,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SPIMASTER" name="validate"/>
-         <value>0.7696735969304177</value>
+         <value>0.15366096147281472</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.PropertyTokenKey" moduleName="SPIMASTER" name="spiConfigurations%0%dataInputSample"/>
@@ -9147,7 +9147,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.PropertyTokenKey" moduleName="SPIMASTER" name="spiConfigurations%2%speed"/>
-         <value>10000</value>
+         <value>2000</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="System Module" registerAlias="CONFIG1" settingAlias="FWDTEN" alias="NOSLP"/>
@@ -10624,32 +10624,32 @@
    </tokenMap>
    <generatedFileHashHistoryMap class="java.util.HashMap">
       <entry>
+         <file>mcc_generated_files\interrupt_manager.h</file>
+         <hash>147448582b659aa7abf6527a4b51ef7ca4e6f736fdd8389d0cb92eb99fb04e41</hash>
+      </entry>
+      <entry>
          <file>mcc_generated_files\ext_int.c</file>
          <hash>02d84d6f3926e24ad7003421e896cd3ede3205353184f36a40deafd7c959014a</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\interrupt_manager.h</file>
-         <hash>147448582b659aa7abf6527a4b51ef7ca4e6f736fdd8389d0cb92eb99fb04e41</hash>
+         <file>mcc_generated_files\spi1_driver.c</file>
+         <hash>7b0d13197776f06405b3d65d11562644a71e6caba557581ee09e2af2b1c68b85</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\fatfs\ffsystem.c</file>
          <hash>9abd55ef008afed7a5330d4d276ea41b89a27933e7fef613c5a05671c577ee15</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\spi1_driver.c</file>
-         <hash>a7e8ec02ae1932c961a43c23cdd2c1bb83a880aa6ab2333ad18ea6085686a4b2</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\sd_spi\sd_spi.h</file>
          <hash>7bf2730d6b6763db5ad7ebae1942ca6da4b857f9e1f47c16ec741625edf077ba</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\fatfs\fatfs_demo.h</file>
-         <hash>60b79d81ea7104386259b44bbbcf5c9439e625ba9c4cd7afc72490a9366d2dc3</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\spi1_driver.h</file>
          <hash>26f91dac2c2a49852fb5a266d9f8e358cb34c7319688687a11e40aee30c46f66</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files\fatfs\fatfs_demo.h</file>
+         <hash>60b79d81ea7104386259b44bbbcf5c9439e625ba9c4cd7afc72490a9366d2dc3</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\sd_spi\sd_spi.c</file>
@@ -10673,15 +10673,15 @@
       </entry>
       <entry>
          <file>mcc_generated_files\system.c</file>
-         <hash>accf8b8e541d59dcce9c836e34b83c8426e4091f1334c968a3b508bd06d0e028</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files\clock.h</file>
-         <hash>55a71db46b7c65e0695228bc69b4eab6ca2279489152649997cadcf5dd6ed2cf</hash>
+         <hash>eb2d56611e6150593da4abd4671194f1be8c425f744e4c5833c0dc401e4ddfeb</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\docs\spi.dox</file>
          <hash>518908892e2d8bc846cfc4b846e70d96c4f59fab7dbddc55fadee679aeaa9697</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files\clock.h</file>
+         <hash>55a71db46b7c65e0695228bc69b4eab6ca2279489152649997cadcf5dd6ed2cf</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\fatfs\fatfs_demo.c</file>
@@ -10697,7 +10697,7 @@
       </entry>
       <entry>
          <file>mcc_generated_files\mcc.h</file>
-         <hash>97c756602962e23850eb5f3c91e7c955cc8e44dce216c5f16c4e5feebc79e1a0</hash>
+         <hash>b901d7c93a93b4f3adcf1cc90f222d104868c9023905eb6bf641fa8e859eea33</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\fatfs\ff.h</file>
@@ -10712,10 +10712,6 @@
          <hash>7fa3716e5623c2919ca8a7f5520090af13071c4df014a5dee7bb058fc674a92a</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\fatfs\ffconf.h</file>
-         <hash>b8ebc82256a6c060dcbd5740faef622a2b4065cccdfbf0763fa29f0de769c5b0</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\adc1.c</file>
          <hash>31fe538728f6278498a50b79b04be227c882f2306367a66436a31ec2e7924616</hash>
       </entry>
@@ -10724,36 +10720,40 @@
          <hash>fc3b85aae60cb60a665d9d905eafa8258c8b90cdd0ef6a280549b2fc29dc67ba</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\tmr2.h</file>
-         <hash>21b307cfcdc831057d9d10c9f5a94af5c414648329d8c157b8a209b1e42acdcd</hash>
+         <file>mcc_generated_files\fatfs\ffconf.h</file>
+         <hash>afe461d04ec8b0b2acfeae4a58a7dcb97779b34b46782b5e58a121dd1d13259a</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\tmr2.c</file>
-         <hash>a003ea24d572c25c9eecdce7f4db2ffbce0b5bc2f2cbf7277397e7a969aec642</hash>
+         <file>mcc_generated_files\tmr2.h</file>
+         <hash>21b307cfcdc831057d9d10c9f5a94af5c414648329d8c157b8a209b1e42acdcd</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\pin_manager.h</file>
          <hash>d0eb57b093bbb478d32071625727f92b824f3a976ab1e8ad910e05e1abcc8257</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\oc1.h</file>
-         <hash>06bab6ba03a67d9d1ccd514d9b613b67f0e136917eca996f28d7992eaacae580</hash>
+         <file>mcc_generated_files\tmr2.c</file>
+         <hash>a003ea24d572c25c9eecdce7f4db2ffbce0b5bc2f2cbf7277397e7a969aec642</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\spi1_types.h</file>
          <hash>9194b198aaa2decbbce5209bea0428ead65d67e1bdacb103b84b32cf1672717c</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\pin_manager.c</file>
-         <hash>783cd2df31ac247b8b94d2b625aca3d373c0ea9131496070d01c827e5a915b61</hash>
+         <file>mcc_generated_files\oc1.h</file>
+         <hash>06bab6ba03a67d9d1ccd514d9b613b67f0e136917eca996f28d7992eaacae580</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\fatfs\diskio.c</file>
-         <hash>15fe9b6a3cf4ba1d9fb8f8d312b983a9d708a987cf0be0eca0f289be427e6d13</hash>
+         <file>mcc_generated_files\pin_manager.c</file>
+         <hash>34efde3a5c6724d8837cccc6d2a2bb7a201e5d40de31830ab0f20679e4859bb1</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\traps.c</file>
          <hash>aa9ebc4b58f5f322b7639bae756c383c9f9fedfc044e5f76c9294163021e8031</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files\fatfs\diskio.c</file>
+         <hash>15fe9b6a3cf4ba1d9fb8f8d312b983a9d708a987cf0be0eca0f289be427e6d13</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\oc1.c</file>
@@ -10764,6 +10764,10 @@
          <hash>45684ce9391ba3f17bdd7b647f394a27db0aaf9d62ea1ee2c4d0fcda8a31d642</hash>
       </entry>
       <entry>
+         <file>mcc_generated_files\adc1.h</file>
+         <hash>6ec25fa2fa78449531ade31a21d74bc286dff7c73e5d902f8f9c5a15d1602ec7</hash>
+      </entry>
+      <entry>
          <file>mcc_generated_files\fatfs\ffunicode.c</file>
          <hash>37b594b653b0e5c6fbf25428ccb56240e5c8149d786a22d0b74f17d8fd936341</hash>
       </entry>
@@ -10772,20 +10776,16 @@
          <hash>a2f4450985098bc47c270a2df95779dd88787a3fbac90e2ae5e6bb916296e707</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\adc1.h</file>
-         <hash>6ec25fa2fa78449531ade31a21d74bc286dff7c73e5d902f8f9c5a15d1602ec7</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\fatfs\diskio.h</file>
          <hash>eb1ef7b2ae900e5fa80c78b674723ef3227b26209a17a4006cc2c96d89c09823</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\ext_int.h</file>
-         <hash>80579270747f7a4a5d88ef0bfece89903af1b8e708ceefa3c041911ed6d2f96f</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\interrupt_manager.c</file>
          <hash>85bbb798a9fccd01205a37a5c57b3156921c494c6dc78f215d436d9a35bd2ed1</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files\ext_int.h</file>
+         <hash>80579270747f7a4a5d88ef0bfece89903af1b8e708ceefa3c041911ed6d2f96f</hash>
       </entry>
    </generatedFileHashHistoryMap>
 </config>

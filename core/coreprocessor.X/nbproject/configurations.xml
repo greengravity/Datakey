@@ -12,10 +12,10 @@
         </logicalFolder>
         <logicalFolder name="fatfs" displayName="fatfs" projectFiles="true">
           <itemPath>mcc_generated_files/fatfs/diskio.h</itemPath>
-          <itemPath>mcc_generated_files/fatfs/ff.h</itemPath>
-          <itemPath>mcc_generated_files/fatfs/integer.h</itemPath>
           <itemPath>mcc_generated_files/fatfs/ffconf.h</itemPath>
           <itemPath>mcc_generated_files/fatfs/fatfs_demo.h</itemPath>
+          <itemPath>mcc_generated_files/fatfs/ff.h</itemPath>
+          <itemPath>mcc_generated_files/fatfs/integer.h</itemPath>
         </logicalFolder>
         <logicalFolder name="sd_spi" displayName="sd_spi" projectFiles="true">
           <itemPath>mcc_generated_files/sd_spi/sd_spi.h</itemPath>
@@ -62,9 +62,9 @@
         <logicalFolder name="fatfs" displayName="fatfs" projectFiles="true">
           <itemPath>mcc_generated_files/fatfs/ffunicode.c</itemPath>
           <itemPath>mcc_generated_files/fatfs/diskio.c</itemPath>
-          <itemPath>mcc_generated_files/fatfs/ff.c</itemPath>
           <itemPath>mcc_generated_files/fatfs/ffsystem.c</itemPath>
           <itemPath>mcc_generated_files/fatfs/fatfs_demo.c</itemPath>
+          <itemPath>mcc_generated_files/fatfs/ff.c</itemPath>
         </logicalFolder>
         <logicalFolder name="sd_spi" displayName="sd_spi" projectFiles="true">
           <itemPath>mcc_generated_files/sd_spi/sd_spi.c</itemPath>

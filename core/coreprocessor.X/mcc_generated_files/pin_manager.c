@@ -79,7 +79,7 @@ void PIN_MANAGER_Initialize (void)
     CNPD2 = 0x0000;
     CNPD3 = 0x0000;
     CNPU1 = 0x0703;
-    CNPU2 = 0x5080;
+    CNPU2 = 0x5084;
     CNPU3 = 0x000C;
 
     /****************************************************************************
@@ -102,9 +102,9 @@ void PIN_MANAGER_Initialize (void)
     __builtin_write_OSCCONL(OSCCON & 0xbf); // unlock PPS
 
     RPOR4bits.RP9R = 0x0008;    //RB9->SPI1:SCK1OUT
+    RPOR1bits.RP2R = 0x000D;    //RB2->OC1:OC1
     RPOR11bits.RP23R = 0x0007;    //RC7->SPI1:SDO1
     RPINR20bits.SDI1R = 0x0016;    //RC6->SPI1:SDI1
-    RPOR1bits.RP2R = 0x000D;    //RB2->OC1:OC1
 
     __builtin_write_OSCCONL(OSCCON | 0x40); // lock PPS
 }

@@ -12,7 +12,7 @@
 #include <stdbool.h>
 #include "mcc_generated_files/fatfs/ff.h"
 
-#define CTX_BUFFER_SIZE 4000
+#define CTX_BUFFER_SIZE 1000
 #define PIN_SIZE 6
 #define MAX_PIN_TRIES 6
 
@@ -84,6 +84,7 @@ typedef struct {
 
 typedef struct {
     bool render;
+    uint32_t written;
 } CTX_KEY_OVERVIEW;
 
 

@@ -1327,7 +1327,7 @@ static SD_RESPONSE SD_SendCmd (uint8_t cmd, uint32_t address)
     // see if we are expecting more data or not
     if( sdmmc_cmdtable[cmd].moreDataExpected == false )
     {
-        SD_SPI_ChipDeselect();
+        SD_SPI_ChipDeselect();        
     }
 
     return(response);
