@@ -1,8 +1,10 @@
-/*#define FCY     8000000UL
-#include <libpic30.h>
-#include "display.h"
-#include "mcc_generated_files/pin_manager.h"
-#include "mcc_generated_files/spi1_driver.h" */
+/*
+ * File:   display_driver.c
+ * Author: greengravity
+ *
+ * Created on 14. Januar 2023, 16:01
+ */
+
 #include "mcc_generated_files/system.h"
 #include "mcc_generated_files/spi1_driver.h"
 #include "mcc_generated_files/pin_manager.h"
@@ -15,9 +17,9 @@
 
 #define OC1_TOPVALUE 0x3F80 
 
-uint8_t _height, _width, _rotation;
-uint8_t _charx=0, _chary=0;
-uint8_t _brightness = 100;
+static uint8_t _height, _width, _rotation;
+static uint8_t _charx=0, _chary=0;
+static uint8_t _brightness = 100;
 
 const uint8_t
   Bcmd[] = {                        // Init commands for 7735B screens
@@ -306,6 +308,7 @@ void dispStart( ) {
 }
 
 
+/*
 void dispStop() {
     //while ( OC1_IsCompareCycleComplete( ) );
     ST77XX_PIN_CS_HIGH;
@@ -313,7 +316,7 @@ void dispStop() {
     OC1_Stop();    
     ST77XX_PIN_BACKLIGHT_HIGH;      
 }
-
+*/
 
 void dispStartWrite(void) {  
     ST77XX_PIN_CS_LOW;
@@ -384,12 +387,24 @@ void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
     dispEndWrite();
 }
 
-void drawFastHLine(int16_t x, int16_t y, int16_t x2, uint16_t color) {
-    fillRect(x, y, x2, y, color);       
+
+
+
+
+void drawFastHLine(int16_t x, int16_t y, int16_t length, uint16_t color) {
+    fillRect(x, y, length, 1, color);       
 }
 
-void drawFastVLine(int16_t x, int16_t y, int16_t y2, uint16_t color) {
-    fillRect(x, y, x, y2, color);       
+void drawFastVLine(int16_t x, int16_t y, int16_t length, uint16_t color) {
+    fillRect(x, y, 1, length, color);       
+}
+
+void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
+    drawFastHLine(x,y,w, color);
+    drawFastHLine(x,y+h,w, color);    
+
+    drawFastVLine(x,y,h, color);
+    drawFastVLine(x+w,y,h, color);        
 }
 
 void clearScreen(uint16_t color) {
@@ -490,7 +505,29 @@ void locate( uint8_t x, uint8_t y ) {
     _chary = y;
 }
 
+uint8_t getLocationX() {
+    return _charx;    
+}
+
+uint8_t getLocationY() {
+    return _chary;
+}
+
+
 //Writing Characters with intern codepage
+void unwriteChars( const GFXChar *chars, uint16_t len ) {
+
+    for (uint16_t i=0;i<len;i++ ) {
+        if ( ( _charx + chars[i].xadv ) > ST7735_TFTWIDTH ) {
+            _charx = 0;
+            _chary += CHAR_HEIGHT;
+        }
+        fillRect( _charx, _chary, chars[i].xadv, CHAR_HEIGHT, COLOR_BLACK );        
+        _charx += chars[i].xadv;
+    }    
+       
+}
+
 void writeChars( const GFXChar *chars, uint16_t len ) {    
     for (uint16_t i=0;i<len;i++ ) {
         if ( ( _charx + chars[i].xadv ) > ST7735_TFTWIDTH ) {

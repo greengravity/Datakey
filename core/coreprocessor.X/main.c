@@ -1,75 +1,63 @@
-/**
-  Generated main.c file from MPLAB Code Configurator
-
-  @Company
-    Microchip Technology Inc.
-
-  @File Name
-    main.c
-
-  @Summary
-    This is the generated main.c using PIC24 / dsPIC33 / PIC32MM MCUs.
-
-  @Description
-    This source file provides main entry point for system initialization and application code development.
-    Generation Information :
-        Product Revision  :  PIC24 / dsPIC33 / PIC32MM MCUs - 1.171.1
-        Device            :  PIC24FJ128GB204
-    The generated drivers are tested against the following:
-        Compiler          :  XC16 v1.70
-        MPLAB 	          :  MPLAB X v5.50
- */
-
 /*
-    (c) 2020 Microchip Technology Inc. and its subsidiaries. You may use this
-    software and any derivatives exclusively with Microchip products.
-
-    THIS SOFTWARE IS SUPPLIED BY MICROCHIP "AS IS". NO WARRANTIES, WHETHER
-    EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS SOFTWARE, INCLUDING ANY IMPLIED
-    WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY, AND FITNESS FOR A
-    PARTICULAR PURPOSE, OR ITS INTERACTION WITH MICROCHIP PRODUCTS, COMBINATION
-    WITH ANY OTHER PRODUCTS, OR USE IN ANY APPLICATION.
-
-    IN NO EVENT WILL MICROCHIP BE LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE,
-    INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, COST OR EXPENSE OF ANY KIND
-    WHATSOEVER RELATED TO THE SOFTWARE, HOWEVER CAUSED, EVEN IF MICROCHIP HAS
-    BEEN ADVISED OF THE POSSIBILITY OR THE DAMAGES ARE FORESEEABLE. TO THE
-    FULLEST EXTENT ALLOWED BY LAW, MICROCHIP'S TOTAL LIABILITY ON ALL CLAIMS IN
-    ANY WAY RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY,
-    THAT YOU HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
-
-    MICROCHIP PROVIDES THIS SOFTWARE CONDITIONALLY UPON YOUR ACCEPTANCE OF THESE
-    TERMS.
+ * File:   main.c
+ * Author: greengravity
+ *
+ * Created on 14. Januar 2023, 16:01
  */
 
-/**
-  Section: Included Files
- */
 #include "main.h"
 #include "logic.h"
 #include "ui.h"
 #include "mcc_ext.h"
 #include "mcc_generated_files/system.h"
 
+#include "mcc_generated_files/spi1_driver.h"
+#include "display_driver.h"
 
 int main(void) {
     SYSTEM_Initialize();        
-    bootPeripherals();
 
-    uint8_t contextbuffer[CTX_BUFFER_SIZE];  
-    
-    //setMasterKey(contextbuffer); //Any Testkey
-    
+    uint8_t contextbuffer[CTX_BUFFER_SIZE];      
     APP_CONTEXT ctx;
     ctx.ctxbuffer = contextbuffer;
+    ctx.fsmounted = false;
+    ctx.fileopen = false; 
+    
     setInitialContext(&ctx);
+    bootPeripherals(&ctx);
+
+    /*
+    spi1_open(DISPLAY_CONFIG);
+    
+    for ( int i=0;i<40;i++) {
+        clearScreen(ST7735_RED);
+        clearScreen(ST7735_BLUE);
+    }
+    clearScreen(ST7735_BLACK);
+    
+    spi1_close();
+    
+    setSleep();
+    
+    spi1_open(DISPLAY_CONFIG);
+    
+    for ( int i=0;i<40;i++) {
+        clearScreen(ST7735_RED);
+        clearScreen(ST7735_BLUE);
+    }
+    clearScreen(ST7735_BLACK);    
+    
+    spi1_close();
+    */
+    
     
     
     while (1) {                
         updateContext(&ctx);
         renderUI(&ctx);
     }
-
+ 
+    while (1);
     return 1;
 }
 
