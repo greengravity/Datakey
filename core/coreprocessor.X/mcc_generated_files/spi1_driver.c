@@ -37,7 +37,7 @@ void spi1_close(void)
 typedef struct { uint16_t con1; uint16_t brg; uint8_t operation;} spi1_configuration_t;
 static const spi1_configuration_t spi1_configuration[] = {   
     { 0x0120, 0x0000, 0 },
-    { 0x0060, 0x0003, 0 },
+    { 0x0060, 0x0000, 0 },
     { 0x0060, 0x0013, 0 },
     { 0x0120, 0x003F, 0 }
 };

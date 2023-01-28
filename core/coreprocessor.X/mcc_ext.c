@@ -15,13 +15,14 @@
 #include "mcc_ext.h"
 #include "mcc_generated_files/system.h" 
 #include "mcc_generated_files/spi1_driver.h"
-#include "mcc_generated_files/fatfs/ff.h"
 #include "mcc_generated_files/pin_manager.h"
 #include "mcc_generated_files/ext_int.h"
 #include "mcc_generated_files/adc1.h"
 #include "mcc_generated_files/tmr2.h"
 #include "mcc_generated_files/oc1.h"
 
+#include "fs/ff.h"
+#include "fs/diskio.h"
 #include "logic.h"
 #include "display_driver.h"
 #include "buttons.h"
@@ -63,7 +64,9 @@ void bootPeripherals(APP_CONTEXT *ctx) {
     
     __delay_ms(150);
     
+    spi_fat_open(); 
     mountFS(ctx);
+    spi_fat_close();
         
     spi1_open(DISPLAY_CONFIG);
     dispStart();
@@ -91,9 +94,9 @@ void shutdownPeripherals(APP_CONTEXT *ctx) {
         ctx->fsmounted = false;                            
     } */
     
-    spi1_close();    
+    spi_fat_open();    
     unmountFS(ctx);    
-    spi1_close();
+    spi_fat_close();
     
     SDCard_CS_SetLow();
     CS_D_SetLow();

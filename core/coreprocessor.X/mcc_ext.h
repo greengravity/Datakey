@@ -11,7 +11,7 @@
 #define	XC_MCC_EXT_H
 
 #include <stdbool.h>
-#include "mcc_generated_files/fatfs/ff.h"
+#include "fs/ff.h"
 #include "logic.h"
 
 // ********** Standard functions *******
@@ -23,9 +23,11 @@ void setSleep(APP_CONTEXT *ctx);
 uint16_t OC1_PrimaryValueGet();
 
 // ********* Extend Filesystem Functions *********
-void fs_standby();
+/*void fs_standby();
 void fs_standby_file(FIL* fp);
-void fs_resume();
+void fs_resume(); */
+void mountFS( APP_CONTEXT *ctx );
+void unmountFS( APP_CONTEXT *ctx );
 
 // ********* Extend SPI-Functions *********
 void SPI1_Transmit16bitRepeated( uint16_t data, int len );

@@ -26,32 +26,10 @@ int main(void) {
     setInitialContext(&ctx);
     bootPeripherals(&ctx);
 
-    /*
-    spi1_open(DISPLAY_CONFIG);
-    
-    for ( int i=0;i<40;i++) {
-        clearScreen(ST7735_RED);
-        clearScreen(ST7735_BLUE);
+    if ( !ctx.fsmounted ) {
+        setContext(&ctx, ERROR_SD_CD);
     }
-    clearScreen(ST7735_BLACK);
-    
-    spi1_close();
-    
-    setSleep();
-    
-    spi1_open(DISPLAY_CONFIG);
-    
-    for ( int i=0;i<40;i++) {
-        clearScreen(ST7735_RED);
-        clearScreen(ST7735_BLUE);
-    }
-    clearScreen(ST7735_BLACK);    
-    
-    spi1_close();
-    */
-    
-    
-    
+           
     while (1) {                
         updateContext(&ctx);
         renderUI(&ctx);

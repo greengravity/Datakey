@@ -4,21 +4,16 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <logicalFolder name="f1" displayName="fs" projectFiles="true">
+        <itemPath>fs/diskio.h</itemPath>
+        <itemPath>fs/ff.h</itemPath>
+        <itemPath>fs/ffconf.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
                      projectFiles="true">
         <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
           <itemPath>mcc_generated_files/drivers/spi_master.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="fatfs" displayName="fatfs" projectFiles="true">
-          <itemPath>mcc_generated_files/fatfs/diskio.h</itemPath>
-          <itemPath>mcc_generated_files/fatfs/ffconf.h</itemPath>
-          <itemPath>mcc_generated_files/fatfs/fatfs_demo.h</itemPath>
-          <itemPath>mcc_generated_files/fatfs/ff.h</itemPath>
-          <itemPath>mcc_generated_files/fatfs/integer.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="sd_spi" displayName="sd_spi" projectFiles="true">
-          <itemPath>mcc_generated_files/sd_spi/sd_spi.h</itemPath>
         </logicalFolder>
         <itemPath>mcc_generated_files/pin_manager.h</itemPath>
         <itemPath>mcc_generated_files/interrupt_manager.h</itemPath>
@@ -33,6 +28,7 @@
         <itemPath>mcc_generated_files/adc1.h</itemPath>
         <itemPath>mcc_generated_files/tmr2.h</itemPath>
         <itemPath>mcc_generated_files/ext_int.h</itemPath>
+        <itemPath>mcc_generated_files/tmr1.h</itemPath>
       </logicalFolder>
       <itemPath>main.h</itemPath>
       <itemPath>buttons.h</itemPath>
@@ -49,6 +45,12 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="f1" displayName="fs" projectFiles="true">
+        <itemPath>fs/ff.c</itemPath>
+        <itemPath>fs/ffsystem.c</itemPath>
+        <itemPath>fs/ffunicode.c</itemPath>
+        <itemPath>fs/mmc.c</itemPath>
+      </logicalFolder>
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
                      projectFiles="true">
@@ -58,16 +60,6 @@
         </logicalFolder>
         <logicalFolder name="drivers" displayName="drivers" projectFiles="true">
           <itemPath>mcc_generated_files/drivers/spi_master.c</itemPath>
-        </logicalFolder>
-        <logicalFolder name="fatfs" displayName="fatfs" projectFiles="true">
-          <itemPath>mcc_generated_files/fatfs/ffunicode.c</itemPath>
-          <itemPath>mcc_generated_files/fatfs/diskio.c</itemPath>
-          <itemPath>mcc_generated_files/fatfs/ffsystem.c</itemPath>
-          <itemPath>mcc_generated_files/fatfs/fatfs_demo.c</itemPath>
-          <itemPath>mcc_generated_files/fatfs/ff.c</itemPath>
-        </logicalFolder>
-        <logicalFolder name="sd_spi" displayName="sd_spi" projectFiles="true">
-          <itemPath>mcc_generated_files/sd_spi/sd_spi.c</itemPath>
         </logicalFolder>
         <itemPath>mcc_generated_files/pin_manager.c</itemPath>
         <itemPath>mcc_generated_files/clock.c</itemPath>
@@ -80,6 +72,7 @@
         <itemPath>mcc_generated_files/adc1.c</itemPath>
         <itemPath>mcc_generated_files/tmr2.c</itemPath>
         <itemPath>mcc_generated_files/ext_int.c</itemPath>
+        <itemPath>mcc_generated_files/tmr1.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
       <itemPath>buttons.c</itemPath>

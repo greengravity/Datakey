@@ -10,7 +10,7 @@
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 #include <stdbool.h>
-#include "mcc_generated_files/fatfs/ff.h"
+#include "fs/ff.h"
 
 #define CTX_BUFFER_SIZE 1000
 #define PIN_SIZE 6
@@ -88,13 +88,13 @@ typedef struct {
 } CTX_KEY_OVERVIEW;
 
 
-
 bool isKeySet( );
 void setMasterKey(uint8_t *key);
 uint8_t* getMasterKey();
 void swipeKeys();
 uint8_t verifyMasterKey();
 
+void setContext(APP_CONTEXT *ctx, CONTEXT_TYPE type);
 void setInitialContext( APP_CONTEXT* ctx );
 void updateContext(APP_CONTEXT* ctx);
 
