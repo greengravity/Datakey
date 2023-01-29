@@ -256,56 +256,84 @@ Keylayout * getCurrentKeyboardKey( IO_CONTEXT *ioctx ) {
     return (Keylayout *)&keylayouts[ioctx->kby*10+ioctx->kbx + km->layoutoff];
 }
 
+uint8_t hctxIOWriteCharacter( IO_CONTEXT *ioctx ) {
+    
+}
 
 uint8_t hctxIO( IO_CONTEXT *ioctx ) {
     
     if ( ioctx->selarea == 0 ) {
-        //cursor on keyboard
-        
-        if ( isButtonPressed(BUTTON_UP) ) {
-            if ( ioctx->kby > 0 ) {
-                ioctx->okby = ioctx->kby;
-                ioctx->okbx = ioctx->kbx;                
-                ioctx->kby--;
-                ioctx->rinf = ANIMATION;
-            } else {
+        //cursor on keyboard       
+        if ( isButtonPressed(BUTTON_A) ) {
+            
+        } else if ( isButtonReleased(BUTTON_A) ) {
+            
+        } else if ( isButtonDown(BUTTON_A) ) {
+            //nothing to do, just block other buttons
+        } else if ( isButtonPressed(BUTTON_UP) ||
+             isButtonPressed(BUTTON_DOWN) ||
+             isButtonPressed(BUTTON_LEFT) ||
+             isButtonPressed(BUTTON_RIGHT) ) {
+            
+            if ( isButtonPressed(BUTTON_UP) && ioctx->kby == 0 ) {
                 ioctx->rinf = AREASWITCH;
-                ioctx->selarea = 1;
-            }            
-        } else if ( isButtonPressed(BUTTON_DOWN) ) {
-            if ( ioctx->kby < 3 ) {
+                ioctx->oselarea = ioctx->selarea;
+                ioctx->selarea = 1;                                
+            } else {
                 ioctx->okby = ioctx->kby;
                 ioctx->okbx = ioctx->kbx;                                
-                ioctx->kby++;
                 ioctx->rinf = ANIMATION;
-            }
-        } else if ( isButtonPressed(BUTTON_LEFT) ) {
-            Keylayout *k = getCurrentKeyboardKey(ioctx);
-            
-            if ( ioctx->kbx > k->span_neg ) {
-                ioctx->okby = ioctx->kby;
-                ioctx->okbx = ioctx->kbx;                
-                ioctx->kbx -= ( k->span_neg + 1 );
-                ioctx->rinf = ANIMATION;
-            }
-        } else if ( isButtonPressed(BUTTON_RIGHT) ) {
-            Keylayout *k = getCurrentKeyboardKey(ioctx);
-            
-            if ( ioctx->kbx < 9 - k->span_pos ) {
-                ioctx->okby = ioctx->kby;
-                ioctx->okbx = ioctx->kbx;                
-                ioctx->kbx += ( k->span_pos + 1 );
-                ioctx->rinf = ANIMATION;
-            }
-        }
+
+                Keylayout *k = getCurrentKeyboardKey(ioctx);
                 
+                if ( isButtonPressed(BUTTON_UP) && ioctx->kby > 0 ) ioctx->kby--;
+                if ( isButtonPressed(BUTTON_DOWN) && ioctx->kby < 3 ) ioctx->kby++;
+                if ( isButtonPressed(BUTTON_LEFT) && ioctx->kbx > k->span_neg ) ioctx->kbx -= ( k->span_neg + 1 );
+                if ( isButtonPressed(BUTTON_RIGHT) && ioctx->kbx < (9 - k->span_pos) ) ioctx->kbx += ( k->span_pos + 1 );
+            }                                    
+        } else if ( isButtonPressed( BUTTON_B) ) {
+            ioctx->oselarea = ioctx->selarea;
+            ioctx->selarea = 2; //open keymap
+            ioctx->rinf = AREASWITCH;          
+        }
+   
     } else if ( ioctx->selarea == 1 ) {
         //cursor in textarea
         if ( isButtonPressed(BUTTON_DOWN) ) {
             ioctx->rinf = AREASWITCH;
-            ioctx->selarea = 0;
+            ioctx->oselarea = ioctx->selarea;
+            ioctx->selarea = 0; //back to keyboard
         }
         
+    } else if ( ioctx->selarea == 2 ) {
+        if ( isButtonPressed(BUTTON_UP) ||
+             isButtonPressed(BUTTON_DOWN) || 
+             isButtonPressed(BUTTON_LEFT) ||
+             isButtonPressed(BUTTON_RIGHT) )
+        {
+            int x = ioctx->kbmap % 3;
+            int y = ioctx->kbmap / 3;
+            
+            if ( isButtonPressed(BUTTON_LEFT) && x > 0 )  x--;           
+            if ( isButtonPressed(BUTTON_RIGHT) && x < 2 ) x++;
+            if ( isButtonPressed(BUTTON_UP) && y > 0 )  y--;           
+            if ( isButtonPressed(BUTTON_DOWN) && y < 2 ) y++;
+            
+            int newmap = y*3+x;
+            
+            if ( keymaps[newmap].active ) {
+                ioctx->okbmap = ioctx->kbmap;
+                ioctx->kbmap = newmap;
+                ioctx->rinf = ANIMATION;
+            }
+                                       
+        } else if ( isButtonPressed(BUTTON_A) ||
+                    isButtonPressed(BUTTON_B) ) {
+            
+            ioctx->oselarea = ioctx->selarea;
+            ioctx->selarea = 0; //back to keyboard            
+            ioctx->rinf = AREASWITCH;
+        }        
     }
     
     if ( ioctx->rinf == ANIMATION || ioctx->rinf == AREASWITCH ) {

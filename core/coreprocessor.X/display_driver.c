@@ -380,9 +380,10 @@ void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
     x2 = x2 < 0 ? 0 : ( x2 >= _width ? ( _width - 1 ) : x2 );
     y2 = y2 < 0 ? 0 : ( y2 >= _height ? ( _height - 1 ) : y2 );
            
-    int len = ( (int)( ( x2-x ) + 1 ) ) * ( (int)( ( y2-y ) + 1 ) );
+    uint16_t len = ( (uint16_t)( ( x2-x ) + 1 ) ) * ( (uint16_t)( ( y2-y ) + 1 ) );
     dispStartWrite();
-    dispSetAddrWindow(x, y, x2, y2);    
+    dispSetAddrWindow(x, y, x2, y2);
+    
     SPI1_Transmit16bitRepeated(color, len);
     dispEndWrite();
 }
@@ -408,8 +409,8 @@ void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
 }
 
 void clearScreen(uint16_t color) {
-    fillRect(0,0,_width, _height/2, color);    
-    fillRect(0,_height/2,_width, _height/2, color);
+    fillRect(0,0,_width, _height, color);
+//    fillRect(0,_height/2,_width, _height/2, color);
 }
 
 void drawImage(int16_t x, int16_t y, const GFXimage *image) {

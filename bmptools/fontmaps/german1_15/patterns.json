@@ -1,34 +1,16 @@
 {
 	"patternmap": [
 		null,
-		null,
-		null,
-		null,
-		null,
-
-		null,
-		null,
 		"1TO9",
 		null,
-		null,
 
-		null,
-		"ATOZ",
-		"SYSTEMMENU",
+		"ATOZ",		
 		"aTOz",
-		null,
+		"SYSTEMMENU",
 
-		null,
 		null,
 		"SOND",
-		null,
-		null,
-
-		null,
-		null,
-		null,
-		null,
-		null	
+		null
 	],
 	"patterns": [
 		{

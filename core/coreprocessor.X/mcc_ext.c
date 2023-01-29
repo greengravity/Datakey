@@ -192,9 +192,9 @@ void fs_resume() {
 
 
 // ************* Extending SPI-Functions ********
-void SPI1_Transmit16bitRepeated( uint16_t data, int len ) {
+void SPI1_Transmit16bitRepeated( uint16_t data, uint16_t len ) {
 
-    int dataSentCount = 0;    
+    uint16_t dataSentCount = 0;    
     uint8_t byte1 = (uint8_t)(data>>8);
     uint8_t byte2 = (uint8_t)(data);
     uint8_t p_dummy;

@@ -7,6 +7,7 @@
 
 
 #include "xc.h"
+#include "string.h"
 #include "logic.h"
 #include "display_driver.h"
 #include "assets.h"
@@ -67,12 +68,16 @@ void rndIOKBMap( Keyboardmaps* kmap ) {
 
 void highlightKeyboardKey( uint8_t x, uint8_t y, Keyboardmaps* km, uint16_t color ) {
     int16_t yoff = ( (DISPLAY_HEIGHT - 16 * 4) - 1 ) + ( y * 16 );    
-
     Keylayout *kl = (Keylayout *)&keylayouts[y*10+x + km->layoutoff];
     
     uint8_t xoff = ( x - kl->span_neg ) * 16; 
-
     drawRect( xoff, yoff, 16 * ( kl->span_neg + kl->span_pos + 1 ), 16, color );
+} 
+
+void highlightPatternmapKey( uint8_t x, uint8_t y, uint16_t color ) {
+    int xoff = 8 + x * 48;
+    int yoff = (DISPLAY_HEIGHT - 57) + y * 16;
+    drawRect( xoff, yoff, 48, 16, color );
 } 
 
 
@@ -101,21 +106,54 @@ void rndIO(IO_CONTEXT *ioctx) {
             if ( ioctx->selarea == 0 ) {
                 highlightKeyboardKey( ioctx->okbx, ioctx->okby, km, COLOR_GRAY );                
                 highlightKeyboardKey( ioctx->kbx,  ioctx->kby, km, COLOR_BLUE );                
-            } else {
-                
+            } else if (ioctx->selarea == 2 ) { 
+                highlightPatternmapKey(ioctx->okbmap % 3 ,ioctx->okbmap / 3, COLOR_GRAY);
+                highlightPatternmapKey(ioctx->kbmap % 3 ,ioctx->kbmap / 3, COLOR_BLUE);
             }
             break;
         case AREASWITCH:
             if ( ioctx->selarea == 0 ) {
-                //switched to keyboardarea
-                drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);
-                drawFastHLine(0,(DISPLAY_HEIGHT - 16 * 4) - 1, DISPLAY_WIDTH, COLOR_GRAY);
-                highlightKeyboardKey( ioctx->kbx,  ioctx->kby, km, COLOR_BLUE );                
-            } else {
+                if ( ioctx->oselarea == 2 ) {
+                    //switched to keyboardarea from keyboardmap
+                    fillRect( 0, (DISPLAY_HEIGHT - 16 * 4) - 1, DISPLAY_WIDTH, 16*4, COLOR_BLACK );
+                    rndIOKBMap( km );
+                    highlightKeyboardKey( ioctx->kbx, ioctx->kby, km, COLOR_BLUE );                    
+                } else if ( ioctx->oselarea == 1 ) {
+                    //switched to keyboardarea from textarea
+                    drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);
+                    drawFastHLine(0,(DISPLAY_HEIGHT - 16 * 4) - 1, DISPLAY_WIDTH, COLOR_GRAY);
+                    highlightKeyboardKey( ioctx->kbx,  ioctx->kby, km, COLOR_BLUE );                                    
+                }
+                
+            } else if ( ioctx->selarea == 1 ) {
                 //switched to textarea
                 highlightKeyboardKey( ioctx->kbx, ioctx->kby, km, COLOR_GRAY );     
                 drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_BLUE);
                 drawFastHLine(0,(DISPLAY_HEIGHT - 16 * 4) - 1, DISPLAY_WIDTH, COLOR_BLUE);                
+            } else if ( ioctx->selarea == 2 ) {
+                highlightKeyboardKey( ioctx->kbx, ioctx->kby, km, COLOR_GRAY );
+                fillRect(8, (DISPLAY_HEIGHT - 57), 144, 48, COLOR_BLACK );
+                for (int x=0;x<3;x++) {
+                    for (int y=0;y<3;y++) {
+                        int map = y * 3 + x;                        
+                        
+                        if ( keymaps[map].active ) {
+                            int xoff = 8 + x * 48;
+                            int yoff = (DISPLAY_HEIGHT - 57) + y * 16;
+                            drawRect(xoff, yoff, 48, 16, COLOR_WHITE );
+
+
+                            int len = strlen( (const char*)&keymaps[map].name );                        
+                            int plen = 0;
+                            for ( int i=0;i<len;i++ ) {
+                                plen += gfxchars[ keymaps[map].name[i] ].xadv;
+                            }
+                            locate( xoff + ( ( 48 - plen) / 2 ), yoff+1);                        
+                            cWriteTextIntern( (const uint8_t *)&keymaps[map].name );                        
+                        }                        
+                    }
+                }
+                highlightPatternmapKey(ioctx->kbmap % 3 ,ioctx->kbmap / 3, COLOR_BLUE);
             }
             break;
         default:

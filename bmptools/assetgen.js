@@ -72,7 +72,7 @@ const iconjson = JSON.parse( fs.readFileSync(path.resolve(icondir, 'icons.js'), 
 // Reading patterndescription
 const patterns = JSON.parse( fs.readFileSync( patternfile, { encoding: "utf-8" }) )
 
-if ( patterns.patternmap.length == 25 ) {
+if ( patterns.patternmap.length == 9 ) {
   let syspattern =  {
     "name": "SYSTEMMENU",
     "text": "Menu",
@@ -87,10 +87,7 @@ if ( patterns.patternmap.length == 25 ) {
   patterns.patterns.push( syspattern )
 
   patterns.patterns.forEach(pm=> {
-    if ( pm.keys.length < 4 ) {
-      for ( let i=0;i<(4-pm.keys.length); i++ ) pm.keys.push([])
-    }
-
+    while ( pm.keys.length < 4 ) pm.keys.push([])
     
     pm.keys.forEach(pk=> {
       let pcount = 0

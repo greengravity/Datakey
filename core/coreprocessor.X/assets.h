@@ -84,6 +84,6 @@ extern const uint8_t hexchars[];
 #define TEXT_IOHEAD_KEY2 14
 #define TEXT_IOHEAD_INFO 15
 
-#define DEFAULT_KEYMAP 11
+#define DEFAULT_KEYMAP 3
 
 #endif

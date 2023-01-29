@@ -30,7 +30,7 @@ void mountFS( APP_CONTEXT *ctx );
 void unmountFS( APP_CONTEXT *ctx );
 
 // ********* Extend SPI-Functions *********
-void SPI1_Transmit16bitRepeated( uint16_t data, int len );
+void SPI1_Transmit16bitRepeated( uint16_t data, uint16_t len );
 void SPI1_Transmit16bit(uint16_t data);
 void SPI1_Transmit32bit(uint32_t data);
 void SPI1_transmit16bitBuffer(uint16_t *data, uint16_t wordCount );

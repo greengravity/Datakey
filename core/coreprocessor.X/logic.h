@@ -69,12 +69,14 @@ typedef struct {
 typedef struct {    
     RENDER_INFO rinf;
     TOKEN_TYPE type;    
-    uint8_t kbmap;
-    uint8_t okbx;  //old Keyx - for animation
-    uint8_t okby;  //old Keyy - for animation  
-    uint8_t kbx;   //Keyx
-    uint8_t kby;   //Keyy
-    uint8_t selarea;   
+    uint8_t okbmap; //old keymap
+    uint8_t kbmap;  //curr keymap
+    uint8_t okbx;  //old keyx - for animation
+    uint8_t okby;  //old keyy - for animation  
+    uint8_t kbx;   //keyx
+    uint8_t kby;   //keyy
+    uint8_t oselarea; //old working area 
+    uint8_t selarea;  //current working area
     uint8_t tacline; //textarea current line
     uint8_t tecx;    //textarea current x position
     char text[1024];
