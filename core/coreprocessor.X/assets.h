@@ -3,13 +3,14 @@
 #include	<xc.h>
 #include	<stdbool.h>
 
-#define MAX_IMAGE_BUFFER 210
-#define TOTAL_IMAGE_COUNT 111
-#define TOTAL_CHAR_COUNT 109
-#define CHAR_HEIGHT 14
-#define ENCODING_ERROR_CHAR 0
+#define MAX_IMAGE_BUFFER 225
+#define TOTAL_IMAGE_COUNT 113
+#define TOTAL_CHAR_COUNT 110
+#define CHAR_HEIGHT 15
+#define CHAR_LINEFEED 0x01
+#define CHAR_ENCODEERR 0x02
 
-// bmpsize: 11748Bytes
+// bmpsize: 12046Bytes
 typedef struct {
   const uint8_t width; // Bitmap width in pixels
   const uint8_t height; // Bitmap width in pixels
@@ -57,10 +58,14 @@ extern const uint8_t hexchars[];
 #define KEYCOMMAND_OK 3
 #define KEYCOMMAND_BACK 4
 #define KEYCOMMAND_EMPTY 5
+#define KEYCOMMAND_LF 6
 
-#define SYSICON_DELETE 108
-#define SYSICON_SPACE 109
-#define SYSICON_OK 110
+#define SYSICON_EMPTY 107
+#define SYSICON_ENCODEERR 108
+#define SYSICON_DELETE 109
+#define SYSICON_SPACE 110
+#define SYSICON_ENTER 111
+#define SYSICON_OK 112
 
 #define TEXT_ERROR_CONTEXT 0
 #define TEXT_ERROR_SD_CD 1
@@ -72,5 +77,13 @@ extern const uint8_t hexchars[];
 #define TEXT_ENTER_NEW_PIN_ERROR 7
 #define TEXT_ENTER_NEW_KEY 8
 #define TEXT_ENTER_NEW_KEY_ERROR 9
+#define TEXT_IOHEAD_NEW 10
+#define TEXT_IOHEAD_NAME 11
+#define TEXT_IOHEAD_URL 12
+#define TEXT_IOHEAD_KEY 13
+#define TEXT_IOHEAD_KEY2 14
+#define TEXT_IOHEAD_INFO 15
+
+#define DEFAULT_KEYMAP 11
 
 #endif

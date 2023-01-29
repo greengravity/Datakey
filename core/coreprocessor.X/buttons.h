@@ -23,6 +23,13 @@
 
 #define BUTTON_COUNT 6
 
+#define BUTTON_LEFT_READ (!BTN2_GetValue())
+#define BUTTON_UP_READ (!BTN3_GetValue())
+#define BUTTON_RIGHT_READ (!BTN5_GetValue())
+#define BUTTON_DOWN_READ (!BTN1_GetValue())
+#define BUTTON_A_READ (!BTN4_GetValue())
+#define BUTTON_B_READ (!BTN6_GetValue())
+
 
 void updateButtons(bool force);
 bool isButtonPressed(uint8_t button);

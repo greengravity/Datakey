@@ -40,6 +40,17 @@ static bool keyset = false;
 
 //128bit AES key
 
+const TOKEN_CONFIG token_configs[] = {
+    { NEW, TEXT_IOHEAD_NEW },
+    { NAME, TEXT_IOHEAD_NAME },
+    { KEY, TEXT_IOHEAD_KEY },
+    { KEY2, TEXT_IOHEAD_KEY2 },
+    { URL, TEXT_IOHEAD_URL },
+    { INFO, TEXT_IOHEAD_INFO }        
+};
+
+
+
 bool isKeySet() {
     return keyset;
 }
@@ -91,7 +102,7 @@ uint8_t verifyMasterKey() {
             }                    
 
             for (int i=0;i<16;i++) {
-               cipher[i] = data[i] ^ data[i+16];                       
+               cipher[i] = data[i] ^ data[i+16];
             }
             if ( memcmp( data+32, cipher, 16 ) == 0 ) {
                 result = 0;
@@ -102,12 +113,7 @@ uint8_t verifyMasterKey() {
             result = 2;
         }                                                
     } else {
-/*        
-        if ( f_stat("KS", &fno) != FR_OK ) {
-            //create Keystore directory if not exits
-            f_mkdir( "KS" );                            
-        } 
-*/
+
         if ( f_open(&file, "VERIFY", FA_WRITE | FA_CREATE_ALWAYS ) == FR_OK ) {
         
             //create new verifikation file
@@ -156,7 +162,7 @@ uint8_t verifyMasterKey() {
     return result;
 }
 
-uint16_t getContextTypeLen(CONTEXT_TYPE type) {
+uint16_t _getContextTypeLen(CONTEXT_TYPE type) {
     switch (type) {
         case ERROR:
             return sizeof (CTX_ERROR);
@@ -164,42 +170,55 @@ uint16_t getContextTypeLen(CONTEXT_TYPE type) {
             return sizeof (CTX_PIN_INPUT);
         case KEY_INPUT:
             return sizeof (CTX_KEY_INPUT);
-        case KEY_OVERVIEW:
-            return sizeof (CTX_KEY_OVERVIEW);
+        case ENTRY_OVERVIEW:
+            return sizeof (CTX_ENTRY_OVERVIEW);
+        case NEW_ENTRY:
+            return sizeof(CTX_NEW_ENTRY);
         default:
             return 0;
     }
 }
 
-bool removeContext(APP_CONTEXT *ctx) {
-    if (ctx->ctxptr == 0) return false;
+uint16_t getContextTypeLen(CONTEXT_TYPE type) {
+    uint16_t len =  _getContextTypeLen(type);
+    if ( len % 2 != 0 ) len ++;
+    return len;
+}
 
-    ctx->ctxptr -= 1;
+bool removeContext(APP_CONTEXT *ctx) {
+    if (ctx->ctxptr <= 1 ) {
+        if ( ctx->ctxtype != EMPTY ) {
+            ctx->ctxtype = EMPTY;
+            return true;
+        }      
+        return false;
+    }
+    
+    ctx->ctxptr -= 2;
     ctx->ctxtype = ctx->ctxbuffer[ctx->ctxptr];
     ctx->ctxptr -= getContextTypeLen(ctx->ctxtype);
-    memset(ctx->ctxbuffer, 0x00, getContextTypeLen(ctx->ctxtype));
     ctx->rinf = REFRESH;
 
     return true;
 }
 
-bool pushContext(APP_CONTEXT *ctx, CONTEXT_TYPE type) {
-    uint8_t ct = type;
+bool pushContext(APP_CONTEXT *ctx, CONTEXT_TYPE type) {    
     uint16_t len = getContextTypeLen(type);
     uint16_t currlen = getContextTypeLen(ctx->ctxtype);
-
-    if ((ctx->ctxptr + currlen + len + 3) > CTX_BUFFER_SIZE) {
-        ctx->ctxtype = ERROR_CONTEXT;
+    uint8_t ct = ctx->ctxtype;
+    
+    ctx->rinf = REFRESH;   
+    if ((ctx->ctxptr + currlen + len + 2) > CTX_BUFFER_SIZE) {
+        ctx->ctxtype = ERROR_CONTEXT;         
         return false;
     }
 
     ctx->ctxptr += currlen;
     ctx->ctxbuffer[ctx->ctxptr] = ct;
-    ctx->ctxptr += 1;
+    ctx->ctxptr += 2;
     ctx->ctxtype = type;
-    memset(ctx->ctxbuffer, 0x00, len);
-    ctx->rinf = REFRESH;
-
+    memset(ctx->ctxbuffer+ctx->ctxptr, 0x00, len);
+    
     return true;
 }
 
@@ -208,18 +227,98 @@ bool replaceContext(APP_CONTEXT *ctx, CONTEXT_TYPE type) {
     return pushContext(ctx, type);
 }
 
-void setContext(APP_CONTEXT *ctx, CONTEXT_TYPE type) {
+bool setContext(APP_CONTEXT *ctx, CONTEXT_TYPE type) {
     ctx->ctxptr = 0;
+    if  (  ((uint16_t)ctx->ctxbuffer) % 2 != 0 ) ctx->ctxptr++;
+    
+    uint16_t len = getContextTypeLen(type);
+    if ( ctx->ctxptr + len > CTX_BUFFER_SIZE ) {
+        ctx->ctxtype = ERROR_CONTEXT;
+        ctx->rinf = REFRESH;
+        return false;
+    }
+    
+    
     ctx->ctxtype = type;
-    ctx->rinf = REFRESH;
+    ctx->rinf = REFRESH;          
     memset(ctx->ctxbuffer, 0x00, getContextTypeLen(type));
+    
+    return true;
 }
 
 void setInitialContext(APP_CONTEXT* ctx) {
-    ctx->ctxptr = 0;
-    ctx->ctxtype = INITIAL;
-    ctx->rinf = UNCHANGED;
+    setContext(ctx, INITIAL);
 }
+
+
+Keylayout * getCurrentKeyboardKey( IO_CONTEXT *ioctx ) {
+    Keyboardmaps* km = (Keyboardmaps*)&keymaps[ ioctx->kbmap ];    
+    return (Keylayout *)&keylayouts[ioctx->kby*10+ioctx->kbx + km->layoutoff];
+}
+
+
+uint8_t hctxIO( IO_CONTEXT *ioctx ) {
+    
+    if ( ioctx->selarea == 0 ) {
+        //cursor on keyboard
+        
+        if ( isButtonPressed(BUTTON_UP) ) {
+            if ( ioctx->kby > 0 ) {
+                ioctx->okby = ioctx->kby;
+                ioctx->okbx = ioctx->kbx;                
+                ioctx->kby--;
+                ioctx->rinf = ANIMATION;
+            } else {
+                ioctx->rinf = AREASWITCH;
+                ioctx->selarea = 1;
+            }            
+        } else if ( isButtonPressed(BUTTON_DOWN) ) {
+            if ( ioctx->kby < 3 ) {
+                ioctx->okby = ioctx->kby;
+                ioctx->okbx = ioctx->kbx;                                
+                ioctx->kby++;
+                ioctx->rinf = ANIMATION;
+            }
+        } else if ( isButtonPressed(BUTTON_LEFT) ) {
+            Keylayout *k = getCurrentKeyboardKey(ioctx);
+            
+            if ( ioctx->kbx > k->span_neg ) {
+                ioctx->okby = ioctx->kby;
+                ioctx->okbx = ioctx->kbx;                
+                ioctx->kbx -= ( k->span_neg + 1 );
+                ioctx->rinf = ANIMATION;
+            }
+        } else if ( isButtonPressed(BUTTON_RIGHT) ) {
+            Keylayout *k = getCurrentKeyboardKey(ioctx);
+            
+            if ( ioctx->kbx < 9 - k->span_pos ) {
+                ioctx->okby = ioctx->kby;
+                ioctx->okbx = ioctx->kbx;                
+                ioctx->kbx += ( k->span_pos + 1 );
+                ioctx->rinf = ANIMATION;
+            }
+        }
+                
+    } else if ( ioctx->selarea == 1 ) {
+        //cursor in textarea
+        if ( isButtonPressed(BUTTON_DOWN) ) {
+            ioctx->rinf = AREASWITCH;
+            ioctx->selarea = 0;
+        }
+        
+    }
+    
+    if ( ioctx->rinf == ANIMATION || ioctx->rinf == AREASWITCH ) {
+        return 1;
+    }
+      
+/*    } else if ( res == 1 ) {
+        ctx->rinf = IO_UPDATE;      */
+    
+    
+    return 0;
+}
+
 
 void hctxPinInput(APP_CONTEXT* ctx) {
     CTX_PIN_INPUT *sctx;
@@ -244,7 +343,7 @@ void hctxPinInput(APP_CONTEXT* ctx) {
                             //Pin match verification pin, set new pin and go to overview page
                             memcpy(pin, sctx->pin, PIN_SIZE);
                             pinerr = 0;
-                            setContext(ctx, KEY_OVERVIEW);
+                            setContext(ctx, ENTRY_OVERVIEW);
                         } else {
                             //Pin differs from verification pin, retry
                             sctx->error = true;
@@ -263,7 +362,7 @@ void hctxPinInput(APP_CONTEXT* ctx) {
                     if (memcmp(sctx->pin, pin, PIN_SIZE) == 0) {
                         //TODO: Check masterkey integrity
                         pinerr = 0;
-                        setContext(ctx, KEY_OVERVIEW);
+                        setContext(ctx, ENTRY_OVERVIEW);
                     } else {
                         ctx->rinf = REFRESH;
                         sctx->ppos = 0;
@@ -343,12 +442,12 @@ void hctxKeyInput(APP_CONTEXT* ctx) {
         sctx->x = sctx->x < 3 ? sctx->x + 1 : sctx->x;
         ctx->rinf = ANIMATION;
         sctx->error = false;
-    } else if (isButtonPressed(BUTTON_UP)) {
+    } else if (isButtonPressed(BUTTON_DOWN)) {
         //up
         sctx->y = sctx->y < 3 ? sctx->y + 1 : sctx->y;
         ctx->rinf = ANIMATION;
         sctx->error = false;
-    } else if (isButtonPressed(BUTTON_DOWN)) {
+    } else if (isButtonPressed(BUTTON_UP)) {
         //down
         sctx->y = sctx->y > 0 ? sctx->y - 1 : 0;
         ctx->rinf = ANIMATION;
@@ -357,40 +456,35 @@ void hctxKeyInput(APP_CONTEXT* ctx) {
 }
 
 
-
-
-void hctxKeyOverview(APP_CONTEXT* ctx) {
-/*
-    uint8_t newkey[16];
-    
-    if ( isButtonPressed(BUTTON_UP) ) {       
-        memset( newkey, 0x00, 16 );
-        setMasterKey(newkey);
-    } else if ( isButtonPressed(BUTTON_DOWN) ) {    
-        memset( newkey, 0x01, 16 );
-        setMasterKey(newkey);        
-    }   
-
-    if ( isButtonPressed(BUTTON_RIGHT) ) {       
-        int res = createSomeFiles();                      
-        if ( res == 2 ) {
-            setContext(ctx, ERROR_SD_FAILURE);
-        } else if ( res == 1 ) {
-            setContext(ctx, ERROR);
-            CTX_ERROR *sctx;
-            sctx = (CTX_ERROR*) (ctx->ctxbuffer + ctx->ctxptr);            
-            char *msg = "Wrong key";
-            memcpy( sctx->msg, msg, sizeof(msg) );
-        } else {
-            CTX_KEY_OVERVIEW *sctx;
-            sctx = (CTX_KEY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr);
-            sctx->written += 10;
-            ctx->rinf = REFRESH;
+void hctxEntryOverview(APP_CONTEXT* ctx) {
+    if ( isButtonPressed(BUTTON_A) ) {        
+        if ( replaceContext(ctx, NEW_ENTRY ) ) {
+            CTX_NEW_ENTRY *sctx;
+            sctx = (CTX_NEW_ENTRY*) (ctx->ctxbuffer + ctx->ctxptr);
+            sctx->io.type = NEW;
+            sctx->io.rinf = REFRESH;
+            sctx->io.kbmap = DEFAULT_KEYMAP;
+            ctx->rinf = IO_UPDATE;
         }
-    }
- */
-  
+    }     
 }
+
+void hctxNewEntry(APP_CONTEXT* ctx) {
+    CTX_NEW_ENTRY *sctx;
+    sctx = (CTX_NEW_ENTRY*) (ctx->ctxbuffer + ctx->ctxptr);                       
+    
+    uint8_t res = hctxIO( &sctx->io );    
+    if ( res == 0 ) {
+        ctx->rinf = UNCHANGED;
+    } else if ( res == 1 ) {
+        ctx->rinf = IO_UPDATE;        
+    } else if ( res == 2 ) {
+        //Input done                
+    } else if ( res == 3 ) {
+       //Input aborted           
+    }
+}
+
 
 
 void updateContext(APP_CONTEXT* ctx) {
@@ -433,7 +527,7 @@ void updateContext(APP_CONTEXT* ctx) {
             }
                     
             setMasterTestKey( );
-            setContext(ctx, KEY_OVERVIEW);                     
+            setContext(ctx, ENTRY_OVERVIEW);                     
         }
             break;
 
@@ -444,9 +538,12 @@ void updateContext(APP_CONTEXT* ctx) {
         case PIN_INPUT:        
             hctxPinInput(ctx);        
             break;
-        case KEY_OVERVIEW:
-            hctxKeyOverview(ctx);        
+        case ENTRY_OVERVIEW:
+            hctxEntryOverview(ctx);        
             break;
+        case NEW_ENTRY:
+            hctxNewEntry(ctx);        
+            break;            
     }
     
     spi_fat_close(); //Close FAT SPI while handle logic 
