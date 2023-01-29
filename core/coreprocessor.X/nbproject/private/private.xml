@@ -3,7 +3,30 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/ffsystem.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/logic.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/ffconf.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/spi1_types.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/mmc.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/ff.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/drivers/spi_master.c</file>
             <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/logic.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/display_driver.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/spi1_driver.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/drivers/spi_master.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/ff.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/main.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/display_driver.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/spi1_driver.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_ext.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/diskio.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/tmr2.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/system.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/diskio.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/ui.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/buttons.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/pin_manager.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_ext.c</file>
         </group>
     </open-files>
 </project-private>

@@ -10,10 +10,6 @@
          <string>class com.microchip.mcc.mcu16.modules.externalInterrupt.EXTINT</string>
       </entry>
       <entry>
-         <string>FatFs</string>
-         <string>class com.microchip.mcc.fatfs.modules.fatfs.FatFs</string>
-      </entry>
-      <entry>
          <string>ICD</string>
          <string>class com.microchip.mcc.mcu16.systemManager.icd.Icd</string>
       </entry>
@@ -46,10 +42,6 @@
          <string>class com.microchip.mcc.mcu16.systemManager.reset.RESET</string>
       </entry>
       <entry>
-         <string>SD Card (SPI)</string>
-         <string>class com.microchip.mcc.sdcard.modules.sdspi.SDCard</string>
-      </entry>
-      <entry>
          <string>SPI1</string>
          <string>class com.microchip.mcc.foundationservices.mcu16.modules.peripheraldriver.spi_upb.SPI</string>
       </entry>
@@ -62,6 +54,10 @@
          <string>class com.microchip.mcc.mcu16.systemManager.DefaultSystemManagerMcu16</string>
       </entry>
       <entry>
+         <string>TMR1</string>
+         <string>class com.microchip.mcc.mcu16.modules.tmr.TMR</string>
+      </entry>
+      <entry>
          <string>TMR2</string>
          <string>class com.microchip.mcc.mcu16.modules.tmr.TMR</string>
       </entry>
@@ -71,10 +67,8 @@
       </entry>
    </usedClasses>
    <usedLibraries class="java.util.ArrayList">
-      <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.fatfs.FatFsLibrary" version="1.1.0"/>
       <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.mcu16.Mcu16PeripheralLibrary" version="1.171.1"/>
       <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.foundationservices.library.FoundationServicesLibrary" version="0.2.3"/>
-      <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.sdcard.SDCardLibrary" version="1.1.0"/>
    </usedLibraries>
    <tokenMap class="java.util.TreeMap">
       <entry>
@@ -1848,150 +1842,6 @@
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="EXT_INT" registerAlias="INTCON2" settingAlias="INT4EP"/>
          <value>Positive Edge</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="DRIVER_TABLE"/>
-         <value>{number=0, driver=SD Card (SPI), label=DRVA}</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_CODE_PAGE"/>
-         <value>850</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_FS_EXFAT"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_FS_LOCK"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_FS_MINIMIZE"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_FS_NORTC"/>
-         <value>1</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_FS_READONLY"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_FS_REENTRANT"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_FS_RPATH"/>
-         <value>1</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_FS_TIMEOUT"/>
-         <value>1000</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_FS_TINY"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_LFN_BUF"/>
-         <value>255</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_LFN_UNICODE"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_MAX_LFN"/>
-         <value>255</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_MAX_SS"/>
-         <value>512</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_MIN_SS"/>
-         <value>512</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_MULTI_PARTITION"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_NORTC_FIXED_DATE"/>
-         <value>2023-01-05</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_SFN_BUF"/>
-         <value>12</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_STRF_ENCODE"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_STR_VOLUME_ID"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_SYNC_t"/>
-         <value>HANDLE</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_TRUST_FREE_CLUSTER_COUNT"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_TRUST_LAST_ALLOCATED"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_USE_CHMOD"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_USE_EXPAND"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_USE_FASTSEEK"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_USE_FIND"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_USE_FORWARD"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_USE_LABEL"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_USE_LFN"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_USE_MKFS"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_USE_STRFUNC"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="FF_USE_TRIM"/>
-         <value>0</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="GENERATE_DEMO"/>
-         <value>1</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="FatFs" name="UNASSIGNED_DRIVERS"/>
-         <value>{id=Example_Template_Driver}</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="ICD" name="customMasterSlaveViewerEnable"/>
@@ -4323,11 +4173,11 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="Pin Module" name="RC4"/>
-         <value>disabled</value>
+         <value>input</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="Pin Module" name="RC5"/>
-         <value>disabled</value>
+         <value>output</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="Pin Module" name="RC6"/>
@@ -6771,7 +6621,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="Pin Module" registerAlias="CNPU2"/>
-         <value>20608</value>
+         <value>21124</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="Pin Module" registerAlias="CNPU3"/>
@@ -7367,7 +7217,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="Pin Module" registerAlias="CNPU2" settingAlias="CN18PUE"/>
-         <value>disabled</value>
+         <value>enabled</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="Pin Module" registerAlias="CNPU2" settingAlias="CN19PUE"/>
@@ -7395,7 +7245,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="Pin Module" registerAlias="CNPU2" settingAlias="CN25PUE"/>
-         <value>disabled</value>
+         <value>enabled</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="Pin Module" registerAlias="CNPU2" settingAlias="CN26PUE"/>
@@ -8302,50 +8152,6 @@
          <value>disabled</value>
       </entry>
       <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SD Card (SPI)" name="CDEnableKey"/>
-         <value>enabled</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SD Card (SPI)" name="CDPinKey"/>
-         <value>RC4</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SD Card (SPI)" name="CDPolarityKey"/>
-         <value>Active Low</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SD Card (SPI)" name="CSEnableKey"/>
-         <value>enabled</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SD Card (SPI)" name="CSPinKey"/>
-         <value>RC5</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SD Card (SPI)" name="CSPolarityKey"/>
-         <value>Active Low</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SD Card (SPI)" name="ChipDeselect"/>
-         <value>_SetHigh()</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SD Card (SPI)" name="ChipSelect"/>
-         <value>_SetLow()</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SD Card (SPI)" name="WPEnableKey"/>
-         <value>disabled</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SD Card (SPI)" name="WPPinKey"/>
-         <value>RB7</value>
-      </entry>
-      <entry>
-         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SD Card (SPI)" name="WPPolarityKey"/>
-         <value>Active High</value>
-      </entry>
-      <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SPI1" name="CalcSpiClockFrequency"/>
          <value>125.0</value>
       </entry>
@@ -9071,11 +8877,11 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SPIMASTER" name="pubSubSPIMASTERConfigurations"/>
-         <value>1831.1882041336723</value>
+         <value>8111.718888818898</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SPIMASTER" name="pubSubspiSubscriber"/>
-         <value>3301.4592317798174</value>
+         <value>6421.601430318009</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SPIMASTER" name="spiSubscriber"/>
@@ -9087,7 +8893,7 @@
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="SPIMASTER" name="validate"/>
-         <value>0.7696735969304177</value>
+         <value>0.5108909922091603</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.PropertyTokenKey" moduleName="SPIMASTER" name="spiConfigurations%0%dataInputSample"/>
@@ -10354,6 +10160,218 @@
          <value>PLL96DIV2</value>
       </entry>
       <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="T1CK"/>
+         <value>disabled</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="TMR1_TIISRFunction"/>
+         <value>ISR_TMR1_TI</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="TimerFrequency"/>
+         <value>16000000</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="actualPeriod"/>
+         <value>0.01</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="callBackRate"/>
+         <value>0.01</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="clockSourceSelect"/>
+         <value>FOSC/2</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="combinedTimer"/>
+         <value>0</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="customPR"/>
+         <value>624</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="inputMode"/>
+         <value>periodMode</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="localClockFreq"/>
+         <value>16000000</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="maxPeriod"/>
+         <value>1.048576</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="minPeriod"/>
+         <value>0.000032</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="prescaleDivisor"/>
+         <value>256</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="prescaledFreq"/>
+         <value>62500.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="requestedPeriod"/>
+         <value>0.01</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="tickerFactor"/>
+         <value>1</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="timerBitMode"/>
+         <value>16 Bit</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="timerExtPinSelection"/>
+         <value>FALSE</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR1" name="timerMaxCount"/>
+         <value>65535</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TCKPS" alias="1:1"/>
+         <value>0</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TCKPS" alias="1:256"/>
+         <value>3</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TCKPS" alias="1:64"/>
+         <value>2</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TCKPS" alias="1:8"/>
+         <value>1</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TCS" alias="External"/>
+         <value>1</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TCS" alias="FOSC/2"/>
+         <value>0</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TECS" alias="LPRC"/>
+         <value>2</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TECS" alias="SOSC"/>
+         <value>0</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TECS" alias="T1CK"/>
+         <value>1</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TECS" alias="TMRCK"/>
+         <value>3</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TGATE" alias="disabled"/>
+         <value>0</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TGATE" alias="enabled"/>
+         <value>1</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TON" alias="disabled"/>
+         <value>0</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TON" alias="enabled"/>
+         <value>1</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TSIDL" alias="disabled"/>
+         <value>0</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TSIDL" alias="enabled"/>
+         <value>1</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TSYNC" alias="disabled"/>
+         <value>0</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TSYNC" alias="enabled"/>
+         <value>1</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="TMR1" registerAlias="PR"/>
+         <value>624</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="TMR1" registerAlias="TCON"/>
+         <value>32816</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="TMR1" registerAlias="TMR"/>
+         <value>0</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR1" registerAlias="PR" settingAlias="PR"/>
+         <value>624</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TCKPS"/>
+         <value>1:256</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TCS"/>
+         <value>FOSC/2</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TECS"/>
+         <value>SOSC</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TGATE"/>
+         <value>disabled</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TON"/>
+         <value>enabled</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TSIDL"/>
+         <value>disabled</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR1" registerAlias="TCON" settingAlias="TSYNC"/>
+         <value>disabled</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR1" registerAlias="TI" settingAlias="context"/>
+         <value>OFF</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR1" registerAlias="TI" settingAlias="enable"/>
+         <value>enabled</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR1" registerAlias="TI" settingAlias="flag"/>
+         <value>disabled</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR1" registerAlias="TI" settingAlias="priority"/>
+         <value>1</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR1" registerAlias="TMR" settingAlias="TMR"/>
+         <value>0</value>
+      </entry>
+      <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="TMR2" name="T2CK"/>
          <value>disabled</value>
       </entry>
@@ -10624,48 +10642,32 @@
    </tokenMap>
    <generatedFileHashHistoryMap class="java.util.HashMap">
       <entry>
-         <file>mcc_generated_files\ext_int.c</file>
-         <hash>02d84d6f3926e24ad7003421e896cd3ede3205353184f36a40deafd7c959014a</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\interrupt_manager.h</file>
          <hash>147448582b659aa7abf6527a4b51ef7ca4e6f736fdd8389d0cb92eb99fb04e41</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\fatfs\ffsystem.c</file>
-         <hash>9abd55ef008afed7a5330d4d276ea41b89a27933e7fef613c5a05671c577ee15</hash>
+         <file>mcc_generated_files\ext_int.c</file>
+         <hash>02d84d6f3926e24ad7003421e896cd3ede3205353184f36a40deafd7c959014a</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\spi1_driver.c</file>
          <hash>a7e8ec02ae1932c961a43c23cdd2c1bb83a880aa6ab2333ad18ea6085686a4b2</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\sd_spi\sd_spi.h</file>
-         <hash>7bf2730d6b6763db5ad7ebae1942ca6da4b857f9e1f47c16ec741625edf077ba</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files\fatfs\fatfs_demo.h</file>
-         <hash>60b79d81ea7104386259b44bbbcf5c9439e625ba9c4cd7afc72490a9366d2dc3</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\spi1_driver.h</file>
          <hash>26f91dac2c2a49852fb5a266d9f8e358cb34c7319688687a11e40aee30c46f66</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files\sd_spi\sd_spi.c</file>
-         <hash>d2df768ac5d2b5e239cdb59422592371d82993a743cd787a5ace2a350425dfa4</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\drivers\spi_master.c</file>
          <hash>321ce8f2e7c9c80962905bc6393e7309c3773533cc88f84882e3012facb00bdb</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\adc_module_features.h</file>
-         <hash>69914b0e980f242140d53d3cb246d759567631976ff5d27c189950c097af60cc</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\drivers\spi_master.h</file>
          <hash>1094ca1341b1ed212e91c8f001514f7c1caff35358b880735409ddb98e3f2b7c</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files\adc_module_features.h</file>
+         <hash>69914b0e980f242140d53d3cb246d759567631976ff5d27c189950c097af60cc</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\system.h</file>
@@ -10673,19 +10675,15 @@
       </entry>
       <entry>
          <file>mcc_generated_files\system.c</file>
-         <hash>accf8b8e541d59dcce9c836e34b83c8426e4091f1334c968a3b508bd06d0e028</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files\clock.h</file>
-         <hash>55a71db46b7c65e0695228bc69b4eab6ca2279489152649997cadcf5dd6ed2cf</hash>
+         <hash>9cf95ae9827f245e73c69d5468925769c8b81d80f0a17145803828874b5bbde9</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\docs\spi.dox</file>
          <hash>518908892e2d8bc846cfc4b846e70d96c4f59fab7dbddc55fadee679aeaa9697</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\fatfs\fatfs_demo.c</file>
-         <hash>bc61bc71d20382e6d0ab4f3f9848060da84083d63df5279a52add307dd2d93c2</hash>
+         <file>mcc_generated_files\clock.h</file>
+         <hash>55a71db46b7c65e0695228bc69b4eab6ca2279489152649997cadcf5dd6ed2cf</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\mcc.c</file>
@@ -10697,23 +10695,15 @@
       </entry>
       <entry>
          <file>mcc_generated_files\mcc.h</file>
-         <hash>97c756602962e23850eb5f3c91e7c955cc8e44dce216c5f16c4e5feebc79e1a0</hash>
+         <hash>1b638ea5a2b942dccfaba5deb98ee4ba496a9f5ab727ec3bd9934fbab616e874</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\fatfs\ff.h</file>
-         <hash>7b2cc1676a4968ffecb11fbcc3d318ab8aa32046e5667db76dfb99fd58bef2a4</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files\fatfs\ff.c</file>
-         <hash>cdc61ee4b01c6e3eb1da72d30a51f0d8a52d6c0af78d4aeb025e66fcfcc95bfb</hash>
+         <file>mcc_generated_files\tmr1.h</file>
+         <hash>d89fe26e0a802b9e74ea305ee3375bb19c7bc05bedb7727c45e222fcb2fe2d4c</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\clock.c</file>
          <hash>7fa3716e5623c2919ca8a7f5520090af13071c4df014a5dee7bb058fc674a92a</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files\fatfs\ffconf.h</file>
-         <hash>b8ebc82256a6c060dcbd5740faef622a2b4065cccdfbf0763fa29f0de769c5b0</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\adc1.c</file>
@@ -10721,35 +10711,35 @@
       </entry>
       <entry>
          <file>main.c</file>
-         <hash>fc3b85aae60cb60a665d9d905eafa8258c8b90cdd0ef6a280549b2fc29dc67ba</hash>
+         <hash>4b0c7a10581c904b3aba1e573c560601e1f40abd1b55da63adba7864e374d3be</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\tmr2.h</file>
          <hash>21b307cfcdc831057d9d10c9f5a94af5c414648329d8c157b8a209b1e42acdcd</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\tmr2.c</file>
-         <hash>a003ea24d572c25c9eecdce7f4db2ffbce0b5bc2f2cbf7277397e7a969aec642</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\pin_manager.h</file>
          <hash>d0eb57b093bbb478d32071625727f92b824f3a976ab1e8ad910e05e1abcc8257</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\oc1.h</file>
-         <hash>06bab6ba03a67d9d1ccd514d9b613b67f0e136917eca996f28d7992eaacae580</hash>
+         <file>mcc_generated_files\tmr2.c</file>
+         <hash>a003ea24d572c25c9eecdce7f4db2ffbce0b5bc2f2cbf7277397e7a969aec642</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files\tmr1.c</file>
+         <hash>6f11f62762bba5c531d8ea886cb7926a1e99858a8d258e3906953f897d93ec5f</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\spi1_types.h</file>
          <hash>9194b198aaa2decbbce5209bea0428ead65d67e1bdacb103b84b32cf1672717c</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\pin_manager.c</file>
-         <hash>783cd2df31ac247b8b94d2b625aca3d373c0ea9131496070d01c827e5a915b61</hash>
+         <file>mcc_generated_files\oc1.h</file>
+         <hash>06bab6ba03a67d9d1ccd514d9b613b67f0e136917eca996f28d7992eaacae580</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\fatfs\diskio.c</file>
-         <hash>15fe9b6a3cf4ba1d9fb8f8d312b983a9d708a987cf0be0eca0f289be427e6d13</hash>
+         <file>mcc_generated_files\pin_manager.c</file>
+         <hash>262de35d42b0d371e29bdc91702d529cd0aba8f2b7b16d26ad89d660f73a030e</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\traps.c</file>
@@ -10764,28 +10754,16 @@
          <hash>45684ce9391ba3f17bdd7b647f394a27db0aaf9d62ea1ee2c4d0fcda8a31d642</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\fatfs\ffunicode.c</file>
-         <hash>37b594b653b0e5c6fbf25428ccb56240e5c8149d786a22d0b74f17d8fd936341</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files\fatfs\integer.h</file>
-         <hash>a2f4450985098bc47c270a2df95779dd88787a3fbac90e2ae5e6bb916296e707</hash>
-      </entry>
-      <entry>
          <file>mcc_generated_files\adc1.h</file>
          <hash>6ec25fa2fa78449531ade31a21d74bc286dff7c73e5d902f8f9c5a15d1602ec7</hash>
       </entry>
       <entry>
-         <file>mcc_generated_files\fatfs\diskio.h</file>
-         <hash>eb1ef7b2ae900e5fa80c78b674723ef3227b26209a17a4006cc2c96d89c09823</hash>
+         <file>mcc_generated_files\interrupt_manager.c</file>
+         <hash>0c77de676a669a161fbfdaf7c11dbb275c61946b63822724814c6c71d81d5e45</hash>
       </entry>
       <entry>
          <file>mcc_generated_files\ext_int.h</file>
          <hash>80579270747f7a4a5d88ef0bfece89903af1b8e708ceefa3c041911ed6d2f96f</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files\interrupt_manager.c</file>
-         <hash>85bbb798a9fccd01205a37a5c57b3156921c494c6dc78f215d436d9a35bd2ed1</hash>
       </entry>
    </generatedFileHashHistoryMap>
 </config>

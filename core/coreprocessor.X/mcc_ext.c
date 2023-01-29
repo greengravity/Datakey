@@ -15,16 +15,18 @@
 #include "mcc_ext.h"
 #include "mcc_generated_files/system.h" 
 #include "mcc_generated_files/spi1_driver.h"
-#include "mcc_generated_files/fatfs/ff.h"
 #include "mcc_generated_files/pin_manager.h"
 #include "mcc_generated_files/ext_int.h"
 #include "mcc_generated_files/adc1.h"
 #include "mcc_generated_files/tmr2.h"
 #include "mcc_generated_files/oc1.h"
 
+#include "fs/ff.h"
+#include "fs/diskio.h"
 #include "logic.h"
 #include "display_driver.h"
 #include "buttons.h"
+
 
 // ********** Standard functions *******
 void disableVoltPower() {
@@ -34,6 +36,20 @@ void disableVoltPower() {
 void enableVoltPower() {
     VOLT_PWR_SetDigitalOutput();
     VOLT_PWR_SetLow();
+}
+
+void mountFS( APP_CONTEXT *ctx ) {
+    
+    if (f_mount(&ctx->drive,"0:",1) == FR_OK) {
+        ctx->fsmounted = true;
+        return;
+    }    
+    ctx->fsmounted = false;
+}
+
+void unmountFS( APP_CONTEXT *ctx ) {
+    ctx->fsmounted = false;
+    f_mount(0,"0:",0);
 }
 
 
@@ -47,11 +63,15 @@ void bootPeripherals(APP_CONTEXT *ctx) {
     RS_D_SetHigh();
     
     __delay_ms(150);
-
+    
+    spi_fat_open(); 
+    mountFS(ctx);
+    spi_fat_close();
+        
     spi1_open(DISPLAY_CONFIG);
     dispStart();
     spi1_close();
-      
+          
     ADC1_ChannelSelect(VOLT_READ);
     ADC1_Enable();
     //ADC1_SoftwareTriggerDisable();
@@ -62,7 +82,7 @@ void bootPeripherals(APP_CONTEXT *ctx) {
 }
 
 void shutdownPeripherals(APP_CONTEXT *ctx) {
-    if ( ctx->fsmounted ) {
+/*    if ( ctx->fsmounted ) {
         //evtl. close file and unmount drive to prevent dataloss
         fs_resume();
         
@@ -72,20 +92,24 @@ void shutdownPeripherals(APP_CONTEXT *ctx) {
         }        
         f_mount(0,"0:",0);
         ctx->fsmounted = false;                            
-    }
+    } */
     
-    spi1_close();
+    spi_fat_open();    
+    unmountFS(ctx);    
+    spi_fat_close();
+    
     SDCard_CS_SetLow();
     CS_D_SetLow();
     RS_D_SetLow();
     RES_D_SetLow();
+    PER_PWR_SetHigh(); //Unpower Peripherie    
+    
     OC1_Stop();
     _LATB2=1; //OC1 Pin set to high 
-
+        
     TMR2_Stop();
     CRYCONLbits.CRYON = 0;
-    
-    PER_PWR_SetHigh(); //Unpower Peripherie    
+        
     disableVoltPower();
     ADC1_Disable();    //Stop Analogconverter    
 }

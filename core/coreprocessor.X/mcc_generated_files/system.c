@@ -89,25 +89,25 @@
 #include "pin_manager.h"
 #include "clock.h"
 #include "system.h"
-#include "fatfs/ff.h"
-#include "adc1.h"
-#include "oc1.h"
-#include "ext_int.h"
+#include "drivers/spi_master.h"
+#include "tmr1.h"
+#include "tmr2.h"
 #include "spi1_driver.h"
+#include "adc1.h"
 #include "interrupt_manager.h"
 #include "traps.h"
-#include "sd_spi/sd_spi.h"
-#include "drivers/spi_master.h"
-#include "tmr2.h"
+#include "oc1.h"
+#include "ext_int.h"
 
 void SYSTEM_Initialize(void)
 {
     PIN_MANAGER_Initialize();
-    CLOCK_Initialize();
     INTERRUPT_Initialize();
+    CLOCK_Initialize();
     ADC1_Initialize();
     OC1_Initialize();
     TMR2_Initialize();
+    TMR1_Initialize();
     EXT_INT_Initialize();
 }
 

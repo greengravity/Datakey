@@ -154,6 +154,11 @@ void rndKeyOverview(APP_CONTEXT* ctx) {
         clearScreen(COLOR_BLACK);
         locate(0, 0);
         cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_TEST ]));
+        
+        locate( 0,20 );
+        char text[20];
+        sprintf(text, "%u", (unsigned int)sctx->written );
+        writeText( text );           
     }
 }
 

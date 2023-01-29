@@ -12,16 +12,17 @@
 
 #include "mcc_ext.h"
 #include "mcc_generated_files/system.h"
-#include "mcc_generated_files/fatfs/fatfs_demo.h"
 #include "mcc_generated_files/pin_manager.h"
 #include "mcc_generated_files/spi1_driver.h"
 #include "mcc_generated_files/oc1.h"
 #include "mcc_generated_files/spi1_driver.h"
 #include "mcc_generated_files/spi1_types.h"
 #include "mcc_generated_files/adc1.h"
-#include "mcc_generated_files/fatfs/ff.h"
 #include "mcc_generated_files/ext_int.h"
 #include "mcc_generated_files/interrupt_manager.h"
+
+#include "fs/diskio.h"
+#include "fs/ff.h"
 
 /*#include "usb/usb.h"
 #include "usb/usb_device_hid.h"
@@ -48,6 +49,11 @@ void setMasterKey(uint8_t *key) {
     memcpy(masterkey, key, 16);
 }
 
+void setMasterTestKey( ) {
+    uint8_t testkey[16] = {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f};        
+    setMasterKey(testkey);    
+}
+
 uint8_t* getMasterKey() {
     return masterkey;
 }
@@ -66,55 +72,52 @@ uint8_t verifyMasterKey() {
     uint8_t cipher[16];            
     uint8_t iv[16];
 
-    FATFS drive;
     FIL file;
     FILINFO fno;
     
     uint8_t result = 0;
-    bool writenewfile = false;
     
-    if (f_mount(&drive,"0:",1) == FR_OK)
-    {                                 
-        if ( f_stat( "VERIFY", &fno ) == FR_OK && f_open(&file, "VERIFY", FA_READ ) == FR_OK ) {                        
-            if ( f_read(&file, data,48, &rwbytes) == FR_OK && rwbytes == 48 ) {
-                memset(&iv, 0x00, 16);
+    if ( f_stat( "VERIFY", &fno ) == FR_OK && f_open(&file, "VERIFY", FA_READ ) == FR_OK ) {                        
+        if ( f_read(&file, data,48, &rwbytes) == FR_OK && rwbytes == 48 ) {
+            memset(&iv, 0x00, 16);
 
-                //decode data
-                prepareAES128BitCBC();                    
-                prepare128bitDecryption( iv );
+            //decode data
+            prepareAES128BitCBC();                    
+            prepare128bitDecryption( iv );
 
-                for (int i=0;i<3;i++) {
-                    decrypt128bit( data+(i*16), cipher );
-                    memcpy( data+(i*16), cipher, 16 );
-                }                    
+            for (int i=0;i<3;i++) {
+                decrypt128bit( data+(i*16), cipher );
+                memcpy( data+(i*16), cipher, 16 );
+            }                    
 
-                for (int i=0;i<16;i++) {
-                   cipher[i] = data[i] ^ data[i+16];                       
-                }
-                if ( memcmp( data+32, cipher, 16 ) == 0 ) {
-                    result = 0;
-                } else {
-                    result = 1;
-                }      
+            for (int i=0;i<16;i++) {
+               cipher[i] = data[i] ^ data[i+16];                       
+            }
+            if ( memcmp( data+32, cipher, 16 ) == 0 ) {
+                result = 0;
             } else {
-                result = 2;
-            }                                                
-        } else if ( f_open(&file, "VERIFY", FA_WRITE | FA_CREATE_ALWAYS ) == FR_OK ) {
-            writenewfile = true;
+                result = 1;
+            }      
         } else {
             result = 2;
-        }
+        }                                                
+    } else {
+/*        
+        if ( f_stat("KS", &fno) != FR_OK ) {
+            //create Keystore directory if not exits
+            f_mkdir( "KS" );                            
+        } 
+*/
+        if ( f_open(&file, "VERIFY", FA_WRITE | FA_CREATE_ALWAYS ) == FR_OK ) {
         
-
-        if ( writenewfile ) {            
-            //generate 2 random blocks and an additional xored blocks
+            //create new verifikation file
             generateRND(data);
             generateRND(data+16);
             for (int i=0;i<16;i++) {
                 data[i+32] = data[i] ^ data[i+16];
                 iv[i] = 0x00;
             }
-            
+
             //encrypt all 3 blocks
             prepareAES128BitCBC();            
             prepare128bitEncryption( iv );
@@ -123,20 +126,32 @@ uint8_t verifyMasterKey() {
                 encrypt128bit( data+(i*16), cipher );
                 memcpy( data+(i*16), cipher, 16 );
             }
-            
+
             endEncryption( );
-            
+
             //after encryption, the 3rd block should only calculate right if the correct key is used
-            if ( f_write(&file, data, 48, &rwbytes) == FR_OK && rwbytes == 48 ) {
-                f_sync(&file);
+            if ( f_write(&file, data, 48, &rwbytes) == FR_OK && rwbytes == 48 ) {               
                 result = 0;
             } else {
                 result = 2;   
-            }   
-        }
-        
-        f_mount(0,"0:",0);
+            }  
+            f_close(&file);
+        } else {
+            result = 2;
+        }        
     }
+       
+    if ( result ==  0 ) {
+        if ( f_stat("KS", &fno) != FR_OK ) {
+            //create Keystore directory if not exits
+            f_mkdir( "KS" );
+            if ( f_stat("KS", &fno) == FR_OK && ( fno.fattrib & AM_DIR ) ) {
+                result = 0;
+            } else {
+                result = 2;
+            }
+        }
+    } 
     
     return result;
 }
@@ -342,7 +357,10 @@ void hctxKeyInput(APP_CONTEXT* ctx) {
 }
 
 
+
+
 void hctxKeyOverview(APP_CONTEXT* ctx) {
+/*
     uint8_t newkey[16];
     
     if ( isButtonPressed(BUTTON_UP) ) {       
@@ -354,7 +372,7 @@ void hctxKeyOverview(APP_CONTEXT* ctx) {
     }   
 
     if ( isButtonPressed(BUTTON_RIGHT) ) {       
-        int res = verifyMasterKey();
+        int res = createSomeFiles();                      
         if ( res == 2 ) {
             setContext(ctx, ERROR_SD_FAILURE);
         } else if ( res == 1 ) {
@@ -363,8 +381,15 @@ void hctxKeyOverview(APP_CONTEXT* ctx) {
             sctx = (CTX_ERROR*) (ctx->ctxbuffer + ctx->ctxptr);            
             char *msg = "Wrong key";
             memcpy( sctx->msg, msg, sizeof(msg) );
+        } else {
+            CTX_KEY_OVERVIEW *sctx;
+            sctx = (CTX_KEY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr);
+            sctx->written += 10;
+            ctx->rinf = REFRESH;
         }
     }
+ */
+  
 }
 
 
@@ -373,23 +398,27 @@ void updateContext(APP_CONTEXT* ctx) {
     if (SENSE_CASE_GetValue()) {
         // Sleep
         setSleep(ctx);
+        if ( !ctx->fsmounted ) {
+            setContext(ctx, ERROR_SD_CD);
+        }
     }
+    
+    
+    spi_fat_open(); //Open FAT SPI while handle logic 
+    
     if (SDCard_CD_GetValue()) {
         //SD-Card removed       
         if (ctx->ctxtype != ERROR_SD_CD) {
             ctx->fsmounted = false;
-            ctx->fileopen = false;
             setContext(ctx, ERROR_SD_CD);
         }
     } else {
         //SD-Card inserted
         if (ctx->ctxtype == ERROR_SD_CD) {
-            setContext(ctx, INITIAL);
-        } else {
+            mountFS( ctx );
             if ( ctx->fsmounted ) {
-                //in case of open drive/file resume filesystem from suspend
-                fs_resume();
-            }            
+                setContext(ctx, INITIAL);
+            }
         }
     }
 
@@ -402,13 +431,9 @@ void updateContext(APP_CONTEXT* ctx) {
             } else {
                 setContext(ctx, KEY_INPUT);
             }
-            
-            
-            
-            
-            setContext(ctx, KEY_OVERVIEW);
-            
-         
+                    
+            setMasterTestKey( );
+            setContext(ctx, KEY_OVERVIEW);                     
         }
             break;
 
@@ -424,7 +449,9 @@ void updateContext(APP_CONTEXT* ctx) {
             break;
     }
     
+    spi_fat_close(); //Close FAT SPI while handle logic 
     
+    /*
     if ( ctx->fsmounted ) {
         //in case of open drive/file set filesystem to suspend
         if ( ctx->fileopen ) {
@@ -432,7 +459,8 @@ void updateContext(APP_CONTEXT* ctx) {
         } else {
             fs_standby( );
         }        
-    }            
+    } 
+    */           
 }
 
 
