@@ -13,6 +13,118 @@
 #include "mcc_generated_files/spi1_driver.h"
 
 
+void rndDrawKeylayoutContent( Keylayout *k, uint8_t x, uint8_t y, uint8_t yoff ) {
+    
+    if ( k->fkt == KEYCOMMAND_CHAR ) {                    
+        GFXChar ch = gfxchars[ k->id ];
+        int8_t xoff = ( ( ( ( k->span_pos + 1 ) * 16 ) - ch.xadv ) / 2 ) + 1;
+        if ( xoff < 0 ) xoff = 0;
+        locate( x * 16 + xoff, yoff+ y*16+1 );
+        writeChars(&ch, 1);
+    } else {
+        uint16_t icon = 0; 
+        if ( k->fkt == KEYCOMMAND_SPACE ) {
+            icon = SYSICON_SPACE;            
+        } else if ( k->fkt == KEYCOMMAND_DEL ) {
+            icon = SYSICON_DELETE;
+        } else if ( k->fkt == KEYCOMMAND_OK ) {
+            icon = SYSICON_OK;
+        } else if ( k->fkt == KEYCOMMAND_BACK ) {
+            //no icon        
+        } else if ( k->fkt == KEYCOMMAND_LF ) {
+            icon = SYSICON_ENTER;
+        }    
+        
+        if ( icon ) {
+            int8_t xoff = ( ( ( ( k->span_pos + 1 ) * 16 ) - bitmaps[icon].width ) / 2 ) + 1;
+            if ( xoff < 0 ) xoff = 0;
+            
+            drawImage( x * 16 + xoff, yoff+ y*16+1, &bitmaps[icon] );
+        }
+    }             
+}
+
+
+void rndIOKBMap( Keyboardmaps* kmap ) {    
+    int16_t yoff = (DISPLAY_HEIGHT - 16 * 4) - 1;    
+            
+    for (uint8_t y=0;y<5;y++ ) {
+        drawFastHLine(0,yoff+y*16, DISPLAY_WIDTH, COLOR_GRAY);
+    }
+    
+    for (uint8_t y=0;y<4;y++) {
+        for (uint8_t x=0;x<10;x++) {
+            Keylayout *k = (Keylayout *)&keylayouts[y*10+x + kmap->layoutoff];
+            if ( k->span_neg == 0 ) {
+                rndDrawKeylayoutContent(k, x, y, yoff );                         
+                drawFastVLine(( x + k->span_pos + 1 ) * 16,yoff+y*16, 16, COLOR_GRAY);                
+            }
+        }           
+    }
+    
+    drawFastVLine(0, yoff, 64, COLOR_GRAY);
+}
+
+void highlightKeyboardKey( uint8_t x, uint8_t y, Keyboardmaps* km, uint16_t color ) {
+    int16_t yoff = ( (DISPLAY_HEIGHT - 16 * 4) - 1 ) + ( y * 16 );    
+
+    Keylayout *kl = (Keylayout *)&keylayouts[y*10+x + km->layoutoff];
+    
+    uint8_t xoff = ( x - kl->span_neg ) * 16; 
+
+    drawRect( xoff, yoff, 16 * ( kl->span_neg + kl->span_pos + 1 ), 16, color );
+} 
+
+
+void rndIO(IO_CONTEXT *ioctx) {
+    Keyboardmaps* km = (Keyboardmaps*)&keymaps[ ioctx->kbmap ];
+    switch ( ioctx->rinf ) {
+        case REFRESH:
+            clearScreen(COLOR_BLACK);
+            
+            locate(0,0);               
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ token_configs[ioctx->type].textid ]));
+            drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);
+            locate(0,17);
+            cWriteTextIntern( (const uint8_t*) (textdata + texte[ TEXT_TEST ]) );
+            locate(0,32);
+            cWriteTextIntern( (const uint8_t*) (textdata + texte[ TEXT_TEST ]) );
+            locate(0,47);
+            cWriteTextIntern( (const uint8_t*) (textdata + texte[ TEXT_TEST ]) );
+                       
+            rndIOKBMap( km );
+            if ( ioctx->selarea == 0 ) {
+                highlightKeyboardKey( ioctx->kbx, ioctx->kby, km, COLOR_BLUE );
+            }
+            break;
+        case ANIMATION:
+            if ( ioctx->selarea == 0 ) {
+                highlightKeyboardKey( ioctx->okbx, ioctx->okby, km, COLOR_GRAY );                
+                highlightKeyboardKey( ioctx->kbx,  ioctx->kby, km, COLOR_BLUE );                
+            } else {
+                
+            }
+            break;
+        case AREASWITCH:
+            if ( ioctx->selarea == 0 ) {
+                //switched to keyboardarea
+                drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);
+                drawFastHLine(0,(DISPLAY_HEIGHT - 16 * 4) - 1, DISPLAY_WIDTH, COLOR_GRAY);
+                highlightKeyboardKey( ioctx->kbx,  ioctx->kby, km, COLOR_BLUE );                
+            } else {
+                //switched to textarea
+                highlightKeyboardKey( ioctx->kbx, ioctx->kby, km, COLOR_GRAY );     
+                drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_BLUE);
+                drawFastHLine(0,(DISPLAY_HEIGHT - 16 * 4) - 1, DISPLAY_WIDTH, COLOR_BLUE);                
+            }
+            break;
+        default:
+            break;
+    }
+    
+    ioctx->rinf = UNCHANGED;
+}
+
 void rndKeyInput(APP_CONTEXT* ctx) {
     CTX_KEY_INPUT *sctx;
     sctx = (CTX_KEY_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
@@ -146,19 +258,24 @@ void rndPinInput(APP_CONTEXT* ctx) {
 
 }
 
-void rndKeyOverview(APP_CONTEXT* ctx) {
-    CTX_KEY_OVERVIEW *sctx;
-    sctx = (CTX_KEY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr);
+void rndEntryOverview(APP_CONTEXT* ctx) {
+    CTX_ENTRY_OVERVIEW *sctx;
+    sctx = (CTX_ENTRY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr);
 
     if (ctx->rinf == REFRESH) {
         clearScreen(COLOR_BLACK);
         locate(0, 0);
         cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_TEST ]));
-        
-        locate( 0,20 );
-        char text[20];
-        sprintf(text, "%u", (unsigned int)sctx->written );
-        writeText( text );           
+                       
+    }
+}
+
+void rndNewEntry(APP_CONTEXT* ctx) {
+    CTX_NEW_ENTRY *sctx;
+    sctx = (CTX_NEW_ENTRY*) (ctx->ctxbuffer + ctx->ctxptr);
+
+    if (ctx->rinf == IO_UPDATE) {
+        rndIO( &sctx->io );
     }
 }
 
@@ -180,9 +297,13 @@ void renderUI(APP_CONTEXT* ctx) {
         case PIN_INPUT:
             rndPinInput(ctx);
             break;
-        case KEY_OVERVIEW:
-            rndKeyOverview(ctx);
+        case ENTRY_OVERVIEW:
+            rndEntryOverview(ctx);
             break;
+        case NEW_ENTRY:
+            rndNewEntry(ctx);
+            break;
+            
         case ERROR:
             rndError(ctx);
         case ERROR_CONTEXT:

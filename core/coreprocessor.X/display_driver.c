@@ -300,7 +300,7 @@ void dispStart( ) {
   dispInit(Rcmd3);
   dispSetRotation( 1 );  
   
-  clearScreen(ST7735_BLACK);
+  clearScreen(COLOR_BLACK);
   
   OC1_SecondaryValueSet(OC1_TOPVALUE);
   dispSetBrightness(100);
@@ -491,10 +491,10 @@ uint8_t unicodeLookup(uint16_t ct) {
         uint8_t offs = ( high - low ) / 2;
         if ( unicodes[ offs ].uccp > ct ) {
             high = offs - 1;            
-            if ( low > high ) return ENCODING_ERROR_CHAR;
+            if ( low > high ) return CHAR_ENCODEERR;
         } else if ( unicodes[ offs ].uccp < ct ) {
             low = offs + 1;
-            if ( low > high ) return ENCODING_ERROR_CHAR;
+            if ( low > high ) return CHAR_ENCODEERR;
         } else return unicodes[ offs ].cid;
     }           
 }
@@ -518,7 +518,7 @@ uint8_t getLocationY() {
 void unwriteChars( const GFXChar *chars, uint16_t len ) {
 
     for (uint16_t i=0;i<len;i++ ) {
-        if ( ( _charx + chars[i].xadv ) > ST7735_TFTWIDTH ) {
+        if ( ( _charx + chars[i].xadv ) > DISPLAY_WIDTH ) {
             _charx = 0;
             _chary += CHAR_HEIGHT;
         }
@@ -530,7 +530,7 @@ void unwriteChars( const GFXChar *chars, uint16_t len ) {
 
 void writeChars( const GFXChar *chars, uint16_t len ) {    
     for (uint16_t i=0;i<len;i++ ) {
-        if ( ( _charx + chars[i].xadv ) > ST7735_TFTWIDTH ) {
+        if ( ( _charx + chars[i].xadv ) > DISPLAY_WIDTH ) {
             _charx = 0;
             _chary += CHAR_HEIGHT;
         }
@@ -555,13 +555,12 @@ void writeTextIntern( uint8_t *text ) {
     }
 }
 
-
 //Writing possible Characters from ASCII Codepage
 void cWriteText( const char *text ) {
     
     uint16_t len = strlen( text );
     for ( uint16_t i=0;i<len;i++) {
-        uint16_t ct = (uint16_t)text[i];        
+        uint16_t ct = (uint16_t)text[i];      
         writeChars( &gfxchars[ unicodeLookup(ct) ], 1 );
     }    
 }

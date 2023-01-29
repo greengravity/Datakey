@@ -1,5 +1,5 @@
 {
-    "texte": [
+    "texte": [        
         { "name":"ERROR_CONTEXT", "text": "Fehler, context memory overflow" },
         { "name":"ERROR_SD_CD", "text": "Bitte zuerst SD-Karte einfügen" },
         { "name":"ERROR_SD_FAILURE", "text": "Fehler, SD-Karte kann nicht gelesen werden" },
@@ -9,7 +9,13 @@
         { "name":"ENTER_NEW_PIN2", "text": "Pin verifizieren:" },
         { "name":"ENTER_NEW_PIN_ERROR", "text": "Pin1 ungleich Pin2!!!" },
         { "name":"ENTER_NEW_KEY", "text": "Masterkey eingeben:" },
-        { "name":"ENTER_NEW_KEY_ERROR", "text": "Masterkey falsch!" }
+        { "name":"ENTER_NEW_KEY_ERROR", "text": "Masterkey falsch!" },
+        { "name":"IOHEAD_NEW", "text": "Neuer Eintrag" },
+        { "name":"IOHEAD_NAME", "text": "Name eingeben" },
+        { "name":"IOHEAD_URL", "text": "Url eingeben" },     
+        { "name":"IOHEAD_KEY", "text": "Key eingeben" },
+        { "name":"IOHEAD_KEY2", "text": "Key2 eingeben" },
+        { "name":"IOHEAD_INFO", "text": "Info eingeben" }
     ],
     "hexchars": "0123456789abcdef"
 }

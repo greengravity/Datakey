@@ -18,44 +18,24 @@ uint32_t lastupdate = 0x00;
 bool readButtonDown(uint8_t button) {
 
     if (button == BUTTON_LEFT) {
-        return !BTN2_GetValue();
+        return BUTTON_LEFT_READ;
     }
-    if (button == BUTTON_UP) {
-        return !BTN1_GetValue();
+    if (button == BUTTON_UP) {        
+        return BUTTON_UP_READ;
     }
     if (button == BUTTON_RIGHT) {
-        return !BTN5_GetValue();
+        return BUTTON_RIGHT_READ;
     }
-    if (button == BUTTON_DOWN) {
-        return !BTN3_GetValue();
+    if (button == BUTTON_DOWN) {        
+        return BUTTON_DOWN_READ;        
     }
     if (button == BUTTON_A) {
-        return !BTN4_GetValue();
+        return BUTTON_A_READ;       
     }
     if (button == BUTTON_B) {
-        return !BTN6_GetValue();
+        return BUTTON_B_READ;       
     }
 
-    
-/*    if (button == BUTTON_LEFT) {
-        return !BTN1_GetValue();
-    }
-    if (button == BUTTON_UP) {
-        return !BTN2_GetValue();
-    }
-    if (button == BUTTON_RIGHT) {
-        return !BTN3_GetValue();
-    }
-    if (button == BUTTON_DOWN) {
-        return !BTN4_GetValue();
-    }
-    if (button == BUTTON_A) {
-        return !BTN5_GetValue();
-    }
-    if (button == BUTTON_B) {
-        return !BTN6_GetValue();
-    }    
-*/    
     return false;
 }
 

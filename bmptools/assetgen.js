@@ -271,10 +271,15 @@ Promise.all(readpromises).then((values) => {
     outdatac.push(binline)
   })
 
+  //Add an empty icon at position 0 to assign to dummy chars like linefeed and zero
+  icons.unshift({ name:"EMPTY", width:0, height:0 })
 
+  encodeerr_imgid = 0;
   icons.forEach((icon, index) => {
     icon.imgid = imgcount
     imgcount++
+
+    if ( icon.name === "encodeerr" ) { encodeerr_imgid = imgcount }
 
     imglist.push({
       color : icon.color,
@@ -320,15 +325,15 @@ Promise.all(readpromises).then((values) => {
 
   outdatac.push('const GFXChar gfxchars[] = ')
   outdatac.push('{')
-  charlist.unshift( { imgid: 0, xoffset:0, xadvance:0, id:0, charval: "zero" } ) //dummy zero Character for zero terminated strings'
+
+  charlist.unshift( { imgid: encodeerr_imgid, xoffset:0, xadvance:15, id:65533, charval: "encodeerr" } ) //Encode error character'
+  charlist.unshift( { imgid: 0, xoffset:0, xadvance:0, id:10, charval: "linefeed" } ) //linefeed character'
+  charlist.unshift( { imgid: 0, xoffset:0, xadvance:0, id:0, charval: "zero" } ) //dummy zero character for zero terminated strings'
   
-  let enc_error_char = 0
   charlist.forEach((ch, index, arr) => {
     ch.charid = index
     let betweenkomma = (index < (arr.length - 1) ? ',' : '')
     outdatac.push('  ' + '{ ' + ch.imgid + ',' + ch.xoffset + ', ' + ch.xadvance + ', ' + ch.id + ' }' + betweenkomma + ' // ' + escapeOutCharval( ch.charval ) )
-
-    if ( ch.charval == '�' ) enc_error_char = ch.charid
   })  
   outdatac.push('};')  
   outdatac.push('')
@@ -399,15 +404,17 @@ Promise.all(readpromises).then((values) => {
   outdatac.push('};')
   outdatac.push('')
 
-
-  let keyfunctions = ["CHAR", "SPACE", "DEL", "OK", "BACK", "EMPTY"]
+  let defaultkmap
+  let keyfunctions = ["CHAR", "SPACE", "DEL", "OK", "BACK", "EMPTY", "LF"]
   let keymap = []
 
   Object.getOwnPropertyNames( mapids ).forEach( pname=>{
     let pattern = patterns.patterns.find( p=> p.name === pname )
     let fullkeys = []
     
-    
+    if ( !defaultkmap ) defaultkmap = { name: pattern.name }
+    if ( pattern.default ) defaultkmap = { name: pattern.name }
+
     pattern.keys.forEach( (k) => {                  
       k.forEach( (k2) => { fullkeys.push(k2) } )
     })
@@ -420,13 +427,13 @@ Promise.all(readpromises).then((values) => {
       if ( k.f.toUpperCase() === "CHAR" ) {        
         let ch = charlist.find( c=>c.charval === k.id )
         if ( ch ) {
-          kid = k.id ? getHexByteVal( ch.charid ) : '0x00'
+          kid = k.id ? getHexByteVal( ch.charid ) : '0x02'
         } else {
           console.log( "Character: " + k.id + ' not found')
-          kid = '0x00'
+          kid = '0x02'
         }
       } else {
-        kid = k.id ? getHexByteVal( k.id ) : '0x00'
+        kid = k.id ? getHexByteVal( k.id ) : '0x02'
       }
                     
       if ( k.size && k.size > 1 ) {
@@ -441,6 +448,15 @@ Promise.all(readpromises).then((values) => {
       }
     })
   })
+
+  if ( defaultkmap ) {
+    defaultkmap.idx = patterns.patternmap.findIndex( p=> p == defaultkmap.name )
+    if ( defaultkmap.idx < 0 ) defaultkmap.idx = 12
+  } else {
+    defaultkmap = { idx: 12 }
+  }
+
+
   outdatac.push('const Keylayout keylayouts[] = ')
   outdatac.push('{')
   outdatac.push( keymap.join(', ') )
@@ -460,7 +476,7 @@ Promise.all(readpromises).then((values) => {
         if ( c2 ) {
           bytelist.push( getHexByteVal( c2.charid ) )                
         } else {
-          bytelist.push( '0x00' )
+          bytelist.push( '0x02' )
         }  
         tpos++
       }
@@ -497,7 +513,7 @@ Promise.all(readpromises).then((values) => {
       if ( c2 ) {
         bytelist.push( getHexByteVal( c2.charid ) )                
       } else {
-        bytelist.push( '0x00' )
+        bytelist.push( '0x02' )
       }        
     }
 
@@ -514,8 +530,9 @@ Promise.all(readpromises).then((values) => {
   outdatah.push('#define MAX_IMAGE_BUFFER ' + maximgbuffer)
   outdatah.push('#define TOTAL_IMAGE_COUNT ' + imgcount)
   outdatah.push('#define TOTAL_CHAR_COUNT ' + charlist.length )
-  outdatah.push('#define CHAR_HEIGHT 14' )
-  outdatah.push('#define ENCODING_ERROR_CHAR ' + enc_error_char )
+  outdatah.push('#define CHAR_HEIGHT 15' )
+  outdatah.push('#define CHAR_LINEFEED 0x01' )
+  outdatah.push('#define CHAR_ENCODEERR 0x02' )
   outdatah.push('')  
   outdatah.push('// bmpsize: ' + pos + 'Bytes')
   outdatah.push('typedef struct {')
@@ -575,7 +592,8 @@ Promise.all(readpromises).then((values) => {
   })
   outdatah.push('')  
 
-
+  outdatah.push('#define DEFAULT_KEYMAP ' + defaultkmap.idx ) 
+  outdatah.push('')
 
   outdatah.push('#endif')
 
