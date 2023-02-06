@@ -21,7 +21,7 @@ int main(void) {
     APP_CONTEXT ctx;
     ctx.ctxbuffer = contextbuffer;
     ctx.fsmounted = false;
-    ctx.fileopen = false; 
+    ctx.fileopen = false;        
     
     setInitialContext(&ctx);
     bootPeripherals(&ctx);

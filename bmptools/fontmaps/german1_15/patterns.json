@@ -14,6 +14,28 @@
 	],
 	"patterns": [
 		{
+			"name": "SYSTEMMENU",
+			"text": "Menu",
+			"keys": [
+				[
+					{ "f": "OK", "size": 3 },
+					{ "f": "GEN", "id": "az", "size": 7 }
+				],
+				[
+					{ "f": "ABORT", "size": 3 },
+					{ "f": "GEN", "id": "az19", "size": 7 }
+				],
+				[
+					{ "f": "EMPTY", "size": 3 },
+					{ "f": "GEN", "id": "az19%", "size": 7 }
+				],
+				[
+					{ "f": "DEL", "size": 3 },
+					{ "f": "GEN", "id": "hex", "size": 7 }
+				]
+			]
+		},
+		{
 			"default": true,
 			"name": "ATOZ",
 			"text": "A-Z",
@@ -56,7 +78,7 @@
 				],
 				[
 					{ "f": "CHAR", "id": "." },													
-					{ "f": "DEL", "size": 2  },
+					{ "f": "BACKSPACE", "size": 2  },
 					{ "f": "SPACE" , "size": 5 },
 					{ "f": "LF", "size":2 }						
 				]		
@@ -104,7 +126,7 @@
 				],
 				[
 					{ "f": "CHAR", "id": "." },													
-					{ "f": "DEL", "size": 2  },
+					{ "f": "BACKSPACE", "size": 2  },
 					{ "f": "SPACE" , "size": 5 },
 					{ "f": "LF", "size":2 }						
 				]					
@@ -145,7 +167,7 @@
 					{ "f": "CHAR", "id": "|" }																
 				],
 				[
-					{ "f": "DEL", "size": 2  },
+					{ "f": "BACKSPACE", "size": 2  },
 					{ "f": "SPACE" , "size": 6 },
 					{ "f": "LF", "size":2 }
 				]							
@@ -185,11 +207,18 @@
 					{ "f": "CHAR", "id": "}" }					
 				],
 				[
-					{ "f": "DEL", "size": 2  },
+					{ "f": "BACKSPACE", "size": 2  },
 					{ "f": "SPACE" , "size": 6 },
 					{ "f": "LF", "size":2 }																
 				]							
 			]
 		}							
-	]	
+	],
+
+	"generatormaps": [
+		{ "id":"az", "name":"Rnd(16): a-Z",  "charset":"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "len": 16 },		
+		{ "id":"az19", "name":"Rnd(16): a-9",  "charset":"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,-_+!;:*", "len": 16 },
+		{ "id":"az19%", "name":"Rnd(16): a-ü",  "charset":"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!\"§$%&/?`´^°²³\\~'#-_,.|+-*/<>()[]={}", "len": 16 },
+		{ "id":"hex", "name":"Rnd(32): hex",  "charset":"0123456789abcdef", "len": 32 }
+	]
 }

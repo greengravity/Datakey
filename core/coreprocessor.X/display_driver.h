@@ -127,10 +127,14 @@ void drawImage(int16_t x, int16_t y, const GFXimage *image);
 void locate( uint8_t x, uint8_t y );
 uint8_t getLocationX();
 uint8_t getLocationY();
+void setWritebounds( uint8_t start, uint8_t end );
 void unwriteChars( const GFXChar *chars, uint16_t len );
+void writeChar( const GFXChar *ch );
 void writeChars( const GFXChar *chars, uint16_t len );
+void cWriteTextInternNLB( const uint8_t *text );
 void cWriteTextIntern( const uint8_t *text );
 void writeTextIntern( uint8_t *text );
+
 void cWriteText( const char *text );
 void writeText( char *text );
 

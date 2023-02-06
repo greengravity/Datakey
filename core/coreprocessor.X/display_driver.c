@@ -20,6 +20,8 @@
 static uint8_t _height, _width, _rotation;
 static uint8_t _charx=0, _chary=0;
 static uint8_t _brightness = 100;
+static uint8_t _startwrite, _endwrite;
+
 
 const uint8_t
   Bcmd[] = {                        // Init commands for 7735B screens
@@ -81,6 +83,7 @@ const uint8_t
     ST77XX_DISPON,    ST_CMD_DELAY, // 18: Main screen turn on, no args, delay
       255 },                        //     255 = max (500 ms) delay
 
+        
   Rcmd1[] = {                       // 7735R init, part 1 (red or green tab)
     15,                             // 15 commands in list:
     ST77XX_SWRESET,   ST_CMD_DELAY, //  1: Software reset, 0 args, w/delay
@@ -118,6 +121,33 @@ const uint8_t
     ST77XX_COLMOD,  1,              // 15: set color mode, 1 arg, no delay:
       0x05 },                       //     16-bit color
 
+  Rcmd3[] = {                       // 7735R init, part 3 (red or green tab)
+    4,                              //  4 commands in list:
+    ST7735_GMCTRP1, 16      ,       //  1: Gamma Adjustments (pos. polarity), 16 args + delay:
+      0x02, 0x1c, 0x07, 0x12,       //     (Not entirely necessary, but provides
+      0x37, 0x32, 0x29, 0x2d,       //      accurate colors)
+      0x29, 0x25, 0x2B, 0x39,
+      0x00, 0x01, 0x03, 0x10,
+    ST7735_GMCTRN1, 16      ,       //  2: Gamma Adjustments (neg. polarity), 16 args + delay:
+      0x03, 0x1d, 0x07, 0x06,       //     (Not entirely necessary, but provides
+      0x2E, 0x2C, 0x29, 0x2D,       //      accurate colors)
+      0x2E, 0x2E, 0x37, 0x3F,
+      0x00, 0x00, 0x02, 0x10,
+    ST77XX_NORON,     ST_CMD_DELAY, //  3: Normal display on, no args, w/delay
+      10,                           //     10 ms delay
+    ST77XX_DISPON,    ST_CMD_DELAY, //  4: Main screen turn on, no args w/delay
+      100 },                        //     100 ms delay        
+        
+  Rcmd2red[] = {                    // 7735R init, part 2 (red tab only)
+    2,                              //  2 commands in list:
+    ST77XX_CASET,   4,              //  1: Column addr set, 4 args, no delay:
+      0x00, 0x00,                   //     XSTART = 0
+      0x00, 0x7F,                   //     XEND = 127
+    ST77XX_RASET,   4,              //  2: Row addr set, 4 args, no delay:
+      0x00, 0x00,                   //     XSTART = 0
+      0x00, 0x9F };                 //     XEND = 159
+
+          /*
   Rcmd2green[] = {                  // 7735R init, part 2 (green tab only)
     2,                              //  2 commands in list:
     ST77XX_CASET,   4,              //  1: Column addr set, 4 args, no delay:
@@ -127,14 +157,7 @@ const uint8_t
       0x00, 0x01,                   //     XSTART = 0
       0x00, 0x9F+0x01 },            //     XEND = 159
 
-  Rcmd2red[] = {                    // 7735R init, part 2 (red tab only)
-    2,                              //  2 commands in list:
-    ST77XX_CASET,   4,              //  1: Column addr set, 4 args, no delay:
-      0x00, 0x00,                   //     XSTART = 0
-      0x00, 0x7F,                   //     XEND = 127
-    ST77XX_RASET,   4,              //  2: Row addr set, 4 args, no delay:
-      0x00, 0x00,                   //     XSTART = 0
-      0x00, 0x9F },                 //     XEND = 159
+
 
   Rcmd2green144[] = {               // 7735R init, part 2 (green 1.44 tab)
     2,                              //  2 commands in list:
@@ -153,25 +176,8 @@ const uint8_t
     ST77XX_RASET,   4,              //  2: Row addr set, 4 args, no delay:
       0x00, 0x00,                   //     XSTART = 0
       0x00, 0x9F },                 //     XEND = 159
-
-  Rcmd3[] = {                       // 7735R init, part 3 (red or green tab)
-    4,                              //  4 commands in list:
-    ST7735_GMCTRP1, 16      ,       //  1: Gamma Adjustments (pos. polarity), 16 args + delay:
-      0x02, 0x1c, 0x07, 0x12,       //     (Not entirely necessary, but provides
-      0x37, 0x32, 0x29, 0x2d,       //      accurate colors)
-      0x29, 0x25, 0x2B, 0x39,
-      0x00, 0x01, 0x03, 0x10,
-    ST7735_GMCTRN1, 16      ,       //  2: Gamma Adjustments (neg. polarity), 16 args + delay:
-      0x03, 0x1d, 0x07, 0x06,       //     (Not entirely necessary, but provides
-      0x2E, 0x2C, 0x29, 0x2D,       //      accurate colors)
-      0x2E, 0x2E, 0x37, 0x3F,
-      0x00, 0x00, 0x02, 0x10,
-    ST77XX_NORON,     ST_CMD_DELAY, //  3: Normal display on, no args, w/delay
-      10,                           //     10 ms delay
-    ST77XX_DISPON,    ST_CMD_DELAY, //  4: Main screen turn on, no args w/delay
-      100 };                        //     100 ms delay
-
-
+*/
+          
 void dispWriteCommand(uint8_t cmd) {
   ST77XX_PIN_DC_LOW;
   spi1_exchangeByte(cmd);
@@ -212,7 +218,7 @@ void dispInit(const uint8_t *addr){
 
   uint8_t numCommands, cmd, numArgs;
   uint16_t ms;
-
+    
   numCommands = *addr; // Number of commands to follow
   addr++;
   while (numCommands--) {              // For each command...
@@ -301,6 +307,9 @@ void dispStart( ) {
   dispSetRotation( 1 );  
   
   clearScreen(COLOR_BLACK);
+  
+  _startwrite = 0;
+  _endwrite = DISPLAY_WIDTH;
   
   OC1_SecondaryValueSet(OC1_TOPVALUE);
   dispSetBrightness(100);
@@ -514,13 +523,17 @@ uint8_t getLocationY() {
     return _chary;
 }
 
+void setWritebounds( uint8_t start, uint8_t end ) {
+    _startwrite = start;
+    _endwrite = end;
+}
 
 //Writing Characters with intern codepage
 void unwriteChars( const GFXChar *chars, uint16_t len ) {
 
     for (uint16_t i=0;i<len;i++ ) {
-        if ( ( _charx + chars[i].xadv ) > DISPLAY_WIDTH ) {
-            _charx = 0;
+        if ( ( _charx + chars[i].xadv ) > _endwrite ) {
+            _charx = _startwrite;
             _chary += CHAR_HEIGHT;
         }
         fillRect( _charx, _chary, chars[i].xadv, CHAR_HEIGHT, COLOR_BLACK );        
@@ -529,47 +542,66 @@ void unwriteChars( const GFXChar *chars, uint16_t len ) {
        
 }
 
-void writeChars( const GFXChar *chars, uint16_t len ) {    
-    for (uint16_t i=0;i<len;i++ ) {
-        if ( ( _charx + chars[i].xadv ) > DISPLAY_WIDTH ) {
-            _charx = 0;
-            _chary += CHAR_HEIGHT;
-        }
-        drawImage( _charx, _chary, &bitmaps[ chars[i].id ] );
-        _charx += chars[i].xadv;
-    }    
+void writeCharNLB(const GFXChar *ch ) {    
+    if ( ( _charx + ch->xadv ) > _endwrite ) return;
+    drawImage( _charx, _chary, &bitmaps[ ch->id ] );
+    _charx += ch->xadv;
 }
 
 
+void writeChar(const GFXChar *ch ) {    
+    if ( ( _charx + ch->xadv ) > _endwrite ) {
+        _charx = _startwrite;
+        _chary += CHAR_HEIGHT;
+    }
+    drawImage( _charx, _chary, &bitmaps[ ch->id ] );
+    _charx += ch->xadv;
+}
+
+
+void writeChars(const GFXChar *chars, uint16_t len ) {    
+    for (uint16_t i=0;i<len;i++ ) {
+        writeChar( &chars[i] );
+    }    
+}
+
 //Writing text from intern Codepage
+void cWriteTextInternNLB(const uint8_t *text ) {    
+    uint16_t len = strlen( (char*)text );
+    for ( uint16_t i=0;i<len;i++) {         
+        writeCharNLB( text[i] < TOTAL_CHAR_COUNT ? &gfxchars[ text[i] ] : &gfxchars[ text[CHAR_ENCODEERR] ] );
+    }
+}
+
 void cWriteTextIntern( const uint8_t *text ) {    
     uint16_t len = strlen( (char*)text );
-    for ( uint16_t i=0;i<len;i++) {        
-        writeChars( &gfxchars[ text[i] ], 1 );
+    for ( uint16_t i=0;i<len;i++) {           
+        writeChar( text[i] < TOTAL_CHAR_COUNT ? &gfxchars[ text[i] ] : &gfxchars[ text[CHAR_ENCODEERR] ] );
     }
 }
 
 void writeTextIntern( uint8_t *text ) {    
     uint16_t len = strlen( (char*)text );
     for ( uint16_t i=0;i<len;i++) {        
-        writeChars( &gfxchars[ text[i] ], 1 );
+        writeChar( text[i] < TOTAL_CHAR_COUNT ? &gfxchars[ text[i] ] : &gfxchars[ text[CHAR_ENCODEERR] ] );
     }
 }
 
 //Writing possible Characters from ASCII Codepage
+
 void cWriteText( const char *text ) {
     
     uint16_t len = strlen( text );
     for ( uint16_t i=0;i<len;i++) {
         uint16_t ct = (uint16_t)text[i];      
-        writeChars( &gfxchars[ unicodeLookup(ct) ], 1 );
+        writeChar( &gfxchars[ unicodeLookup(ct) ] );
     }    
 }
-
+ 
 void writeText( char *text ) {    
     uint16_t len = strlen( text );
     for ( uint16_t i=0;i<len;i++) {
         uint16_t ct = (uint16_t)text[i];        
-        writeChars( &gfxchars[ unicodeLookup(ct) ], 1 );
+        writeChar( &gfxchars[ unicodeLookup(ct) ] );
     }    
 }

@@ -54,11 +54,7 @@ clines.forEach(ln => {
     character.xoffset = parseInt(character.xoffset, 10)
     if (character.xoffset < 0) character.xoffset = 0;
     character.yoffset = parseInt(character.yoffset, 10)
-    character.xadvance = parseInt(character.xadvance, 10)
-
-    if (character.xadvance < character.width + character.xoffset) {
-      character.xadvance = character.width + character.xoffset
-    }
+    character.xadvance = character.width
 
     character.charval = outcp.dec[character.id]
     charlist.push(character);
@@ -72,38 +68,22 @@ const iconjson = JSON.parse( fs.readFileSync(path.resolve(icondir, 'icons.js'), 
 // Reading patterndescription
 const patterns = JSON.parse( fs.readFileSync( patternfile, { encoding: "utf-8" }) )
 
-if ( patterns.patternmap.length == 9 ) {
-  let syspattern =  {
-    "name": "SYSTEMMENU",
-    "text": "Menu",
-    "keys": [
-      [
-        { "f": "OK" },
-        { "f": "BACK" },
-      ],
-    ]
-  }
+patterns.patterns.forEach(pm=> {
+  while ( pm.keys.length < 4 ) pm.keys.push([])
+  
+  pm.keys.forEach(pk=> {
+    let pcount = 0
 
-  patterns.patterns.push( syspattern )
+    pk.forEach(pk2=> {
+      pcount+= pk2.size ? pk2.size : 1
+    })            
 
-  patterns.patterns.forEach(pm=> {
-    while ( pm.keys.length < 4 ) pm.keys.push([])
-    
-    pm.keys.forEach(pk=> {
-      let pcount = 0
+    if ( pcount < 10 ) {
+      pk.push( { f:"EMPTY", size: ( 10-pcount ) } )
+    }    
+  })
 
-      pk.forEach(pk2=> {
-        pcount+= pk2.size ? pk2.size : 1
-      })            
-
-      if ( pcount < 10 ) {
-        pk.push( { f:"EMPTY", size: ( 10-pcount ) } )
-      }    
-    })
-
-  }) 
-}
-
+}) 
 
 // Reading Textinfos
 const textdata = JSON.parse( fs.readFileSync( textfile, { encoding: "utf-8" }) )
@@ -200,6 +180,9 @@ let icons = iconjson.map(jicon => {
   return icon
 })
 
+  //Add an empty icon at position 0 to assign to dummy chars like linefeed and zero
+  icons.unshift({ name:"EMPTY", width:0, height:0 })
+
 
 // Generating C Source and Headerfiles
 Promise.all(readpromises).then((values) => {
@@ -268,15 +251,14 @@ Promise.all(readpromises).then((values) => {
     outdatac.push(binline)
   })
 
-  //Add an empty icon at position 0 to assign to dummy chars like linefeed and zero
-  icons.unshift({ name:"EMPTY", width:0, height:0 })
-
   encodeerr_imgid = 0;
+  space_imgid = 0;
   icons.forEach((icon, index) => {
     icon.imgid = imgcount
-    imgcount++
+    if ( icon.name === "ENCODEERR" ) { encodeerr_imgid = imgcount }
+    if ( icon.name === "SPACETEXT" ) { space_imgid = imgcount }
 
-    if ( icon.name === "encodeerr" ) { encodeerr_imgid = imgcount }
+    imgcount++
 
     imglist.push({
       color : icon.color,
@@ -293,7 +275,7 @@ Promise.all(readpromises).then((values) => {
         line += icon.imgdata[x][y][0] > 150 ? '#' : ' '
         binline += ','
 
-        binline += rgbToByteVal(icon.imgdata[x][y])
+        binline += rgbToByteVal(icon.imgdata[x][y])        
         pos ++
       }
       outdatac.push('// ' + line)
@@ -323,6 +305,11 @@ Promise.all(readpromises).then((values) => {
   outdatac.push('const GFXChar gfxchars[] = ')
   outdatac.push('{')
 
+  charlist = charlist.filter(c=> {
+    return !( c.id == 32 || c.id == 65533 || c.id == 10 || c.id == 0 )
+  })
+
+  charlist.unshift( { imgid: space_imgid, xoffset:0, xadvance:8, id:32, charval: " " } ) //space character'
   charlist.unshift( { imgid: encodeerr_imgid, xoffset:0, xadvance:15, id:65533, charval: "encodeerr" } ) //Encode error character'
   charlist.unshift( { imgid: 0, xoffset:0, xadvance:0, id:10, charval: "linefeed" } ) //linefeed character'
   charlist.unshift( { imgid: 0, xoffset:0, xadvance:0, id:0, charval: "zero" } ) //dummy zero character for zero terminated strings'
@@ -353,12 +340,17 @@ Promise.all(readpromises).then((values) => {
   let mapids = {}
   let mapidx = 0
 
+  let emptytext = { text: "" }
+  textdata.texte.push( emptytext )
+
   patterns.patternmap.forEach( (p,index)=> {
     if ( p && p != "" ) {      
       if ( !mapids[p] ) {
         let pattern = patterns.patterns.find( kp=> kp.name === p ) 
         if ( pattern ) {
-          mapids[p] = { idx: mapidx, text: pattern.text }
+          let t = { text:pattern.text }
+          textdata.texte.push(t)
+          mapids[p] = { idx: mapidx, text: t }
           mapidx++
         }        
       }
@@ -366,99 +358,14 @@ Promise.all(readpromises).then((values) => {
   })
 
 
-  outdatac.push('const Keyboardmaps keymaps[] = ')
-  outdatac.push('{')
+  patterns.generatormaps.forEach( (gm, index) => {    
+    gm.nametext = { text: gm.name }
+    textdata.texte.push(gm.nametext)
 
-
-  patterns.patternmap.forEach( (p,index, arr)=> {
-    let betweenkomma = (index < (arr.length - 1) ? ',' : '')
-    
-    if ( p && p!= "" && mapids[p] ) {
-
-      let name = []
-      for ( let i=0;i<5;i++) {
-        if ( mapids[p].text.length > i ) {
-          let ch = mapids[p].text.charAt(i)
-          let c = charlist.find( c=> c.charval === ch )
-          if ( c ) {
-            name.push( getHexByteVal(c.charid) )
-          } else {
-            name.push( '0x00' )
-          }
-        } else {
-          name.push( '0x00' )
-        }
-      }
-
-      outdatac.push('  ' + '{ true,  ' + '{ ' + name.join(', ') + ' }, ' + ( mapids[p].idx * 40 ) + ' }' + betweenkomma + ' // ' + mapids[p].text )
-
-    } else {
-
-      outdatac.push('  ' + '{ false, ' + '{ 0x00, 0x00, 0x00, 0x00, 0x00 }, 0 }' + betweenkomma + ' // empty' )
-
-    }
-  })
-  outdatac.push('};')
-  outdatac.push('')
-
-  let defaultkmap
-  let keyfunctions = ["CHAR", "SPACE", "DEL", "OK", "BACK", "EMPTY", "LF"]
-  let keymap = []
-
-  Object.getOwnPropertyNames( mapids ).forEach( pname=>{
-    let pattern = patterns.patterns.find( p=> p.name === pname )
-    let fullkeys = []
-    
-    if ( !defaultkmap ) defaultkmap = { name: pattern.name }
-    if ( pattern.default ) defaultkmap = { name: pattern.name }
-
-    pattern.keys.forEach( (k) => {                  
-      k.forEach( (k2) => { fullkeys.push(k2) } )
-    })
-
-    fullkeys.forEach( (k)=> {
-      if ( !keyfunctions.find( kf => kf === k.f ) ) keyfunctions.push( k.f )
-      let fktidx = keyfunctions.findIndex( kf => kf === k.f )
-
-      let kid
-      if ( k.f.toUpperCase() === "CHAR" ) {        
-        let ch = charlist.find( c=>c.charval === k.id )
-        if ( ch ) {
-          kid = k.id ? getHexByteVal( ch.charid ) : '0x02'
-        } else {
-          console.log( "Character: " + k.id + ' not found')
-          kid = '0x02'
-        }
-      } else {
-        kid = k.id ? getHexByteVal( k.id ) : '0x02'
-      }
-                    
-      if ( k.size && k.size > 1 ) {
-        for ( let i= 0; i< k.size; i++ ) {
-          let spanpos = getHexByteVal( ( k.size - i ) - 1 )
-          let spanneg = getHexByteVal( i )
-
-          keymap.push('{ ' + fktidx + ', ' + kid + ', ' + spanpos + ', ' + spanneg + ' }' )
-        }        
-      } else {
-        keymap.push('{ ' + fktidx + ', ' + kid + ', 0x00, 0x00 }' )
-      }
-    })
+    gm.charsettext = { text: gm.charset }
+    textdata.texte.push(gm.charsettext)
   })
 
-  if ( defaultkmap ) {
-    defaultkmap.idx = patterns.patternmap.findIndex( p=> p == defaultkmap.name )
-    if ( defaultkmap.idx < 0 ) defaultkmap.idx = 12
-  } else {
-    defaultkmap = { idx: 12 }
-  }
-
-
-  outdatac.push('const Keylayout keylayouts[] = ')
-  outdatac.push('{')
-  outdatac.push( keymap.join(', ') )
-  outdatac.push('};')
-  outdatac.push('')
 
   outdatac.push('const uint8_t textdata[] = ')
   outdatac.push('{')
@@ -499,6 +406,101 @@ Promise.all(readpromises).then((values) => {
 
   outdatac.push('};')
   outdatac.push('')
+
+
+  outdatac.push('const Generatormaps generatormaps[] = ')
+  outdatac.push('{')  
+
+  outdatac.push(
+    patterns.generatormaps.map( (gm, index) => {      
+      return '{ ' + gm.nametext.pos + ', ' + gm.charsettext.pos + ', ' + gm.len + '}'
+    }).join(',')
+  )
+  outdatac.push('};')  
+  outdatac.push('')
+
+
+
+  outdatac.push('const Keyboardmaps keymaps[] = ')
+  outdatac.push('{')
+
+
+  patterns.patternmap.forEach( (p,index, arr)=> {
+    let betweenkomma = (index < (arr.length - 1) ? ',' : '')
+    
+    if ( p && p!= "" && mapids[p] ) {
+      outdatac.push('  ' + '{ true,  ' + mapids[p].text.pos + ', ' + ( mapids[p].idx * 40 ) + ' }' + betweenkomma + ' // ' + mapids[p].text )
+    } else {
+      outdatac.push('  ' + '{ false, ' + emptytext.pos  + ', 0 }' + betweenkomma + ' // empty' )
+    }
+  })
+  outdatac.push('};')
+  outdatac.push('')
+
+  let defaultkmap
+  let keyfunctions = ["EMPTY", "CHAR", "SPACE", "BACKSPACE", "LF", "OK", "ABORT", "DEL", "GEN"]
+  let keymap = []
+
+  Object.getOwnPropertyNames( mapids ).forEach( pname=>{
+    let pattern = patterns.patterns.find( p=> p.name === pname )
+    let fullkeys = []
+    
+    if ( !defaultkmap ) defaultkmap = { name: pattern.name }
+    if ( pattern.default ) defaultkmap = { name: pattern.name }
+
+    pattern.keys.forEach( (k) => {                  
+      k.forEach( (k2) => { fullkeys.push(k2) } )
+    })
+
+    fullkeys.forEach( (k)=> {
+      if ( !keyfunctions.find( kf => kf === k.f ) ) keyfunctions.push( k.f )
+      let fktidx = keyfunctions.findIndex( kf => kf === k.f )
+
+      let kid
+      if ( k.f.toUpperCase() === "CHAR" ) {        
+        let ch = charlist.find( c=>c.charval === k.id )
+        if ( ch ) {
+          kid = k.id ? getHexByteVal( ch.charid ) : '0x02'
+        } else {
+          console.log( "Character: " + k.id + ' not found')
+          kid = '0x02'
+        }
+      } else if ( k.f.toUpperCase() === "GEN" ) {
+        let ind = patterns.generatormaps.findIndex( (gm, index) => {
+          return gm.id == k.id
+        })        
+        kid = ind >= 0 ? getHexByteVal( ind ) : '0x00'
+      } else {
+        kid = k.id ? getHexByteVal( k.id ) : '0x00'
+      }
+                    
+      if ( k.size && k.size > 1 ) {
+        for ( let i= 0; i< k.size; i++ ) {
+          let spanpos = getHexByteVal( ( k.size - i ) - 1 )
+          let spanneg = getHexByteVal( i )
+
+          keymap.push('{ ' + fktidx + ', ' + kid + ', ' + spanpos + ', ' + spanneg + ' }' )
+        }        
+      } else {
+        keymap.push('{ ' + fktidx + ', ' + kid + ', 0x00, 0x00 }' )
+      }
+    })
+  })
+
+  if ( defaultkmap ) {
+    defaultkmap.idx = patterns.patternmap.findIndex( p=> p == defaultkmap.name )
+    if ( defaultkmap.idx < 0 ) defaultkmap.idx = 12
+  } else {
+    defaultkmap = { idx: 12 }
+  }
+
+
+  outdatac.push('const Keylayout keylayouts[] = ')
+  outdatac.push('{')
+  outdatac.push( keymap.join(', ') )
+  outdatac.push('};')
+  outdatac.push('')
+
   outdatac.push('const uint8_t hexchars[] = ')
   outdatac.push('{')
 
@@ -528,8 +530,10 @@ Promise.all(readpromises).then((values) => {
   outdatah.push('#define TOTAL_IMAGE_COUNT ' + imgcount)
   outdatah.push('#define TOTAL_CHAR_COUNT ' + charlist.length )
   outdatah.push('#define CHAR_HEIGHT 15' )
+  outdatah.push('#define CHAR_EOL 0x00' )
   outdatah.push('#define CHAR_LINEFEED 0x01' )
   outdatah.push('#define CHAR_ENCODEERR 0x02' )
+  outdatah.push('#define CHAR_SPACE 0x03' )
   outdatah.push('')  
   outdatah.push('// bmpsize: ' + pos + 'Bytes')
   outdatah.push('typedef struct {')
@@ -552,7 +556,7 @@ Promise.all(readpromises).then((values) => {
   outdatah.push('')   
   outdatah.push('typedef struct {')
   outdatah.push('  const uint8_t active;' ) 
-  outdatah.push('  const uint8_t name[5];' )
+  outdatah.push('  const uint16_t name;' )
   outdatah.push('  const uint16_t layoutoff;' )
   outdatah.push('} Keyboardmaps;')
   outdatah.push('')
@@ -563,11 +567,18 @@ Promise.all(readpromises).then((values) => {
   outdatah.push('  const uint8_t span_neg;' )
   outdatah.push('} Keylayout;')
   outdatah.push('')    
+  outdatah.push('typedef struct {')
+  outdatah.push('  const uint16_t name;' ) 
+  outdatah.push('  const uint16_t charset;' )
+  outdatah.push('  const uint8_t len;' )
+  outdatah.push('} Generatormaps;')
+  outdatah.push('')  
   outdatah.push('extern const uint16_t bitmapdata[];')
   outdatah.push('extern const GFXimage bitmaps[];')
   outdatah.push('extern const GFXChar gfxchars[];')
   outdatah.push('extern const Unicodelist unicodes[];')
   outdatah.push('extern const Keyboardmaps keymaps[];')
+  outdatah.push('extern const Generatormaps generatormaps[];')  
   outdatah.push('extern const Keylayout keylayouts[];')
   outdatah.push('extern const uint8_t textdata[];')
   outdatah.push('extern const uint16_t texte[];')
@@ -584,12 +595,16 @@ Promise.all(readpromises).then((values) => {
   })
   outdatah.push('')  
 
-  textdata.texte.forEach(( td, ind )=>{    
-    outdatah.push('#define TEXT_' + td.name + ' ' + ind )  
+  textdata.texte.forEach(( td, ind )=>{
+    if ( td.name ) {    
+      outdatah.push('#define TEXT_' + td.name + ' ' + ind )  
+    }
   })
   outdatah.push('')  
 
   outdatah.push('#define DEFAULT_KEYMAP ' + defaultkmap.idx ) 
+  outdatah.push('')
+  outdatah.push('#define PASSWORD_REPLACE_CHAR ' + getHexByteVal( charlist.find( cl=>cl.charval == textdata.passwordreplacechar ).charid ) ) 
   outdatah.push('')
 
   outdatah.push('#endif')

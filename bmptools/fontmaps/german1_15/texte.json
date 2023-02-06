@@ -15,7 +15,25 @@
         { "name":"IOHEAD_URL", "text": "Url eingeben" },     
         { "name":"IOHEAD_KEY", "text": "Key eingeben" },
         { "name":"IOHEAD_KEY2", "text": "Key2 eingeben" },
-        { "name":"IOHEAD_INFO", "text": "Info eingeben" }
+        { "name":"IOHEAD_INFO", "text": "Info eingeben" },        
+        { "name":"VIEWHEAD_NAME", "text": "Name anzeigen" },
+        { "name":"VIEWHEAD_URL", "text": "Url anzeigen" },     
+        { "name":"VIEWHEAD_KEY", "text": "Key anzeigen" },
+        { "name":"VIEWHEAD_KEY2", "text": "Key2 anzeigen" },
+        { "name":"VIEWHEAD_INFO", "text": "Info anzeigen" },        
+        { "name":"HEAD_ENTRY_DETAIL", "text": "Eintragsdaten" },
+        { "name":"HEAD_ENTRY_OVERVIEW", "text": "Eintragsliste" },
+        { "name":"EDETAIL_NAME", "text": "Name:" },
+        { "name":"EDETAIL_KEY1", "text": "Key1:" },
+        { "name":"EDETAIL_KEY2", "text": "Key2:" },
+        { "name":"EDETAIL_URL", "text": "URL:" },
+        { "name":"EDETAIL_INFO", "text": "Info:" },
+        { "name":"MSG_OVERWRITE", "text": " Eintrag        überschreiben?" },
+        { "name":"MSG_DELETE_TOKEN", "text": "Infofeld löschen?" },
+        { "name":"MSG_DELETE_ENTRY", "text": "Achtung, gesamten Schlüsseleintrag löschen?" },
+        { "name":"MSG_ABORT", "text": "Ohne Sichern    abbrechen?" },
+        { "name":"LOAD_ENTRY_PLACEHOLDER", "text": "---lade---" }
     ],
-    "hexchars": "0123456789abcdef"
+    "hexchars": "0123456789abcdef",
+    "passwordreplacechar": "*"    
 }

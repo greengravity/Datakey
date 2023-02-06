@@ -287,7 +287,6 @@ void prepareAES128BitCBC() {
 bool prepare128bitEncryption( uint8_t *iv ) {
     if ( !isKeySet() ) return false;
     
-    CRYCONLbits.CPHRMOD = 1;
     CRYCONLbits.OPMOD = 0b0000;  //Operation mode encryption
     
     memcpy( (void*)&CRYKEY0, getMasterKey(), 16);   //Set Masterkey
@@ -313,6 +312,42 @@ bool prepare128bitDecryption( uint8_t *iv ) {
     return true;
 }
 
+uint8_t switchregister[48];
+bool switchregset= false;
+
+void switch128BitDecryptEncrypt() {
+    
+    uint8_t swreg[48];
+    memcpy( swreg, switchregister, 48); //backup siwtchregister
+    memcpy( switchregister, (void*)&CRYTXTA, 16); //copy crytextregister A-C into switchregister
+    memcpy( switchregister+16, (void*)&CRYTXTB, 16);            
+    memcpy( switchregister+32, (void*)&CRYTXTC, 16);            
+    switchregset= true;       
+    
+    if ( CRYCONLbits.OPMOD == 0b0000 ) {
+        //current mode encryption, switch to dencryption
+        
+        CRYCONLbits.OPMOD = 0b0010;  //Key Expand mode    
+        memcpy( (void*)&CRYKEY0, getMasterKey(), 16);   //Set Masterkey
+        CRYCONLbits.CRYGO = 0b1;    //Start keygeneration
+        while (CRYCONLbits.CRYGO == 0b1 );
+        CRYCONLbits.OPMOD = 0b0001;
+        
+        memcpy((void*)&CRYTXTA, swreg, 16 );
+        memcpy((void*)&CRYTXTB, swreg+16, 16 );
+        memcpy((void*)&CRYTXTC, swreg+32, 16 );
+        
+    } else if ( CRYCONLbits.OPMOD == 0b0001 ) {
+        //current mode decryption, switch to encryption
+
+        CRYCONLbits.OPMOD = 0b0000;  //Operation mode encryption
+
+        memcpy( (void*)&CRYKEY0, getMasterKey(), 16);   //Set Masterkey
+        memcpy((void*)&CRYTXTA, swreg, 16 );
+        memcpy((void*)&CRYTXTB, swreg+16, 16 );
+        memcpy((void*)&CRYTXTC, swreg+32, 16 );
+    }
+}
 
 //encrypt a block of 128 bit with the current setup
 void encrypt128bit( uint8_t *plaintext, uint8_t* ciphertext ) {
@@ -332,8 +367,17 @@ void decrypt128bit( uint8_t* ciphertext, uint8_t *plaintext ) {
 
 //clear keyram and stop engine
 void endEncryption( ) {        
-    for ( int i= 0;i<16;i++) ((uint8_t*)&CRYKEY0)[i] = 0x00;
+    for ( int i= 0;i<16;i++) {
+        ((uint8_t*)&CRYKEY0)[i] = 0x00;
+        ((uint8_t*)&CRYTXTA)[i] = 0x00;
+        ((uint8_t*)&CRYTXTB)[i] = 0x00;
+        ((uint8_t*)&CRYTXTC)[i] = 0x00;
+    }
     CRYCONLbits.CRYON = 0;
+    if ( switchregset ) {
+        switchregset = false;
+        memset(switchregister, 0x00, 48);
+    }
 }
 
 //Generate 16bit random bytes

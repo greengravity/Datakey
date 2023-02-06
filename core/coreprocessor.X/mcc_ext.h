@@ -40,6 +40,7 @@ void SPI1_transmit16bitBuffer(uint16_t *data, uint16_t wordCount );
 void prepareAES128BitCBC();
 bool prepare128bitEncryption( uint8_t *iv );
 bool prepare128bitDecryption( uint8_t *iv );
+void switch128BitDecryptEncrypt();
 void encrypt128bit( uint8_t *plaintext, uint8_t* ciphertext );
 void decrypt128bit( uint8_t* ciphertext, uint8_t *plaintext );
 void endEncryption( );
