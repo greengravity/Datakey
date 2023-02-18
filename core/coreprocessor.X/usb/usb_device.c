@@ -55,6 +55,8 @@ please contact mla_licensing@microchip.com
 #include "usb_device.h"
 #include "usb_device_local.h"
 
+#include "../mcc_ext.h"
+
 #ifndef uintptr_t
     #if  defined(__XC8__) || defined(__XC16__)
         #define uintptr_t uint16_t
@@ -1265,7 +1267,7 @@ void USBDeviceDetach(void)
 
          //Move to the detached state
          USBDeviceState = DETACHED_STATE;
-
+                  
          #ifdef  USB_SUPPORT_OTG
              //Disable D+ Pull-up
              U1OTGCONbits.DPPULUP = 0;
@@ -1360,7 +1362,7 @@ void USBDeviceAttach(void)
     {
         if(USB_BUS_SENSE == 1)
         {
-    	    //Initialize registers to known states.
+    	    //Initialize registers to known states.                                  
             U1CON = 0;
 
             // Mask all USB interrupts
@@ -1371,11 +1373,9 @@ void USBDeviceAttach(void)
             SetConfigurationOptions();
 
             USBEnableInterrupts();  //Modifies global interrupt settings
-
-            // Enable module & attach to bus
-            while(!U1CONbits.USBEN){U1CONbits.USBEN = 1;}
-
-            //moved to the attached state
+                          
+            // Enable module & attach to bus  
+            while( !U1CONbits.USBEN ){U1CONbits.USBEN = 1;}
             USBDeviceState = ATTACHED_STATE;
 
             #ifdef  USB_SUPPORT_OTG

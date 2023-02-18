@@ -53,6 +53,8 @@
 /**
  Section: File specific functions
 */
+void (*TMR2_InterruptHandler)(void) = NULL;
+void TMR2_CallBack(void);
 
 /**
   Section: Data Type Definitions
@@ -88,84 +90,92 @@ static TMR_OBJ tmr2_obj;
 
 void TMR2_Initialize (void)
 {
-    //TMR3 0; 
-    TMR3 = 0x00;
-    //PR3 65535; 
-    PR3 = 0xFFFF;
     //TMR2 0; 
     TMR2 = 0x00;
-    //Period = 68719.476736 s; Frequency = 16000000 Hz; PR2 65535; 
-    PR2 = 0xFFFF;
-    //TCKPS 1:256; T32 32 Bit; TON enabled; TSIDL disabled; TCS FOSC/2; TECS SOSC; TGATE disabled; 
-    T2CON = 0x8038;
+    //Period = 0.002 s; Frequency = 16000000 Hz; PR2 124; 
+    PR2 = 0x7C;
+    //TCKPS 1:256; T32 16 Bit; TON enabled; TSIDL disabled; TCS FOSC/2; TECS SOSC; TGATE disabled; 
+    T2CON = 0x8030;
 
+    if(TMR2_InterruptHandler == NULL)
+    {
+        TMR2_SetInterruptHandler(&TMR2_CallBack);
+    }
+
+    IFS0bits.T2IF = false;
+    IEC0bits.T2IE = true;
 	
     tmr2_obj.timerElapsed = false;
 
 }
 
 
-void TMR2_Tasks_32BitOperation( void )
+void __attribute__ ( ( interrupt, no_auto_psv ) ) _T2Interrupt (  )
 {
     /* Check if the Timer Interrupt/Status is set */
-    if(IFS0bits.T3IF)
-    {
-        tmr2_obj.count++;
-        tmr2_obj.timerElapsed = true;
-        IFS0bits.T3IF = false;
+
+    //***User Area Begin
+
+    // ticker function call;
+    // ticker is 1 -> Callback function gets called everytime this ISR executes
+    if(TMR2_InterruptHandler) 
+    { 
+           TMR2_InterruptHandler(); 
     }
+
+    //***User Area End
+
+    tmr2_obj.count++;
+    tmr2_obj.timerElapsed = true;
+    IFS0bits.T2IF = false;
 }
 
-void TMR2_Period32BitSet( uint32_t value )
+void TMR2_Period16BitSet( uint16_t value )
 {
     /* Update the counter values */
-    PR2 = (value & 0x0000FFFF);
-    PR3 = ((value & 0xFFFF0000)>>16);
+    PR2 = value;
+    /* Reset the status information */
+    tmr2_obj.timerElapsed = false;
 }
 
-uint32_t TMR2_Period32BitGet( void )
+uint16_t TMR2_Period16BitGet( void )
 {
-    uint32_t periodVal = 0xFFFFFFFF;
-
-    /* get the timer period value and return it */
-    periodVal = (((uint32_t)PR3 <<16) | PR2);
-
-    return( periodVal );
-
+    return( PR2 );
 }
 
-void TMR2_Counter32BitSet( uint32_t value )
+void TMR2_Counter16BitSet ( uint16_t value )
 {
     /* Update the counter values */
-   TMR3HLD = ((value & 0xFFFF0000)>>16);
-   TMR2 = (value & 0x0000FFFF);
-
+    TMR2 = value;
+    /* Reset the status information */
+    tmr2_obj.timerElapsed = false;
 }
 
-uint32_t TMR2_Counter32BitGet( void )
+uint16_t TMR2_Counter16BitGet( void )
 {
-    uint32_t countVal = 0xFFFFFFFF;
-    uint16_t countValUpper;
-    uint16_t countValLower;
-
-    countValLower = TMR2;
-    countValUpper = TMR3HLD;
-
-    /* get the current counter value and return it */
-    countVal = (((uint32_t)countValUpper<<16)| countValLower );
-
-    return( countVal );
-
+    return( TMR2 );
 }
 
 
+void __attribute__ ((weak)) TMR2_CallBack(void)
+{
+    // Add your custom callback code here
+}
 
+void  TMR2_SetInterruptHandler(void (* InterruptHandler)(void))
+{ 
+    IEC0bits.T2IE = false;
+    TMR2_InterruptHandler = InterruptHandler; 
+    IEC0bits.T2IE = true;
+}
 
 void TMR2_Start( void )
 {
     /* Reset the status information */
     tmr2_obj.timerElapsed = false;
 
+    /*Enable the interrupt*/
+    IEC0bits.T2IE = true;
 
     /* Start the Timer */
     T2CONbits.TON = 1;
@@ -176,6 +186,8 @@ void TMR2_Stop( void )
     /* Stop the Timer */
     T2CONbits.TON = false;
 
+    /*Disable the interrupt*/
+    IEC0bits.T2IE = false;
 }
 
 bool TMR2_GetElapsedThenClear(void)

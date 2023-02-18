@@ -16,22 +16,26 @@
 		{
 			"name": "SYSTEMMENU",
 			"text": "Menu",
+			"defx": 0,
+			"defy": 0,
 			"keys": [
 				[
-					{ "f": "OK", "size": 3 },
-					{ "f": "GEN", "id": "az", "size": 7 }
+					{ "f": "OK", "size": 2 },
+					{ "f": "ABORT", "size": 2 },
+					{ "f": "GEN", "id": "az", "size": 6 }
 				],
 				[
-					{ "f": "ABORT", "size": 3 },
-					{ "f": "GEN", "id": "az19", "size": 7 }
+					{ "f": "SPACE" , "size": 2 },					
+					{ "f": "BACKSPACE", "size": 2  },
+					{ "f": "GEN", "id": "az19", "size": 6 }
 				],
 				[
-					{ "f": "EMPTY", "size": 3 },
-					{ "f": "GEN", "id": "az19%", "size": 7 }
+					{ "f": "EMPTY", "size": 4 },
+					{ "f": "GEN", "id": "az19%", "size": 6 }					
 				],
 				[
-					{ "f": "DEL", "size": 3 },
-					{ "f": "GEN", "id": "hex", "size": 7 }
+					{ "f": "EMPTY", "size": 4 },
+					{ "f": "GEN", "id": "hex", "size": 6 }
 				]
 			]
 		},

@@ -38,5 +38,35 @@
     { 
         "name": "ARROWDOWN",
         "icon": "arrowdown.png"   
-    }   
+    },
+    { 
+        "name": "BRIGHTNESS",
+        "icon": "brightness.png"   
+    },
+    { 
+        "name": "USB",
+        "icon": "usb.png"   
+    },
+    { 
+        "name": "COLOR",
+        "icon": "color.png"
+    },
+    { 
+        "name": "CLOCK",
+        "icon": "clock.png"
+    },
+    { 
+        "name": "CALENDAR",
+        "icon": "calendar.png"
+    },
+    { 
+        "name": "COLON",
+        "icon": "colon.png"
+    },
+    { 
+        "name": "DOT",
+        "icon": "dot.png"
+    }         
+
+
 ]

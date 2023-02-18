@@ -6,13 +6,12 @@
  */
 #include <xc.h>
 #include "buttons.h"
-#include "mcc_generated_files/tmr2.h"
+#include "mcc_ext.h"
 
 #define UPDATE_PERIOD 156 // 5 millisecs
 
-uint8_t currButtonmap = 0x00;
-uint8_t prevButtonmap = 0x00;
-uint32_t lastupdate = 0x00;
+static uint8_t currButtonmap = 0x00;
+static uint8_t prevButtonmap = 0x00;
 
 //Mainfunction which makes indrect assignment of buttons to pins
 bool readButtonDown(uint8_t button) {
@@ -41,10 +40,10 @@ bool readButtonDown(uint8_t button) {
 
 
 void updateButtons(bool force) {
-    uint32_t time = TMR2_Counter32BitGet();
     prevButtonmap = currButtonmap;
-    if ( time > ( lastupdate + UPDATE_PERIOD ) || force ) {
-        lastupdate = time;                
+
+    if ( buttonTimer == 0 || force ) {
+        buttonTimer = 20;        
         currButtonmap = 0x00;
         for (int i=0;i< BUTTON_COUNT; i++) {
             if ( readButtonDown( i ) ) {  

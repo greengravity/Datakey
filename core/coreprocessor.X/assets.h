@@ -4,7 +4,7 @@
 #include	<stdbool.h>
 
 #define MAX_IMAGE_BUFFER 225
-#define TOTAL_IMAGE_COUNT 118
+#define TOTAL_IMAGE_COUNT 125
 #define TOTAL_CHAR_COUNT 110
 #define CHAR_HEIGHT 15
 #define CHAR_EOL 0x00
@@ -12,7 +12,7 @@
 #define CHAR_ENCODEERR 0x02
 #define CHAR_SPACE 0x03
 
-// bmpsize: 12736Bytes
+// bmpsize: 13966Bytes
 typedef struct {
   const uint8_t width; // Bitmap width in pixels
   const uint8_t height; // Bitmap width in pixels
@@ -24,6 +24,7 @@ typedef struct {
   const uint8_t xoff;
   const uint8_t xadv;
   const uint16_t uccp; // Unicode codepoint
+  const uint8_t scancode[4]; // Keyboard scancode data
 } GFXChar;
 
 typedef struct {
@@ -34,6 +35,8 @@ typedef struct {
 typedef struct {
   const uint8_t active;
   const uint16_t name;
+  const uint8_t defx;
+  const uint8_t defy;
   const uint16_t layoutoff;
 } Keyboardmaps;
 
@@ -68,8 +71,7 @@ extern const uint8_t hexchars[];
 #define KEYCOMMAND_LF 4
 #define KEYCOMMAND_OK 5
 #define KEYCOMMAND_ABORT 6
-#define KEYCOMMAND_DEL 7
-#define KEYCOMMAND_GEN 8
+#define KEYCOMMAND_GEN 7
 
 #define SYSICON_EMPTY 107
 #define SYSICON_SPACETEXT 108
@@ -82,6 +84,13 @@ extern const uint8_t hexchars[];
 #define SYSICON_ABORT 115
 #define SYSICON_ARROWUP 116
 #define SYSICON_ARROWDOWN 117
+#define SYSICON_BRIGHTNESS 118
+#define SYSICON_USB 119
+#define SYSICON_COLOR 120
+#define SYSICON_CLOCK 121
+#define SYSICON_CALENDAR 122
+#define SYSICON_COLON 123
+#define SYSICON_DOT 124
 
 #define TEXT_ERROR_CONTEXT 0
 #define TEXT_ERROR_SD_CD 1
@@ -106,16 +115,23 @@ extern const uint8_t hexchars[];
 #define TEXT_VIEWHEAD_INFO 20
 #define TEXT_HEAD_ENTRY_DETAIL 21
 #define TEXT_HEAD_ENTRY_OVERVIEW 22
-#define TEXT_EDETAIL_NAME 23
-#define TEXT_EDETAIL_KEY1 24
-#define TEXT_EDETAIL_KEY2 25
-#define TEXT_EDETAIL_URL 26
-#define TEXT_EDETAIL_INFO 27
-#define TEXT_MSG_OVERWRITE 28
-#define TEXT_MSG_DELETE_TOKEN 29
-#define TEXT_MSG_DELETE_ENTRY 30
-#define TEXT_MSG_ABORT 31
-#define TEXT_LOAD_ENTRY_PLACEHOLDER 32
+#define TEXT_HEAD_OPTIONS1 23
+#define TEXT_HEAD_OPTIONS2 24
+#define TEXT_EDETAIL_NAME 25
+#define TEXT_EDETAIL_KEY1 26
+#define TEXT_EDETAIL_KEY2 27
+#define TEXT_EDETAIL_URL 28
+#define TEXT_EDETAIL_INFO 29
+#define TEXT_OPTV_USB_OFF 30
+#define TEXT_OPTV_USB_KEYBOARD 31
+#define TEXT_MSG_OVERWRITE 32
+#define TEXT_MSG_DELETE_TOKEN 33
+#define TEXT_MSG_DELETE_ENTRY 34
+#define TEXT_MSG_ABORT 35
+#define TEXT_CHB_CREATE_ENTRY 36
+#define TEXT_CHB_DELETE_ENTRY 37
+#define TEXT_CHB_CONFIG 38
+#define TEXT_LOAD_ENTRY_PLACEHOLDER 39
 
 #define DEFAULT_KEYMAP 3
 

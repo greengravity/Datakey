@@ -15,10 +15,10 @@
 #include <xc.h>
 #include "ffconf.h"
 #include "diskio.h"
-#include "../mcc_generated_files/tmr1.h"
 #include "../mcc_generated_files/spi1_driver.h"
 #include "../mcc_generated_files/pin_manager.h"
 #include "../mcc_generated_files/spi1_driver.h"
+#include "../mcc_generated_files/rtcc.h"
 
 /* Socket controls  (Platform dependent) */
 #define CS_LOW()	SDCard_CS_SetLow()	/* MMC CS = L */
@@ -82,20 +82,33 @@ BYTE usefastspi = 0;
 /* When the target system does not support socket power control, there   */
 /* is nothing to do in these functions.                                  */
 
+DWORD get_fattime(void) {
+    DWORD fattime;    
+    bcdTime_t time;
+    
+    RTCC_TimeGet( &time );
+    
+    fattime = 0;
+    fattime |= (DWORD)( time.tm_year + 20 ) << 25;
+    fattime |= (DWORD)( time.tm_mon ) << 21;
+    fattime |= (DWORD)( time.tm_mday ) << 16;
+    fattime |= (DWORD)( time.tm_hour ) << 11;
+    fattime |= (DWORD)( time.tm_min ) << 5;
+    fattime |= (DWORD)( time.tm_sec );
 
+    return fattime;
+}
 
 void spi_fat_open() {
     if ( usefastspi ) {
         spi1_open( SDFAST_CONFIG );
     } else {
         spi1_open( SDSLOW_CONFIG );
-    }
-    TMR1_Start();
+    }    
 }
 
 void spi_fat_close() {
-    spi1_close();
-    TMR1_Stop();
+    spi1_close();    
 }
 
 
@@ -121,7 +134,7 @@ int wait_ready (void)
 {
 	BYTE d;
 
-	Timer2 = 50;	/* Wait for ready in timeout of 500ms */
+	Timer2 = 250;	/* Wait for ready in timeout of 500ms */
 	do {
 		d = xchg_spi(0xFF);
 	} while ((d != 0xFF) && Timer2);
@@ -175,7 +188,7 @@ int rcvr_datablock (	/* 1:OK, 0:Failed */
 	BYTE token;
 
 
-	Timer1 = 10;
+	Timer1 = 50;
 	do {							/* Wait for data packet in timeout of 100ms */
 		token = xchg_spi(0xFF);
 	} while ((token == 0xFF) && Timer1);
@@ -312,7 +325,7 @@ DSTATUS disk_initialize (
 
 	ty = 0;
 	if (send_cmd(CMD0, 0) == 1) {			/* Enter Idle state */
-		Timer1 = 100;						/* Initialization timeout of 1000 msec */
+		Timer1 = 500;						/* Initialization timeout of 1000 msec */
 		if (send_cmd(CMD8, 0x1AA) == 1) {	/* SDv2? */
 			for (n = 0; n < 4; n++) ocr[n] = xchg_spi(0xFF);			/* Get trailing return value of R7 resp */
 			if (ocr[2] == 0x01 && ocr[3] == 0xAA) {				/* The card can work at vdd range of 2.7-3.6V */
@@ -549,9 +562,28 @@ DRESULT disk_ioctl (
 /*-----------------------------------------------------------------------*/
 /* Device Timer Driven Procedure                                         */
 /*-----------------------------------------------------------------------*/
-/* This function must be called by timer interrupt in period of 1ms      */
+/* This function must be called by timer interrupt in period of 2ms      */
+void FatTimerCallback(void ) {
+	BYTE s;
+	UINT n;
+
+	n = Timer1;					// 1000Hz decrement timer with zero stopped 
+	if (n) Timer1 = --n;
+	n = Timer2;
+	if (n) Timer2 = --n;
 
 
+	// Update socket status
+	s = Stat;
+	if (MMC_CD) {
+		s &= ~STA_NODISK;
+	} else {
+		s |= (STA_NODISK | STA_NOINIT);
+	}
+	Stat = s;    
+}
+
+/*
 void TMR1_CallBack(void)
 {
 	BYTE s;
@@ -572,3 +604,4 @@ void TMR1_CallBack(void)
 	}
 	Stat = s;
 }
+*/

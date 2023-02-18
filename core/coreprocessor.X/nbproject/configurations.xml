@@ -28,7 +28,19 @@
         <itemPath>mcc_generated_files/adc1.h</itemPath>
         <itemPath>mcc_generated_files/tmr2.h</itemPath>
         <itemPath>mcc_generated_files/ext_int.h</itemPath>
-        <itemPath>mcc_generated_files/tmr1.h</itemPath>
+        <itemPath>mcc_generated_files/rtcc.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f2" displayName="usb" projectFiles="true">
+        <itemPath>usb/usb.h</itemPath>
+        <itemPath>usb/usb_ch9.h</itemPath>
+        <itemPath>usb/usb_common.h</itemPath>
+        <itemPath>usb/usb_config.h</itemPath>
+        <itemPath>usb/usb_device.h</itemPath>
+        <itemPath>usb/usb_device_hid.h</itemPath>
+        <itemPath>usb/usb_device_local.h</itemPath>
+        <itemPath>usb/usb_hal.h</itemPath>
+        <itemPath>usb/usb_hal_pic24f.h</itemPath>
+        <itemPath>usb/usb_tasks.h</itemPath>
       </logicalFolder>
       <itemPath>main.h</itemPath>
       <itemPath>buttons.h</itemPath>
@@ -72,7 +84,15 @@
         <itemPath>mcc_generated_files/adc1.c</itemPath>
         <itemPath>mcc_generated_files/tmr2.c</itemPath>
         <itemPath>mcc_generated_files/ext_int.c</itemPath>
-        <itemPath>mcc_generated_files/tmr1.c</itemPath>
+        <itemPath>mcc_generated_files/rtcc.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f2" displayName="usb" projectFiles="true">
+        <itemPath>usb/usb_descriptors.c</itemPath>
+        <itemPath>usb/usb_device.c</itemPath>
+        <itemPath>usb/usb_device_hid.c</itemPath>
+        <itemPath>usb/usb_events.c</itemPath>
+        <itemPath>usb/usb_hal_16bit.c</itemPath>
+        <itemPath>usb/usb_tasks.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
       <itemPath>buttons.c</itemPath>
@@ -169,7 +189,7 @@
         <property key="oXC16gcc-sfr-warn" value="false"/>
         <property key="oXC16gcc-smar-io-lvl" value="1"/>
         <property key="oXC16gcc-smart-io-fmt" value=""/>
-        <property key="optimization-level" value="0"/>
+        <property key="optimization-level" value="2"/>
         <property key="post-instruction-scheduling" value="default"/>
         <property key="pre-instruction-scheduling" value="default"/>
         <property key="preprocessor-macros" value=""/>
@@ -312,6 +332,7 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

@@ -16,6 +16,7 @@ const icondir =      './icons'
 const fontfile =     './fontmaps/' + fontdir + '/font.fnt';
 const fontmap =      './fontmaps/' + fontdir + '/font_0.png';
 const patternfile =  './fontmaps/' + fontdir + '/patterns.json';
+const keycodefile =  './fontmaps/' + fontdir + '/keycodes.json';
 const textfile =     './fontmaps/' + fontdir + '/texte.json';
 //const outfilec =     './assets/'   + fontdir + '/assets.c'
 //const outfileh =     './assets/'   + fontdir + '/assets.h'
@@ -64,6 +65,8 @@ clines.forEach(ln => {
 
 // Reading icondescription
 const iconjson = JSON.parse( fs.readFileSync(path.resolve(icondir, 'icons.js'), { encoding: "utf-8" }) )
+
+const keycodes = JSON.parse( fs.readFileSync( keycodefile, { encoding: "utf-8" }) )
 
 // Reading patterndescription
 const patterns = JSON.parse( fs.readFileSync( patternfile, { encoding: "utf-8" }) )
@@ -315,9 +318,18 @@ Promise.all(readpromises).then((values) => {
   charlist.unshift( { imgid: 0, xoffset:0, xadvance:0, id:0, charval: "zero" } ) //dummy zero character for zero terminated strings'
   
   charlist.forEach((ch, index, arr) => {
+    let c_keycodes = ["0x00", "0x00", "0x00", "0x00"]
+
+    let kc = keycodes.keycodes.find(kc=>kc.char == ch.charval )
+    if ( kc && kc.code.length <= 4 ) {
+      kc.code.forEach( (kcc, kcindex ) => {
+        c_keycodes[kcindex] = kcc
+      })
+    }
+
     ch.charid = index
     let betweenkomma = (index < (arr.length - 1) ? ',' : '')
-    outdatac.push('  ' + '{ ' + ch.imgid + ',' + ch.xoffset + ', ' + ch.xadvance + ', ' + ch.id + ' }' + betweenkomma + ' // ' + escapeOutCharval( ch.charval ) )
+    outdatac.push('  ' + '{ ' + ch.imgid + ',' + ch.xoffset + ', ' + ch.xadvance + ', ' + ch.id + ', {' + c_keycodes.join(', ') + '} }' + betweenkomma + ' // ' + escapeOutCharval( ch.charval ) )
   })  
   outdatac.push('};')  
   outdatac.push('')
@@ -350,7 +362,10 @@ Promise.all(readpromises).then((values) => {
         if ( pattern ) {
           let t = { text:pattern.text }
           textdata.texte.push(t)
-          mapids[p] = { idx: mapidx, text: t }
+          let defx = pattern.defx !== undefined ? getHexByteVal( pattern.defx ) : "0xff"
+          let defy = pattern.defy !== undefined ? getHexByteVal( pattern.defy ) : "0xff"
+
+          mapids[p] = { idx: mapidx, text: t, defx: defx, defy: defy }
           mapidx++
         }        
       }
@@ -429,16 +444,16 @@ Promise.all(readpromises).then((values) => {
     let betweenkomma = (index < (arr.length - 1) ? ',' : '')
     
     if ( p && p!= "" && mapids[p] ) {
-      outdatac.push('  ' + '{ true,  ' + mapids[p].text.pos + ', ' + ( mapids[p].idx * 40 ) + ' }' + betweenkomma + ' // ' + mapids[p].text )
+      outdatac.push('  ' + '{ true,  ' + mapids[p].text.pos + ', ' + mapids[p].defx + ', ' + mapids[p].defy + ', '  + ( mapids[p].idx * 40 ) + ' }' + betweenkomma + ' // ' + mapids[p].text )
     } else {
-      outdatac.push('  ' + '{ false, ' + emptytext.pos  + ', 0 }' + betweenkomma + ' // empty' )
+      outdatac.push('  ' + '{ false, ' + emptytext.pos  + ', 0xff, 0xff, 0 }' + betweenkomma + ' // empty' )
     }
   })
   outdatac.push('};')
   outdatac.push('')
 
   let defaultkmap
-  let keyfunctions = ["EMPTY", "CHAR", "SPACE", "BACKSPACE", "LF", "OK", "ABORT", "DEL", "GEN"]
+  let keyfunctions = ["EMPTY", "CHAR", "SPACE", "BACKSPACE", "LF", "OK", "ABORT", "GEN"]
   let keymap = []
 
   Object.getOwnPropertyNames( mapids ).forEach( pname=>{
@@ -547,6 +562,7 @@ Promise.all(readpromises).then((values) => {
   outdatah.push('  const uint8_t xoff;' )
   outdatah.push('  const uint8_t xadv;' )
   outdatah.push('  const uint16_t uccp; // Unicode codepoint' )  
+  outdatah.push('  const uint8_t scancode[4]; // Keyboard scancode data' )    
   outdatah.push('} GFXChar;')
   outdatah.push('')  
   outdatah.push('typedef struct {')
@@ -557,6 +573,8 @@ Promise.all(readpromises).then((values) => {
   outdatah.push('typedef struct {')
   outdatah.push('  const uint8_t active;' ) 
   outdatah.push('  const uint16_t name;' )
+  outdatah.push('  const uint8_t defx;' )
+  outdatah.push('  const uint8_t defy;' ) 
   outdatah.push('  const uint16_t layoutoff;' )
   outdatah.push('} Keyboardmaps;')
   outdatah.push('')

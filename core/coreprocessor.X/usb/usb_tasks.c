@@ -11,6 +11,7 @@
 #include "usb.h"
 #include "usb_device_hid.h"
 #include "usb_tasks.h"
+#include "../mcc_ext.h"
 
 #if defined(__XC8)
     #define PACKED
@@ -248,7 +249,11 @@ signed int keyboardIdleRate;
 signed int LocalSOFCount;
 static signed int OldSOFCount;
 
-
+static uint8_t *usb_writechars;
+static uint16_t usb_writelen;
+static uint16_t usb_currwritepos;
+static uint16_t usb_iswriting = false;
+static bool     usb_charpush = true;
 
 
 
@@ -279,16 +284,35 @@ void USB_Interface_Init() {
 
 }
 
-void USB_Interface_Tasks() {
-    signed int TimeDeltaMilliseconds;
-    //unsigned char i;
-    bool needToSendNewReportPacket;
 
+
+
+bool USB_IsWriteCharBuffer() {
+    return usb_iswriting;
+}
+
+void USB_WriteCharacterBuffer(uint8_t *wb, uint16_t len) {  
+    usb_writechars = wb;
+    usb_writelen = len;
+    usb_currwritepos = 0;
+    usb_iswriting = true;
+}
+
+
+void USB_StopWriteCharBuffer() {
+    usb_writelen = 0;
+}
+
+
+
+void USB_Interface_Tasks() {
     /* If the USB device isn't configured yet, we can't really do anything
      * else since we don't have a host to talk to.  So jump back to the
      * top of the while loop. */
     if( USBGetDeviceState() < CONFIGURED_STATE )
     {
+        usb_charpush = true;
+        usb_iswriting = false;
         return;
     }
 
@@ -311,6 +335,7 @@ void USB_Interface_Tasks() {
     //Copy the (possibly) interrupt context SOFCounter value into a local variable.
     //Using a while() loop to do this since the SOFCounter isn't necessarily atomically
     //updated and we need to read it a minimum of twice to ensure we captured the correct value.
+/*
     while(LocalSOFCount != SOFCounter)
     {
         LocalSOFCount = SOFCounter;
@@ -333,78 +358,46 @@ void USB_Interface_Tasks() {
     {
         OldSOFCount = LocalSOFCount - 5000;
     }
-
+*/
 
     /* Check if the IN endpoint is busy, and if it isn't check if we want to send
      * keystroke data to the host. */
     if(HIDTxHandleBusy(keyboard.lastINTransmission) == false)
     {
-        /* Clear the INPUT report buffer.  Set to all zeros. */
-        memset(&inputReport, 0, sizeof(inputReport));
-
-        /*
-        if(BUTTON_IsPressed(BUTTON_USB_DEVICE_HID_KEYBOARD_KEY) == true)
-        {
-            if(keyboard.waitingForRelease == false)
-            {
-                keyboard.waitingForRelease = true;
-
-                // Set the only important data, the key press data.
-                inputReport.keys[0] = 4;
-
-                //In this simulated keyboard, if the last key pressed exceeds the a-z + 0-9,
-                //then wrap back around so we send 'a' again.
-            }
-        }
-        else
-        {
-            keyboard.waitingForRelease = false;
-        }
-        */
-
-        inputReport.keys[0] = 4;                
-                
-        //Check to see if the new packet contents are somehow different from the most
-        //recently sent packet contents.
         
-        /*
-        needToSendNewReportPacket = false;
-        for(i = 0; i < sizeof(inputReport); i++)
-        {
-            if(*((uint8_t*)&oldInputReport + i) != *((uint8_t*)&inputReport + i))
-            {
-                needToSendNewReportPacket = true;
-                break;
+        if ( usb_iswriting ) {
+            // Clear the INPUT report buffer.  Set to all zeros
+            memset(&inputReport, 0, sizeof(inputReport));
+
+            if ( usb_charpush ) {
+                if ( usb_currwritepos < usb_writelen ) {
+                    const GFXChar *gfxc = &gfxchars[ usb_writechars[usb_currwritepos] ];
+                    usb_currwritepos ++;
+                    inputReport.modifiers.value = gfxc->scancode[0];
+                    memcpy( inputReport.keys, gfxc->scancode+1 ,3 );
+                } else {
+                    usb_iswriting = false;
+                }
             }
-        }
-        */
-
-        //Check if the host has set the idle rate to something other than 0 (which is effectively "infinite").
-        //If the idle rate is non-infinite, check to see if enough time has elapsed since
-        //the last packet was sent, and it is time to send a new repeated packet or not.
-        if(keyboardIdleRate != 0)
-        {
-            //Check if the idle rate time limit is met.  If so, need to send another HID input report packet to the host
-            if(TimeDeltaMilliseconds >= keyboardIdleRate)
+            usb_charpush = !usb_charpush;                
+                        
+            
+            //Now send the new input report packet, if it is appropriate to do so (ex: new data is
+            //present or the idle rate limit was met).
+            if(usb_iswriting == true)
             {
-                needToSendNewReportPacket = true;
+
+                //Save the old input report packet contents.  We do this so we can detect changes in report packet content
+                //useful for determining when something has changed and needs to get re-sent to the host when using
+                //infinite idle rate setting.
+//                oldInputReport = inputReport;
+
+                /* Send the 8 byte packet over USB to the host. */
+                keyboard.lastINTransmission = HIDTxPacket(HID_EP, (uint8_t*)&inputReport, sizeof(inputReport));            
+                OldSOFCount = LocalSOFCount;    //Save the current time, so we know when to send the next packet (which depends in part on the idle rate setting)
             }
+        
         }
-
-        //Now send the new input report packet, if it is appropriate to do so (ex: new data is
-        //present or the idle rate limit was met).
-        if(needToSendNewReportPacket == true)
-        {
-            //Save the old input report packet contents.  We do this so we can detect changes in report packet content
-            //useful for determining when something has changed and needs to get re-sent to the host when using
-            //infinite idle rate setting.
-            oldInputReport = inputReport;
-
-            /* Send the 8 byte packet over USB to the host. */
-            keyboard.lastINTransmission = HIDTxPacket(HID_EP, (uint8_t*)&inputReport, sizeof(inputReport));
-            OldSOFCount = LocalSOFCount;    //Save the current time, so we know when to send the next packet (which depends in part on the idle rate setting)
-        }
-
     }//if(HIDTxHandleBusy(keyboard.lastINTransmission) == false)
 
 
@@ -425,7 +418,7 @@ void USB_Interface_Tasks() {
 }
 
 void USB_Suspend() {
-    USBSleepOnSuspend();    
+    //USBSleepOnSuspend();    
 }
 void USB_Resume() {
     

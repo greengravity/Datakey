@@ -27,6 +27,10 @@
 #include "display_driver.h"
 #include "buttons.h"
 
+#include "usb/usb.h"
+
+
+volatile UINT buttonTimer = 0, adcTimer = 0, usbTimeout = 0, keyTimeout = 0;
 
 // ********** Standard functions *******
 void disableVoltPower() {
@@ -38,8 +42,7 @@ void enableVoltPower() {
     VOLT_PWR_SetLow();
 }
 
-void mountFS( APP_CONTEXT *ctx ) {
-    
+void mountFS( APP_CONTEXT *ctx ) {   
     if (f_mount(&ctx->drive,"0:",1) == FR_OK) {
         ctx->fsmounted = true;
         return;
@@ -56,49 +59,45 @@ void unmountFS( APP_CONTEXT *ctx ) {
 void bootPeripherals(APP_CONTEXT *ctx) {
     EX_INT0_InterruptDisable();
     PER_PWR_SetLow();    
-    enableVoltPower();
+    //enableVoltPower();
 
+    SDCard_CD_SetWPUOn();
     SDCard_CS_SetHigh();
+       
     CS_D_SetHigh();
     RS_D_SetHigh();
     
     __delay_ms(150);
-    
+
+/*    
     spi_fat_open(); 
     mountFS(ctx);
     spi_fat_close();
-        
+*/        
     spi1_open(DISPLAY_CONFIG);
     dispStart();
     spi1_close();
           
+    TMR2_Start();
+    
     ADC1_ChannelSelect(VOLT_READ);
     ADC1_Enable();
-    //ADC1_SoftwareTriggerDisable();
-    
-    TMR2_Start();
+    adcTimer = 0;
+    ctx->adc_rw_state = 1;
+        
+    USBDeviceInit();
+        
     updateButtons(true);
     updateButtons(true);
 }
 
-void shutdownPeripherals(APP_CONTEXT *ctx) {
-/*    if ( ctx->fsmounted ) {
-        //evtl. close file and unmount drive to prevent dataloss
-        fs_resume();
-        
-        if ( ctx->fileopen ) {
-            f_close(&ctx->file);
-            ctx->fileopen = false;
-        }        
-        f_mount(0,"0:",0);
-        ctx->fsmounted = false;                            
-    } */
-    
+void shutdownPeripherals(APP_CONTEXT *ctx) {   
     spi_fat_open();    
     unmountFS(ctx);    
     spi_fat_close();
     
     SDCard_CS_SetLow();
+    SDCard_CD_SetWPUOff();
     CS_D_SetLow();
     RS_D_SetLow();
     RES_D_SetLow();
@@ -110,14 +109,18 @@ void shutdownPeripherals(APP_CONTEXT *ctx) {
     TMR2_Stop();
     CRYCONLbits.CRYON = 0;
         
-    disableVoltPower();
+    //disableVoltPower();
     ADC1_Disable();    //Stop Analogconverter    
+    
+    USBDeviceDetach();
+    USBModuleDisable();
 }
 
 
 void setSleep(APP_CONTEXT *ctx) {
-    //Shutdown all Peripherals
-    shutdownPeripherals(ctx);
+    //Shutdown all Peripherals    
+    shutdownPeripherals(ctx); 
+    setInitialContext( ctx );    
     _LATB2 = 1;
     EX_INT0_InterruptFlagClear();
     EX_INT0_InterruptEnable();
@@ -125,9 +128,9 @@ void setSleep(APP_CONTEXT *ctx) {
     Nop();
     EX_INT0_InterruptDisable();
     EX_INT0_InterruptFlagClear();
-    __delay_ms(100);
-    
+    __delay_ms(100);    
     bootPeripherals(ctx);
+    
 }
 
 
@@ -393,4 +396,22 @@ void generateRND(uint8_t *rnd) {
     /* The random number is now located in CRYTXTA. */    
     
     CRYCONLbits.CRYON = con;
+}
+
+
+
+void TMR2_CallBack(void) {
+    // 2ms Timer callback    
+	UINT n;
+
+    FatTimerCallback();
+
+	n = buttonTimer;					// 1000Hz decrement timer with zero stopped 
+	if (n) buttonTimer = --n;
+	n = adcTimer;
+	if (n) adcTimer = --n;
+	n = usbTimeout;					// 1000Hz decrement timer with zero stopped 
+	if (n) usbTimeout = --n;   
+	n = keyTimeout;					// 1000Hz decrement timer with zero stopped 
+	if (n) keyTimeout = --n;        
 }
