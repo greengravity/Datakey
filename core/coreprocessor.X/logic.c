@@ -5,10 +5,13 @@
  * Created on 20. Januar 2023, 16:05
  */
 
+#include "main.h"
+
 #include "xc.h"
 #include "logic.h"
 #include "buttons.h"
 #include <string.h>
+#include <time.h>
 
 #include "mcc_ext.h"
 #include "mcc_generated_files/system.h"
@@ -25,8 +28,10 @@
 #include "fs/ff.h"
 #include "display_driver.h"
 
-/*#include "usb/usb.h"
-#include "usb/usb_device_hid.h"
+#include "usb/usb.h"
+#include "usb/usb_tasks.h"
+
+/*#include "usb/usb_device_hid.h"
 #include "usb/usb_tasks.h" */
 
 
@@ -41,16 +46,27 @@ static uint8_t pinerr = 0;
 static uint8_t masterkey[16];
 static bool keyset = false;
 
+//static bool timeset = false;
+
 //128bit AES key
 
 typedef enum {
     IOR_UNCHANGED,
     IOR_UPDATED,    
     IOR_OK,
-    IOR_ABORT,
-    IOR_DELETE,            
+    IOR_ABORT,    
     IOR_CTX_SWITCH,
 } HCTX_IO_RESULT;
+
+const uint16_t highlight_color_tab[] = {
+    COLOR_RED,
+    COLOR_GREEN,
+    COLOR_BLUE,
+    COLOR_CYAN,
+    COLOR_MAGENTA,
+    COLOR_YELLOW,
+    COLOR_ORANGE
+};
 
 const TOKEN_CONFIG token_configs[] = {
     { NEW, TEXT_IOHEAD_NEW, TEXT_IOHEAD_NEW },
@@ -197,10 +213,16 @@ uint16_t _getContextTypeLen(CONTEXT_TYPE type) {
             return sizeof(CTX_EDIT_ENTRY);
         case MESSAGEBOX:
             return sizeof(CTX_MSG_BOX);
+        case CHOOSEBOX:
+            return sizeof(CTX_CHOOSE_BOX);           
         case ENTRY_DETAIL:
             return sizeof(CTX_ENTRY_DETAIL);
         case VIEW_TOKEN:
-            return sizeof(CTX_VIEW_TOKEN);           
+            return sizeof(CTX_VIEW_TOKEN);  
+        case OPTIONS1:
+            return sizeof(CTX_OPTIONS1);  
+        case OPTIONS2:
+            return sizeof(CTX_OPTIONS2);  
         default:
             return 0;
     }
@@ -293,7 +315,7 @@ uint8_t getCharactersInLine(uint8_t* text, uint16_t coff, uint16_t maxchars ) {
     while ( c < maxchars ) {
         xadv = gfxchars[ text[coff+c] < TOTAL_CHAR_COUNT ? text[coff+c] : CHAR_ENCODEERR ].xadv;        
         if ( currx + xadv > TEXTAREA_WIDTH ) {
-            //need linebreak                        
+            //need linebreak
             if ( lastspacex > MAX_TEXTAREA_SPACE_BREAK ) {
                 return lastspace;
             } else {
@@ -306,8 +328,7 @@ uint8_t getCharactersInLine(uint8_t* text, uint16_t coff, uint16_t maxchars ) {
             lastspace = c + 1;
             lastspacex = currx +xadv;
         }
-        
-                        
+
         currx += xadv;
         c++;
     }
@@ -436,8 +457,6 @@ HCTX_IO_RESULT hctxIO( IO_CONTEXT *ioctx, APP_CONTEXT* ctx ) {
                     return IOR_OK;
                 } else if ( k->fkt == KEYCOMMAND_ABORT ) {                
                     return IOR_ABORT;
-                } else if ( k->fkt == KEYCOMMAND_DEL ) {                
-                    return IOR_DELETE;
                 }                             
             }
             ioctx->mboxresult = MSGB_NO_RESULT;
@@ -519,6 +538,8 @@ HCTX_IO_RESULT hctxIO( IO_CONTEXT *ioctx, APP_CONTEXT* ctx ) {
                     ioctx->text[ioctx->tlen-1] = 0x00;
                     return IOR_OK;
                 }
+            }
+/*               
             } else if ( k->fkt == KEYCOMMAND_DEL ) {
                 if ( ioctx->type != NEW ) {
 
@@ -536,7 +557,7 @@ HCTX_IO_RESULT hctxIO( IO_CONTEXT *ioctx, APP_CONTEXT* ctx ) {
                                         
                     return IOR_CTX_SWITCH;                                                                                
                 }
-            }
+            }*/
         } else if ( isButtonReleased(BUTTON_A) ) {
             ioctx->rinf = ONBUTTON_RELEASE;
         } else if ( isButtonDown(BUTTON_A) ) {
@@ -742,6 +763,11 @@ HCTX_IO_RESULT hctxIO( IO_CONTEXT *ioctx, APP_CONTEXT* ctx ) {
             ioctx->oselarea = ioctx->selarea;
             ioctx->selarea = 0; //back to keyboard            
             ioctx->rinf = AREASWITCH;
+            
+            if ( keymaps[ioctx->kbmap].defx != 0xff ) {
+                ioctx->kbx = keymaps[ioctx->kbmap].defx;
+                ioctx->kby = keymaps[ioctx->kbmap].defy;
+            }
         }        
     }
     
@@ -775,7 +801,7 @@ void hctxPinInput(APP_CONTEXT* ctx) {
                         if (memcmp(sctx->pin, sctx->verifypin, PIN_SIZE) == 0) {
                             //Pin match verification pin, set new pin and go to overview page
                             memcpy(pin, sctx->pin, PIN_SIZE);
-                            pinerr = 0;
+                            pinerr = 0;                           
                             setContext(ctx, ENTRY_OVERVIEW);
                         } else {
                             //Pin differs from verification pin, retry
@@ -794,7 +820,7 @@ void hctxPinInput(APP_CONTEXT* ctx) {
                 } else {
                     if (memcmp(sctx->pin, pin, PIN_SIZE) == 0) {
                         //TODO: Check masterkey integrity
-                        pinerr = 0;
+                        pinerr = 0;                        
                         setContext(ctx, ENTRY_OVERVIEW);
                     } else {
                         ctx->rinf = REFRESH;
@@ -1327,11 +1353,12 @@ void hctxEntryOverview(APP_CONTEXT* ctx) {
     DIR dir;
     static FILINFO fno;
     
-    uint16_t cursor = sctx->cursor;
+//    uint16_t cursor = sctx->cursor;
     
     if ( !sctx->initialized ) {
         sctx->initialized = true;
         
+        sctx->entrycount = 0;
         res = f_opendir(&dir, "KS");                       
         if (res == FR_OK) {
             while ( true ) {
@@ -1347,7 +1374,7 @@ void hctxEntryOverview(APP_CONTEXT* ctx) {
         hctxEntryOverviewLoadNames( ctx );       
         ctx->rinf = ANIMATION;
     } else if ( isButtonPressed(BUTTON_A) ) {
-        if ( replaceContext(ctx, EDIT_ENTRY ) ) {
+/*        if ( replaceContext(ctx, EDIT_ENTRY ) ) {
             CTX_EDIT_ENTRY *ectx;
             ectx = (CTX_EDIT_ENTRY*) (ctx->ctxbuffer + ctx->ctxptr);
             ectx->io.type = NEW;
@@ -1358,8 +1385,59 @@ void hctxEntryOverview(APP_CONTEXT* ctx) {
             ectx->io.tewp = 1;
             ectx->overviewcursor = cursor;
             ctx->rinf = IO_UPDATE;
+        } */
+        
+        if ( sctx->cursor < sctx->entrycount ) {
+            TCHAR path[16];
+            uint16_t cursor = sctx->cursor;
+                        
+            memcpy( path, &"KS/", 3 );                    
+            memcpy( path+3, sctx->entries[cursor].path, strlen( sctx->entries[cursor].path ) + 1 );
+                        
+            replaceContext(ctx, ENTRY_DETAIL );
+
+            CTX_ENTRY_DETAIL *edctx;
+            edctx = (CTX_ENTRY_DETAIL*) (ctx->ctxbuffer + ctx->ctxptr);
+                       
+            memcpy( edctx->path, path, 16 );
+            if ( loadEntryDetail( ctx ) != FR_OK ) {
+                setContext( ctx, ERROR_SD_FAILURE  );
+            } else {
+                edctx->selected = NAME;
+                edctx->overviewcursor = cursor;
+            }
+        }         
+        
+        
+    } else if ( isButtonPressed(BUTTON_B) ) {        
+        bool candelete = false;
+        if ( sctx->entrycount > 0 ) {
+            candelete = true;
         }
+  
+        pushContext(ctx, CHOOSEBOX );
+        
+        CTX_CHOOSE_BOX *cbctx;
+        cbctx = (CTX_CHOOSE_BOX*) (ctx->ctxbuffer + ctx->ctxptr);        
+        
+        if ( candelete ) {
+            cbctx->options = 3;
+            cbctx->textid[0] = TEXT_CHB_CREATE_ENTRY;
+            cbctx->selectid[0] = CHBX_CREATE_ENTRY;
+            cbctx->textid[1] = TEXT_CHB_DELETE_ENTRY;
+            cbctx->selectid[1] = CHBX_DELETE_ENTRY;
+            cbctx->textid[2] = TEXT_CHB_CONFIG;
+            cbctx->selectid[2] = CHBX_CONFIG;            
+        } else {
+            cbctx->options = 2;
+            cbctx->textid[0] = TEXT_CHB_CREATE_ENTRY;
+            cbctx->selectid[0] = CHBX_CREATE_ENTRY;
+            cbctx->textid[2] = TEXT_CHB_CONFIG;
+            cbctx->selectid[2] = CHBX_CONFIG;            
+        }
+                              
     } else if ( isButtonPressed(BUTTON_RIGHT) ) {
+/*        
         if ( sctx->cursor < sctx->entrycount ) {
             TCHAR path[16];
             uint16_t cursor = sctx->cursor;
@@ -1380,7 +1458,7 @@ void hctxEntryOverview(APP_CONTEXT* ctx) {
                 edctx->overviewcursor = cursor;
             }
         }                               
- 
+*/ 
     } else if ( isButtonPressed(BUTTON_UP) || isButtonPressed(BUTTON_DOWN) ) {
         if ( isButtonPressed(BUTTON_UP) && sctx->cursor > 0 ) sctx->cursor--;
         if ( isButtonPressed(BUTTON_DOWN) && sctx->cursor < ( sctx->entrycount - 1 ) ) sctx->cursor++;
@@ -1594,7 +1672,8 @@ void hctxEditEntry(APP_CONTEXT* ctx) {
                 edctx->overviewcursor = cursor;
             }
         }
-    } else if ( res == IOR_DELETE ) {
+    }
+/*    } else if ( res == IOR_DELETE ) {
         //Delete entry
         memcpy( path, sctx->path, 16 ); 
         cursor = sctx->overviewcursor;
@@ -1607,7 +1686,7 @@ void hctxEditEntry(APP_CONTEXT* ctx) {
             edctx = (CTX_ENTRY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr);                                   
             edctx->cursor = cursor;
         }
-    }
+    }*/
 }
 
 void hctxMessagebox(APP_CONTEXT* ctx) {
@@ -1635,35 +1714,284 @@ void hctxMessagebox(APP_CONTEXT* ctx) {
     }   
 }
 
-void updateContext(APP_CONTEXT* ctx) {
-    updateButtons(false);
-    if (SENSE_CASE_GetValue()) {
-        // Sleep
-        setSleep(ctx);
-        if ( !ctx->fsmounted ) {
-            setContext(ctx, ERROR_SD_CD);
+void hctxChoosebox(APP_CONTEXT* ctx) {
+    CTX_CHOOSE_BOX *sctx;
+    sctx = (CTX_CHOOSE_BOX*) (ctx->ctxbuffer + ctx->ctxptr);
+    
+    if ( isButtonPressed(BUTTON_UP) ) {
+        if ( sctx->selected > 0 ) {
+            sctx->oselected = sctx->selected;
+            sctx->selected--;
+            ctx->rinf = ANIMATION;
+        }                
+    } else if ( isButtonPressed(BUTTON_DOWN) ) {
+        if ( sctx->selected < ( sctx->options - 1 ) ) {
+            sctx->oselected = sctx->selected;
+            sctx->selected++;
+            ctx->rinf = ANIMATION;
+        }  
+    } else if ( isButtonPressed(BUTTON_A) ) {
+        CHBX_SELECTIONS sel = sctx->selectid[ sctx->selected ];
+                
+        if ( sel == CHBX_CREATE_ENTRY ) {
+            removeContext(ctx);
+            
+            CTX_ENTRY_OVERVIEW *ovctx;
+            ovctx = (CTX_ENTRY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr);            
+            uint16_t cursor = ovctx->cursor;
+            
+            if ( replaceContext(ctx, EDIT_ENTRY ) ) {
+                CTX_EDIT_ENTRY *ectx;
+                ectx = (CTX_EDIT_ENTRY*) (ctx->ctxbuffer + ctx->ctxptr);
+                ectx->io.type = NEW;
+                ectx->io.rinf = REFRESH;
+                ectx->io.kbmap = DEFAULT_KEYMAP;
+                ectx->io.text[0] = CHAR_LINEFEED;
+                ectx->io.tlen = 1;
+                ectx->io.tewp = 1;
+                ectx->overviewcursor = cursor;                
+                ctx->rinf = IO_UPDATE;
+            }                     
+        } else if ( sel == CHBX_DELETE_ENTRY ) {
+            removeContext(ctx);
+            
+            CTX_ENTRY_OVERVIEW *ovctx;
+            ovctx = (CTX_ENTRY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr);
+                                        
+            //Delete entry
+            
+            TCHAR path[16];
+            memcpy(path, &"KS/", 3);
+            memcpy(path+3, ovctx->entries[ovctx->cursor].path, strlen(ovctx->entries[ovctx->cursor].path) + 1 );
+            
+            if ( deleteEntry( path ) != FR_OK ) {
+                setContext( ctx, ERROR_SD_FAILURE  );
+            } else {
+                ovctx->initialized = false;
+            }
+                        
+        } else if ( sel == CHBX_CONFIG ) {
+            setContext( ctx, OPTIONS1 );            
         }
+                    
+    } else if ( isButtonPressed(BUTTON_B) ) {
+        removeContext(ctx);
     }
     
+}
+
+uint8_t hctxGetColor() {
     
-    spi_fat_open(); //Open FAT SPI while handle logic 
-    
-    if (SDCard_CD_GetValue()) {
-        //SD-Card removed       
-        if (ctx->ctxtype != ERROR_SD_CD) {
-            ctx->fsmounted = false;
-            setContext(ctx, ERROR_SD_CD);
+    for (uint8_t i= 0;i<sizeof(highlight_color_tab)/sizeof(uint16_t);i++ ) {
+        if ( highlight_color_tab[i] == device_options.highlight_color1 ) return i;              
+    }    
+    return 0;    
+}
+
+void hctxSetColor(uint8_t c ) {    
+    device_options.highlight_color1  = highlight_color_tab[c];
+    device_options.highlight_color2  = device_options.highlight_color1;   
+}
+
+
+void hctxOptions1(APP_CONTEXT* ctx) {
+    CTX_OPTIONS1 *sctx;
+    sctx = (CTX_OPTIONS1*) (ctx->ctxbuffer + ctx->ctxptr);    
+          
+    if ( isButtonPressed(BUTTON_DOWN) ) {
+        sctx->oselected = sctx->selected;
+        if ( sctx->selected < 2 ) sctx->selected ++;
+        ctx->rinf = ANIMATION;
+    } else if ( isButtonPressed(BUTTON_UP) ) {
+        sctx->oselected = sctx->selected;
+        if ( sctx->selected > 0 ) sctx->selected --;                
+        ctx->rinf = ANIMATION;
+    } else if ( isButtonPressed( BUTTON_LEFT ) ) {
+        if ( sctx->selected == 0 ) {
+            device_options.umode = device_options.umode == USB_MODE_OFF ? USB_MODE_KEYBOARD : USB_MODE_OFF;
+        } else if ( sctx->selected == 1 ) {
+            device_options.brightness = device_options.brightness > 10 ? device_options.brightness - 10 : device_options.brightness;
+            dispSetBrightness( device_options.brightness );
+        } else if ( sctx->selected == 2 ) {
+            uint8_t c = hctxGetColor();
+            if ( c > 0 ) { 
+                hctxSetColor(c-1); 
+            } else { 
+                hctxSetColor(sizeof(highlight_color_tab)/sizeof(uint16_t) - 1); 
+            };            
         }
-    } else {
-        //SD-Card inserted
-        if (ctx->ctxtype == ERROR_SD_CD) {
-            mountFS( ctx );
-            if ( ctx->fsmounted ) {
-                setContext(ctx, INITIAL);
+        ctx->rinf = ANIMATION;
+    } else if ( isButtonPressed( BUTTON_RIGHT ) ) {
+        if ( sctx->selected == 0 ) {
+            device_options.umode = device_options.umode == USB_MODE_OFF ? USB_MODE_KEYBOARD : USB_MODE_OFF;
+        } else if ( sctx->selected == 1 ) {
+            device_options.brightness = device_options.brightness < 100 ? device_options.brightness + 10 : device_options.brightness;
+            dispSetBrightness( device_options.brightness );
+        } else if ( sctx->selected == 2 ) {
+            uint8_t c = hctxGetColor();
+            if ( c < sizeof(highlight_color_tab)/sizeof(uint16_t) - 1 ) { 
+                hctxSetColor(c + 1);
+            } else {
+                hctxSetColor(0);
             }
         }
+        ctx->rinf = ANIMATION;
+    } else if ( isButtonPressed( BUTTON_B ) ) {
+        replaceContext(ctx, OPTIONS2 );        
+    }
+}
+
+int getMaxDaysOfMonth(int year, int month) {
+    switch ( month ) {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+            return 31;
+        case 2:
+            if ( year % 4 == 0 ) return 29; //Schaltjahr ohne jahrhundertregelung
+            return 28;
+        default:
+            return 30;
+    }
+}
+
+
+void hctxOptions2(APP_CONTEXT* ctx) {
+    CTX_OPTIONS2 *sctx;
+    sctx = (CTX_OPTIONS2*) (ctx->ctxbuffer + ctx->ctxptr);    
+
+    ctx->rinf = ANIMATION;
+    if ( sctx->selected >= 1 && sctx->selected <= 3 ) {
+        RTCC_TimeSet( &sctx->time );
+    } else {
+        RTCC_TimeGet( &sctx->time );
+    }
+        
+    sctx->oselected = 0xff;    
+    if ( isButtonPressed(BUTTON_DOWN) ) {        
+        sctx->oselected = sctx->selected;
+        if ( sctx->selected == 0 ) {
+            sctx->selected = 4;
+        } else if ( sctx->selected == 1 ) {
+            sctx->time.tm_hour --;
+            if ( sctx->time.tm_hour < 0 ) sctx->time.tm_hour = 23;
+        } else if ( sctx->selected == 2 ) {
+            sctx->time.tm_min --;
+            if ( sctx->time.tm_min < 0 ) sctx->time.tm_min = 59;                        
+        } else if ( sctx->selected == 3 ) {            
+            sctx->time.tm_sec --;
+            if ( sctx->time.tm_sec < 0 ) sctx->time.tm_sec = 59;
+        } else if ( sctx->selected == 5 ) {
+            sctx->time.tm_mday --;
+            if ( sctx->time.tm_mday < 1 ) sctx->time.tm_mday = getMaxDaysOfMonth( sctx->time.tm_year, sctx->time.tm_mon );
+        } else if ( sctx->selected == 6 ) {
+            sctx->time.tm_mon --;
+            if ( sctx->time.tm_mon < 1 ) sctx->time.tm_mon = 12;
+        } else if ( sctx->selected == 7 ) {            
+            sctx->time.tm_year --;
+            if ( sctx->time.tm_year < 20 ) sctx->time.tm_year = 99;
+        }  
+
+        if ( sctx->time.tm_mday > getMaxDaysOfMonth( sctx->time.tm_year, sctx->time.tm_mon ) ) sctx->time.tm_mday = getMaxDaysOfMonth( sctx->time.tm_year, sctx->time.tm_mon );        
+        if ( sctx->selected != 0 && sctx->selected != 4 ) RTCC_TimeSet( &sctx->time );        
+    } else if ( isButtonPressed(BUTTON_UP) ) {
+        sctx->oselected = sctx->selected;
+        if ( sctx->selected == 4 ) { 
+            sctx->selected = 0;
+        } else if ( sctx->selected == 1 ) {
+            sctx->time.tm_hour ++;
+            if ( sctx->time.tm_hour >= 24 ) sctx->time.tm_hour = 0;
+        } else if ( sctx->selected == 2 ) {
+            sctx->time.tm_min ++;
+            if ( sctx->time.tm_min >= 60 ) sctx->time.tm_min = 0;                        
+        } else if ( sctx->selected == 3 ) {            
+            sctx->time.tm_sec ++;
+            if ( sctx->time.tm_sec >= 60 ) sctx->time.tm_sec = 0;
+        } else if ( sctx->selected == 5 ) {
+            sctx->time.tm_mday ++;         
+            if ( sctx->time.tm_mday > getMaxDaysOfMonth( sctx->time.tm_year, sctx->time.tm_mon ) ) sctx->time.tm_mday = 1;
+        } else if ( sctx->selected == 6 ) {            
+            sctx->time.tm_mon ++;
+            if ( sctx->time.tm_mon > 12 ) sctx->time.tm_mon = 1;
+        } else if ( sctx->selected == 7 ) {            
+            sctx->time.tm_year ++;
+            if ( sctx->time.tm_year > 99 ) sctx->time.tm_year = 20;            
+        }                 
+             
+        if ( sctx->time.tm_mday > getMaxDaysOfMonth( sctx->time.tm_year, sctx->time.tm_mon ) ) sctx->time.tm_mday = getMaxDaysOfMonth( sctx->time.tm_year, sctx->time.tm_mon );        
+        if ( sctx->selected != 0 && sctx->selected != 4 ) RTCC_TimeSet( &sctx->time );
+    } else if ( isButtonPressed( BUTTON_LEFT ) ) {
+        sctx->oselected = sctx->selected;
+        if ( sctx->selected != 0 && sctx->selected != 4 ) sctx->selected --;         
+    } else if ( isButtonPressed( BUTTON_RIGHT ) ) {
+        sctx->oselected = sctx->selected;
+        if ( sctx->selected != 3 && sctx->selected != 7 ) sctx->selected ++;        
+    } else if ( isButtonPressed( BUTTON_B ) ) {
+        replaceContext(ctx, ENTRY_OVERVIEW );        
+    }
+}
+
+
+void updatePowerState( APP_CONTEXT* ctx ) {
+    if ( ctx->adc_rw_state == 0 ) {                
+        if (ADC1_IsConversionComplete(VOLT_READ)) {            
+            uint16_t val = ADC1_ConversionResultGet(VOLT_READ);
+            ctx->power = (val >> 4) + 1;
+            adcTimer = 500;
+            ctx->adc_rw_state = 1;
+            disableVoltPower();
+            ctx->rinf_pwr = ANIMATION;
+        }
+    } else if ( adcTimer == 0 ) {        
+        enableVoltPower();
+        ctx->adc_rw_state = 0;
+        ADC1_SoftwareTriggerDisable();
+    }
+}
+
+void updateContext(APP_CONTEXT* ctx) {
+    updateButtons(false);
+    if (SENSE_CASE_GetValue()) {        
+        setSleep(ctx);        
     }
 
+    spi_fat_open(); //Open FAT SPI while handle logic 
+    
+    if ( ctx->ctxtype != INITIAL && ctx->ctxtype != PIN_INPUT ) {
+        
+        if ( device_options.umode == USB_MODE_KEYBOARD && USB_BUS_SENSE ) {
+            if(USBDeviceState == DETACHED_STATE) {
+                USBDeviceAttach();
+            }
+            USB_Interface_Tasks();
+        } else {
+            if(USBDeviceState != DETACHED_STATE) {
+                USBDeviceDetach();
+            }
+        }
+                 
+        
+        if (SDCard_CD_GetValue()) {
+            //SD-Card removed       
+            if (ctx->ctxtype != ERROR_SD_CD) {                
+                setContext(ctx, ERROR_SD_CD);
+            }
+            ctx->fsmounted = false;
+        } else {
+            //SD-Card inserted
+            if (!ctx->fsmounted) {
+                mountFS( ctx );
+                if ( !ctx->fsmounted ) {
+                    setContext(ctx, ERROR_SD_CD);
+                }
+            }
+        }         
+    }
+    
 
     switch (ctx->ctxtype) {
         case INITIAL:
@@ -1697,147 +2025,19 @@ void updateContext(APP_CONTEXT* ctx) {
         case EDIT_ENTRY:
             hctxEditEntry(ctx);        
             break;
-        case MESSAGEBOX:
+        case MESSAGEBOX:            
             hctxMessagebox(ctx);        
-            break;            
+            break;      
+        case CHOOSEBOX:
+            hctxChoosebox(ctx);
+            break;
+        case OPTIONS1:
+            hctxOptions1(ctx);        
+            break;                 
+        case OPTIONS2:
+            hctxOptions2(ctx);        
+            break;              
     }
     
-    spi_fat_close(); //Close FAT SPI while handle logic 
-    
-    /*
-    if ( ctx->fsmounted ) {
-        //in case of open drive/file set filesystem to suspend
-        if ( ctx->fileopen ) {
-            fs_standby(ctx->file);
-        } else {
-            fs_standby( );
-        }        
-    } 
-    */           
+    spi_fat_close(); //Close FAT SPI while handle logic               
 }
-
-
-/*  Test stuff
-
-    if ( isButtonReleased( BUTTON_LEFT ) ) {
-        setSleep();
-        setInitialContext( ctx );
-    }    
-        
-        
-        //USB_Interface_Tasks();
-
-        
-
-         //fillRect(x, 0, 10, 4, ST7735_WHITE);
-
-        
-        if (isButtonPressed(BUTTON_LEFT)) {
-
-            fillRect(x, 10, 10, 10, ST7735_RED);
-            
-            spi1_close();
-
-            __delay_ms(100);
-
-            if (f_mount(&drive, "0:", 1) == FR_OK) {
-                if (f_open(&file, "HELLO.TXT", FA_WRITE | FA_CREATE_ALWAYS ) == FR_OK) {
-                    fs_standby_file(&file);
-                    writing = true;                    
-                } else {
-                }
-            } else {
-            }
-
- 
-            spi1_open(DISPLAY_CONFIG);
-
-            fillRect(x, 10, 10, 10, ST7735_BLACK);
-
-        } else if ( isButtonDown(BUTTON_LEFT) ) {
-            if ( writing ) {
-                spi1_close();
-
-                char data[] = "Next!";
-                UINT actualLength;
-                fs_resume();
-                f_write(&file, data, sizeof (data) - 1, &actualLength);                    
-                fs_standby(&file);
-                
-                spi1_open(DISPLAY_CONFIG);
-
-                fillRect(x, 10, 10, 10, ST7735_BLUE);                
-            }            
-        } else if ( isButtonReleased( BUTTON_LEFT ) ) {
-            spi1_close();
-            
-            fs_resume();            
-            f_close(&file);
-            f_mount(0, "0:", 0);
-            __delay_ms(10);
-
-            spi1_open(DISPLAY_CONFIG);
-                        
-            fillRect(x, 10, 10, 10, ST7735_BLACK);
-        }
- 
- 
-  
-    x = 0;
-    fillRect(x, 0, 10, 4, ST7735_WHITE);
-    if (isButtonDown(BUTTON_LEFT)) fillRect(x, 10, 10, 10, ST7735_RED);
-    else fillRect(x, 10, 10, 10, ST7735_BLACK);
-
-    x += 15;
-    fillRect(x, 0, 10, 4, ST7735_WHITE);
-    if (isButtonDown(BUTTON_UP)) {
-
-        if (dispGetBrightness() >= C_PRIM_VALUE_STEP) {
-            dispSetBrightness( dispGetBrightness() - C_PRIM_VALUE_STEP ); 
-        } else dispSetBrightness( 0 ); 
-
-        fillRect(x, 10, 10, 10, ST7735_RED);
-    } else fillRect(x, 10, 10, 10, ST7735_BLACK);
-
-    x += 15;
-    fillRect(x, 0, 10, 4, ST7735_WHITE);
-    if (isButtonDown(BUTTON_RIGHT)) {
-
-        if ( dispGetBrightness() <= 100 - C_PRIM_VALUE_STEP) {                
-            dispSetBrightness( dispGetBrightness() + C_PRIM_VALUE_STEP ); 
-        } else dispSetBrightness( 100 );             
-
-        fillRect(x, 10, 10, 10, ST7735_RED);
-    } else fillRect(x, 10, 10, 10, ST7735_BLACK);
-
-    x += 15;
-    fillRect(x, 0, 10, 4, ST7735_WHITE);
-    if (isButtonDown(BUTTON_DOWN)) fillRect(x, 10, 10, 10, ST7735_RED);
-    else fillRect(x, 10, 10, 10, ST7735_BLACK);
-
-    x += 15;
-    fillRect(x, 0, 10, 4, ST7735_WHITE);
-    if (isButtonDown(BUTTON_A)) fillRect(x, 10, 10, 10, ST7735_RED);
-    else fillRect(x, 10, 10, 10, ST7735_BLACK);
-
-    x += 15;
-    fillRect(x, 0, 10, 4, ST7735_WHITE);
-    if (isButtonDown(BUTTON_B)) fillRect(x, 10, 10, 10, ST7735_RED);
-    else fillRect(x, 10, 10, 10, ST7735_BLACK);
-
-    x += 15;
-    fillRect(x, 0, 10, 4, ST7735_WHITE);
-    if ( intset ) fillRect(x, 10, 10, 10, ST7735_RED);
-    else fillRect(x, 10, 10, 10, ST7735_BLACK);
-
-
-    if (ADC1_IsConversionComplete(VOLTAGE)) {
-        ADC1_SoftwareTriggerDisable();
-        uint16_t val = ADC1_ConversionResultGet(VOLTAGE);
-
-        uint8_t len = (val >> 4) + 1;
-        fillRect(len + 1, 30, (159 - len), 10, ST7735_BLACK);
-        fillRect(0, 30, len, 10, ST7735_BLUE);
-
-    }    
- */ 

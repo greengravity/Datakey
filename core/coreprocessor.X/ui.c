@@ -12,7 +12,9 @@
 #include "display_driver.h"
 #include "assets.h"
 #include "mcc_generated_files/spi1_driver.h"
+#include "mcc_generated_files/rtcc.h"
 #include "buttons.h"
+#include "mcc_generated_files/rtcc.h"
 
 
 void rndDrawKeylayoutContent( Keylayout *k, uint8_t x, uint8_t y, uint8_t yoff, IO_CONTEXT *ioctx ) {
@@ -33,10 +35,6 @@ void rndDrawKeylayoutContent( Keylayout *k, uint8_t x, uint8_t y, uint8_t yoff, 
             icon = SYSICON_OK;
         } else if ( k->fkt == KEYCOMMAND_ABORT ) {
             icon = SYSICON_ABORT;
-        } else if ( k->fkt == KEYCOMMAND_DEL ) {
-            if ( ioctx->type != NEW ) {
-                icon = SYSICON_DELETE;              
-            }
         } else if ( k->fkt == KEYCOMMAND_LF ) {
             icon = SYSICON_ENTER;
         } else if ( k->fkt == KEYCOMMAND_GEN ) {
@@ -388,6 +386,16 @@ void rndPinInput(APP_CONTEXT* ctx) {
 
 }
 
+void highlightEntryLineMid( uint8_t line, uint16_t color, uint8_t start, uint8_t width ) {
+    uint8_t y = 19;
+    
+    y += line * 17;
+    
+    drawFastHLine(start,y, width, color);
+    y += 17;
+    drawFastHLine(start,y, width, color);
+}
+
 void highlightEntryLine( uint8_t line, uint16_t color, uint8_t width ) {
     uint8_t y = 19;
     
@@ -405,78 +413,79 @@ void rndEntryOverview(APP_CONTEXT* ctx) {
 
     bool drawdown=true;
     bool drawup = true;
-    
-    if (ctx->rinf == REFRESH) {           
-        clearScreen(COLOR_BLACK);
-        locate(0, 0);
-        cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_HEAD_ENTRY_OVERVIEW ]));
-        drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);        
-    } else if ( ctx->rinf == ANIMATION || ctx->rinf == LOADENTRY ) {
-        int32_t start;
-        if ( sctx->entrycount > OVERVIEW_LINES ) {
-            start = sctx->cursor;  
-            start -= ( OVERVIEW_LINES / 2 - 1 );
-            if ( start <= 0 ) {
+
+    if ( ctx->rinf == REFRESH || ctx->rinf == ANIMATION || ctx->rinf == LOADENTRY ) {
+        if (ctx->rinf == REFRESH) {           
+            clearScreen(COLOR_BLACK);
+            locate(0, 0);
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_HEAD_ENTRY_OVERVIEW ]));
+            drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);       
+        }
+         
+        if ( sctx->initialized ) {
+            int32_t start;
+            if ( sctx->entrycount > OVERVIEW_LINES ) {
+                start = sctx->cursor;  
+                start -= ( OVERVIEW_LINES / 2 - 1 );
+                if ( start <= 0 ) {
+                    start = 0;
+                    drawup = false;
+                } else {        
+                    int32_t end = sctx->entrycount;  
+                    end -= OVERVIEW_LINES;
+                    if ( start >= end ) {
+                        start = end;
+                        drawdown = false;
+                    }
+                }            
+            } else {
                 start = 0;
-                drawup = false;
-            } else {        
-                int32_t end = sctx->entrycount;  
-                end -= OVERVIEW_LINES;
-                if ( start >= end ) {
-                    start = end;
-                    drawdown = false;
+            }        
+
+
+            uint8_t y = 20;
+            uint8_t highlightpos = 0;
+
+            setWritebounds( 0, DISPLAY_WIDTH - 6 );       
+            for (uint16_t pos = 0; pos < OVERVIEW_LINES; pos ++ ) {
+                locate(0, y);
+                if ( start >= sctx->bufferstart && start < sctx->bufferstart + sctx->bufferlen ) {                
+                    if ( sctx->entries[start].loaded ) {
+                        cWriteTextInternNLB(sctx->entries[start].name );
+                    } else {
+                        cWriteTextInternNLB( textdata+texte[TEXT_LOAD_ENTRY_PLACEHOLDER] );
+                    }                
                 }
-            }            
-        } else {
-            start = 0;
-        }        
-        
-        
-        uint8_t y = 20;
-        uint8_t highlightpos = 0;
-        
-        if ( ctx->rinf == ANIMATION ) {
-            highlightEntryLine( sctx->ohighlightpos, COLOR_BLACK, DISPLAY_WIDTH - 6 );
-        }
-        
-        setWritebounds( 0, DISPLAY_WIDTH - 6 );       
-        for (uint16_t pos = 0; pos < OVERVIEW_LINES; pos ++ ) {
-            locate(0, y);
-            if ( start >= sctx->bufferstart && start < sctx->bufferstart + sctx->bufferlen ) {                
-                if ( sctx->entries[start].loaded ) {
-                    cWriteTextInternNLB(sctx->entries[start].name );
-                } else {
-                    cWriteTextInternNLB( textdata+texte[TEXT_LOAD_ENTRY_PLACEHOLDER] );
-                }                
+                uint8_t x = getLocationX();
+                fillRect(x,y,(DISPLAY_WIDTH - 5 ) - x, 15, COLOR_BLACK );
+
+                if ( start == sctx->cursor ) highlightpos = pos;                        
+                start++;
+                y += 17;
+            }               
+
+            if ( ctx->rinf == ANIMATION || ctx->rinf == REFRESH ) {
+                highlightEntryLine( sctx->ohighlightpos, COLOR_BLACK, DISPLAY_WIDTH );
+                sctx->ohighlightpos = highlightpos;
+                highlightEntryLine( highlightpos, device_options.highlight_color1, DISPLAY_WIDTH );
+
             }
-            uint8_t x = getLocationX();
-            fillRect(x,y,(DISPLAY_WIDTH - 5 ) - x, 15, COLOR_BLACK );
-            
-            if ( start == sctx->cursor ) highlightpos = pos;                        
-            start++;
-            y += 17;
-        }               
-                
-        if ( ctx->rinf == ANIMATION ) {
-            sctx->ohighlightpos = highlightpos;
-            highlightEntryLine( highlightpos, device_options.highlight_color1, DISPLAY_WIDTH - 6 );
-               
-        }
-        setWritebounds( 0, DISPLAY_WIDTH );
+            setWritebounds( 0, DISPLAY_WIDTH );
 
-        if ( drawup ) {
-            drawImage( DISPLAY_WIDTH-5, 23+20, &bitmaps[SYSICON_ARROWUP] );
-        } else {
-            fillRect( DISPLAY_WIDTH-5, 23+20, 5,12, COLOR_BLACK );
-        }
+            if ( drawup ) {
+                drawImage( DISPLAY_WIDTH-5, 23, &bitmaps[SYSICON_ARROWUP] );
+            } else {
+                fillRect( DISPLAY_WIDTH-5, 23, 5,12, COLOR_BLACK );
+            }
 
-        start = sctx->cursor;
-        start-= OVERVIEW_LINES / 2;
-        if ( drawdown ) {
-            drawImage( DISPLAY_WIDTH-5, 45+40 , &bitmaps[SYSICON_ARROWDOWN] );        
-        } else {
-            fillRect( DISPLAY_WIDTH-5, 45+40, 5,12, COLOR_BLACK );
-        }                                                        
+            start = sctx->cursor;
+            start-= OVERVIEW_LINES / 2;
+            if ( drawdown ) {
+                drawImage( DISPLAY_WIDTH-5, 50+60 , &bitmaps[SYSICON_ARROWDOWN] );        
+            } else {
+                fillRect( DISPLAY_WIDTH-5, 50+60, 5,12, COLOR_BLACK );
+            }    
+        }
     }
 }
 
@@ -584,6 +593,40 @@ void rndMessagebox(APP_CONTEXT* ctx) {
     }
 }
 
+void highlightChooseBoxEntry(uint8_t yoff, uint8_t selection, uint16_t color ) {
+    fillRect( 14, yoff + 3 + selection * 17, DISPLAY_WIDTH - 28, 1, color );    
+    fillRect( 14, yoff + 3 + selection * 17 + 17, DISPLAY_WIDTH - 28,1, color );    
+}
+
+void rndChoosebox(APP_CONTEXT* ctx) {
+    
+    CTX_CHOOSE_BOX *sctx;
+    sctx = (CTX_CHOOSE_BOX*) (ctx->ctxbuffer + ctx->ctxptr);    
+    
+    if ( ctx->rinf == REFRESH || ctx->rinf == ANIMATION ) {  
+        uint8_t height = sctx->options * 17 + 6;
+        uint8_t yoff = ( DISPLAY_HEIGHT - height ) / 2;
+        uint8_t xoff = 10;
+        
+        if ( ctx->rinf == REFRESH ) {
+            fillRect( xoff,yoff, DISPLAY_WIDTH-20, height, COLOR_BLACK );
+            drawRect( xoff,yoff, DISPLAY_WIDTH-20, height,  COLOR_WHITE );
+        }
+        
+        setWritebounds( 14, DISPLAY_WIDTH-14 );
+        for (uint8_t i =0; i<sctx->options; i++) {
+            locate( 14, yoff + 4 + i * 17 );
+            cWriteTextIntern( (const uint8_t*) (textdata + texte[ sctx->textid[i] ]) );
+        }
+        
+        highlightChooseBoxEntry(yoff, sctx->oselected, COLOR_BLACK );
+        highlightChooseBoxEntry(yoff, sctx->selected, device_options.highlight_color1 );
+                 
+        setWritebounds( 0, DISPLAY_WIDTH );
+    }
+    
+}
+
 void rndViewToken(APP_CONTEXT* ctx) {
     CTX_VIEW_TOKEN *sctx;
     sctx = (CTX_VIEW_TOKEN*) (ctx->ctxbuffer + ctx->ctxptr);     
@@ -623,20 +666,194 @@ void rndViewToken(APP_CONTEXT* ctx) {
     }
            
     if ( sctx->currline > 0 ) {
-        drawImage( DISPLAY_WIDTH-5, 23 +20, &bitmaps[SYSICON_ARROWUP] );
+        drawImage( DISPLAY_WIDTH-5, 23 , &bitmaps[SYSICON_ARROWUP] );
     } else {
-        fillRect( DISPLAY_WIDTH-5, 23+ 20, 5,12, COLOR_BLACK );
+        fillRect( DISPLAY_WIDTH-5, 23, 5,12, COLOR_BLACK );
     }
     
     int32_t lines = sctx->lines;
     lines -= TEXTVIEWER_LINES;
     if ( lines < 0 ) lines = 0;
     if ( sctx->currline < lines ) {
-        drawImage( DISPLAY_WIDTH-5, 45+40 , &bitmaps[SYSICON_ARROWDOWN] );        
+        drawImage( DISPLAY_WIDTH-5, 50+60 , &bitmaps[SYSICON_ARROWDOWN] );        
     } else {
-        fillRect( DISPLAY_WIDTH-5, 45+40, 5,12, COLOR_BLACK );
+        fillRect( DISPLAY_WIDTH-5, 50+60, 5,12, COLOR_BLACK );
     }  
+                   
+}
+
+
+void rndOptions1(APP_CONTEXT* ctx) {
+    CTX_OPTIONS1 *sctx;
+    sctx = (CTX_OPTIONS1*) (ctx->ctxbuffer + ctx->ctxptr);         
     
+    if ( ctx->rinf == REFRESH || ctx->rinf == ANIMATION ) {
+        uint8_t y;
+        uint8_t x;
+        
+        if ( ctx->rinf == REFRESH ) {
+            clearScreen(COLOR_BLACK);
+            locate(0, 0);
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_HEAD_OPTIONS1 ]));
+            drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);
+        }
+                        
+        y = 20;
+        drawImage( 5, y, &bitmaps[SYSICON_USB] );
+        locate(25, y);
+        if ( device_options.umode == USB_MODE_OFF ) {
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_OPTV_USB_OFF ]));
+        } else if ( device_options.umode == USB_MODE_KEYBOARD ) {
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_OPTV_USB_KEYBOARD ]));            
+        }
+        x = getLocationX();
+        fillRect(x, y, DISPLAY_WIDTH-x, 15, COLOR_BLACK );
+                        
+        y+=17;
+        drawImage( 5, y, &bitmaps[SYSICON_BRIGHTNESS] );
+        locate(25, y);
+
+        fillRect(23, y+1, 2, 13, COLOR_BLACK ); 
+        fillRect(25+64, y+1, 2, 13, COLOR_BLACK );
+        for (int i=0;i<64;i++) {
+            uint16_t gcb;
+            uint16_t gradient_color;
+                        
+            gcb = i*4;
+            gradient_color = ( ( gcb & 0xf8 ) << 8 ) | ( ( gcb & 0xfc ) << 3 ) | ( ( gcb & 0xf8 ) >> 3 );
+                        
+            fillRect(25+i, y+1, 1, 13, gradient_color );            
+        }
+        int bloc = device_options.brightness;
+        bloc = ( bloc * 64 ) / 100;
+        fillRect(25+bloc, y+1, 1, 13, device_options.highlight_color1 );
+        fillRect(25+bloc-1, y+1, 1, 13, COLOR_BLACK );
+        fillRect(25+bloc+1, y+1, 1, 13, COLOR_BLACK );
+          
+        y+=17;
+        drawImage( 5, y, &bitmaps[SYSICON_COLOR] );
+        locate(25, y);
+        
+        fillRect( 25, y+3, 64, 9, device_options.highlight_color1 );
+        
+        highlightEntryLine(sctx->oselected, COLOR_BLACK, DISPLAY_WIDTH);
+        highlightEntryLine(sctx->selected, device_options.highlight_color1, DISPLAY_WIDTH );
+    }           
+}
+
+
+void setPositiontab(uint8_t selection,  uint8_t y, uint8_t x1, uint8_t x2, uint32_t *positiontab ) {
+    uint32_t v, v2;
+    
+    
+    v2 = 0;
+    v = y;    
+    v2 |= ( v << 16 );
+    v = x1;    
+    v2 |= ( v << 8 );
+    v = x2;    
+    v2 |= v;
+    positiontab[selection] = v2;
+}
+
+void highlightClockDate( uint8_t selection, uint16_t color, uint32_t *positiontab ) {
+    uint8_t x1, x2, y;
+    
+    y =  ( positiontab[selection] & 0xff0000 ) >> 16;
+    x1 = ( positiontab[selection] & 0xff00 ) >> 8;
+    x2 = ( positiontab[selection] & 0xff );   
+    highlightEntryLineMid( y , color, x1, x2-x1 );    
+}
+
+void writeDateTime( int dt ) {
+    uint8_t formatted[2];
+  
+    formatted[1] = dt % 10;
+    formatted[0] = dt / 10;
+     
+    for ( int i=0;i<2;i++) {
+        GFXChar ch = gfxchars[ hexchars[formatted[i]] ];
+        writeChars(&ch, 1);    
+    }            
+}
+
+void rndOptions2(APP_CONTEXT* ctx) {
+    CTX_OPTIONS2 *sctx;
+    sctx = (CTX_OPTIONS2*) (ctx->ctxbuffer + ctx->ctxptr);         
+        
+    if ( ctx->rinf == REFRESH || ctx->rinf == ANIMATION ) {
+        uint32_t positiontab[8];        
+        uint8_t y;
+        uint8_t x1, x2;
+                           
+        if ( ctx->rinf == REFRESH ) {
+            clearScreen(COLOR_BLACK);
+            locate(0, 0);
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_HEAD_OPTIONS2 ]));
+            drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);
+        }
+        
+        y = 20;
+        setPositiontab(0,  0, 0, 25, positiontab );                
+        drawImage( 5, y, &bitmaps[SYSICON_CLOCK] );
+        
+        //write hour
+        locate(25, y);
+        x1 = getLocationX();
+        writeDateTime( sctx->time.tm_hour );
+        x2 = getLocationX();
+        setPositiontab(1, 0, x1, x2, positiontab );
+        drawImage( x2, y, &bitmaps[SYSICON_COLON] );
+        x1 = x2 + 4;
+        locate(x1, y);
+        
+        //write minute        
+        writeDateTime( sctx->time.tm_min );
+        x2 = getLocationX();
+        setPositiontab(2, 0, x1, x2, positiontab );
+        drawImage( x2, y, &bitmaps[SYSICON_COLON] );
+        x1= x2 + 4;
+        locate(x1, y);
+
+        //write seconds        
+        writeDateTime( sctx->time.tm_sec );
+        x2 = getLocationX();
+        setPositiontab(3, 0, x1, x2, positiontab );        
+        fillRect(x2,y, DISPLAY_WIDTH-x2,15, COLOR_BLACK);
+               
+        y += 17;
+        setPositiontab(4,  1, 0, 25, positiontab );                
+        drawImage( 5, y, &bitmaps[SYSICON_CALENDAR] );
+        
+        //write day
+        locate(25, y);
+        x1 = getLocationX();
+        writeDateTime( sctx->time.tm_mday );
+        x2 = getLocationX();
+        setPositiontab(5, 1, x1, x2, positiontab );
+        drawImage( x2, y, &bitmaps[SYSICON_DOT] );
+        x1 = x2 +4;
+        locate(x1, y);
+        
+        //write month
+        writeDateTime( sctx->time.tm_mon );
+        x2 = getLocationX();
+        setPositiontab(6, 1, x1, x2, positiontab );
+        drawImage( x2, y, &bitmaps[SYSICON_DOT] );  
+        x1 = x2 +4;
+        locate(x1, y);
+
+        //write year        
+        writeChars(&gfxchars[ hexchars[2] ], 1);         
+        writeChars(&gfxchars[ hexchars[0] ], 1);
+        writeDateTime( sctx->time.tm_year );
+        x2 = getLocationX();
+        setPositiontab(7, 1, x1, x2, positiontab );        
+        fillRect(x2,y, DISPLAY_WIDTH-x2,15, COLOR_BLACK);
+                              
+        if ( sctx->oselected != 0xff ) highlightEntryLine( sctx->oselected < 4 ? 0 : 1 , COLOR_BLACK, DISPLAY_WIDTH );
+        highlightClockDate( sctx->selected, device_options.highlight_color1, positiontab );
+    }    
 }
 
 void renderUI(APP_CONTEXT* ctx) {
@@ -661,9 +878,18 @@ void renderUI(APP_CONTEXT* ctx) {
         case MESSAGEBOX:
             rndMessagebox(ctx);
             break;
+        case CHOOSEBOX:
+            rndChoosebox(ctx);
+            break;
         case VIEW_TOKEN:
             rndViewToken(ctx);
-            break;            
+            break; 
+        case OPTIONS1:
+            rndOptions1(ctx);
+            break;              
+        case OPTIONS2:
+            rndOptions2(ctx);
+            break;               
         case ERROR:
             rndError(ctx);
         case ERROR_CONTEXT:

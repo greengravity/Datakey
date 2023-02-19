@@ -28,6 +28,8 @@ typedef enum {
 
 void spi_fat_open();
 void spi_fat_close();
+void FatTimerCallback(void);
+DWORD get_fattime(void);
 
 DSTATUS disk_initialize (BYTE pdrv);
 DSTATUS disk_status (BYTE pdrv);
@@ -83,6 +85,7 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
 #define CT_SD2		0x04		/* SD ver 2 */
 #define CT_SDC		(CT_SD1|CT_SD2)	/* SD */
 #define CT_BLOCK	0x08		/* Block addressing */
+
 
 
 #ifdef __cplusplus

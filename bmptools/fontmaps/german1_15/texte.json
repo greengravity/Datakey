@@ -23,17 +23,24 @@
         { "name":"VIEWHEAD_INFO", "text": "Info anzeigen" },        
         { "name":"HEAD_ENTRY_DETAIL", "text": "Eintragsdaten" },
         { "name":"HEAD_ENTRY_OVERVIEW", "text": "Eintragsliste" },
+        { "name":"HEAD_OPTIONS1", "text": "Optionen" },
+        { "name":"HEAD_OPTIONS2", "text": "Datum einstellen" },
         { "name":"EDETAIL_NAME", "text": "Name:" },
         { "name":"EDETAIL_KEY1", "text": "Key1:" },
         { "name":"EDETAIL_KEY2", "text": "Key2:" },
         { "name":"EDETAIL_URL", "text": "URL:" },
         { "name":"EDETAIL_INFO", "text": "Info:" },
+        { "name":"OPTV_USB_OFF", "text": "aus" },        
+        { "name":"OPTV_USB_KEYBOARD", "text": "V-Tastatur" },
         { "name":"MSG_OVERWRITE", "text": " Eintrag        überschreiben?" },
         { "name":"MSG_DELETE_TOKEN", "text": "Infofeld löschen?" },
         { "name":"MSG_DELETE_ENTRY", "text": "Achtung, gesamten Schlüsseleintrag löschen?" },
         { "name":"MSG_ABORT", "text": "Ohne Sichern    abbrechen?" },
+        { "name":"CHB_CREATE_ENTRY", "text": "Eintrag anlegen" },
+        { "name":"CHB_DELETE_ENTRY", "text": "Eintrag löschen" },
+        { "name":"CHB_CONFIG", "text": "Konfiguration" },
         { "name":"LOAD_ENTRY_PLACEHOLDER", "text": "---lade---" }
     ],
     "hexchars": "0123456789abcdef",
-    "passwordreplacechar": "*"    
+    "passwordreplacechar": "*"
 }

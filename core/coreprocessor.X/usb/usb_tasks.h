@@ -33,6 +33,9 @@
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 
+bool USB_IsWriteCharBuffer();
+void USB_WriteCharacterBuffer(uint8_t *wb, uint16_t len);
+void USB_StopWriteCharBuffer();
 void USB_Interface_Init(void);
 void USB_Interface_Tasks(void);
 void USB_Suspend(void);

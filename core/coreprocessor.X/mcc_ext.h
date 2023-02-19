@@ -14,7 +14,16 @@
 #include "fs/ff.h"
 #include "logic.h"
 
+#define SDCard_CD_SetWPUOn()           (CNPU2bits.CN25PUE = 1)
+#define SDCard_CD_SetWPUOff()          (CNPU2bits.CN25PUE = 0)
+
+extern volatile UINT buttonTimer, adcTimer, usbTimeout, keyTimeout;
+
+
 // ********** Standard functions *******
+void disableVoltPower();
+void enableVoltPower();
+
 void bootPeripherals(APP_CONTEXT *ctx);
 void shutdownPeripherals(APP_CONTEXT *ctx);
 void setSleep(APP_CONTEXT *ctx);
@@ -23,9 +32,6 @@ void setSleep(APP_CONTEXT *ctx);
 uint16_t OC1_PrimaryValueGet();
 
 // ********* Extend Filesystem Functions *********
-/*void fs_standby();
-void fs_standby_file(FIL* fp);
-void fs_resume(); */
 void mountFS( APP_CONTEXT *ctx );
 void unmountFS( APP_CONTEXT *ctx );
 

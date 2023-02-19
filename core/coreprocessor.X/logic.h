@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include "fs/ff.h"
 #include "assets.h"
+#include "mcc_generated_files/rtcc.h"
 
 #define CTX_BUFFER_SIZE 2000
 #define PIN_SIZE 6
@@ -86,6 +87,9 @@ typedef enum {
     VIEW_TOKEN,
     EDIT_ENTRY,
     MESSAGEBOX,
+    CHOOSEBOX,
+    OPTIONS1,
+    OPTIONS2
 } CONTEXT_TYPE;
 
 
@@ -94,6 +98,13 @@ typedef enum {
     MSGB_YES = 1,
     MSGB_NO = 2,
 } MSGB_RESULT;
+
+typedef enum {
+    CHBX_ABORT,
+    CHBX_CREATE_ENTRY,
+    CHBX_DELETE_ENTRY,
+    CHBX_CONFIG,
+} CHBX_SELECTIONS;
 
 typedef enum {
     YES_NO,    
@@ -205,6 +216,28 @@ typedef struct {
     MSGTYPE mtype;
 } CTX_MSG_BOX;
 
+typedef struct {
+    uint16_t textid[6];
+    uint8_t selectid[6];
+    uint8_t options;
+    CHBX_SELECTIONS selected;
+    CHBX_SELECTIONS oselected;
+    uint8_t __pad1;
+} CTX_CHOOSE_BOX;
+
+typedef struct {          
+    uint8_t selected;
+    uint8_t oselected;
+} CTX_OPTIONS1;
+
+typedef struct {
+    bcdTime_t time;
+    uint8_t selected;
+    uint8_t oselected;    
+    uint8_t holdtime;
+    uint8_t __pad1;
+} CTX_OPTIONS2;
+
 //Context storage
 typedef struct {
     uint16_t ctxptr; 
@@ -215,13 +248,16 @@ typedef struct {
     uint8_t power;   
     bool fsmounted;
     bool fileopen;
+    bool rinf_pwr;
+    uint8_t adc_rw_state;
     uint8_t __pad1;
     FATFS drive;
-    FIL file;
 } APP_CONTEXT;
 
+extern const uint16_t highlight_color_tab[];
 extern const TOKEN_CONFIG token_configs[];
 extern DEVICE_OPTIONS device_options;
+
 
 bool isKeySet( );
 void setMasterKey(uint8_t *key);

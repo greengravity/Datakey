@@ -51,15 +51,15 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "drivers/spi_master.h"
-#include "tmr1.h"
-#include "tmr2.h"
 #include "spi1_driver.h"
-#include "adc1.h"
+#include "drivers/spi_master.h"
+#include "rtcc.h"
 #include "interrupt_manager.h"
 #include "traps.h"
-#include "oc1.h"
 #include "ext_int.h"
+#include "adc1.h"
+#include "oc1.h"
+#include "tmr2.h"
 
 #warning "This file will be removed in future MCC releases. Use system.h instead."
 

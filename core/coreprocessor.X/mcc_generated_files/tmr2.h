@@ -59,6 +59,7 @@
 
 #endif
 
+#define TMR2_INTERRUPT_TICKER_FACTOR    1
 
 /**
   Section: Interface Routines
@@ -108,13 +109,13 @@
 */
 void TMR2_Initialize (void);
 
+
 /**
   @Summary
-    Used to maintain the driver's state machine and implement its ISR
+    Updates 16-bit timer value
 
   @Description
-    This routine is used to maintain the driver's internal state machine and
-    implement its ISR for interrupt-driven implementations.
+    This routine updates 16-bit timer value
 
   @Param
     None.
@@ -126,42 +127,51 @@ void TMR2_Initialize (void);
     Refer to the example of TMR2_Initialize();
 */
 
-void TMR2_Tasks_32BitOperation( void );
+void TMR2_Period16BitSet( uint16_t value );
+
+/**
+
+  @Summary
+    Provides the timer 16-bit period value
+
+  @Description
+    This routine provides the timer 16-bit period value
+
+  @Param
+    None.
+
+  @Returns
+    Timer 16-bit period value
+ 
+  @Example 
+    Refer to the example of TMR2_Initialize();
+*/
+
+uint16_t TMR2_Period16BitGet( void );
 
 /**
   @Summary
-    Updates 32-bit timer value
+    Updates the timer's 16-bit value
 
   @Description
-    This routine updates 32-bit timer value
+    This routine updates the timer's 16-bit value
 
   @Param
-    value       - 32-bit period value
+    None.
 
   @Returns
     None
 
   @Example 
     <code>
-    bool statusTimer1;
-    uint32_t period;
-    uint32_t value;
+    uint16_t value=0xF0F0;
 
-    period = 0x20202020;
-
-    TMR2_Initialize();
-
-    TMR2_Period32BitSet(period);
-
-    if((value = TMR2_Period32BitGet())== period)
-    {
-        TMR2_Start();
-    }
+    TMR2_Counter16BitSet(value));
 
     while(1)
     {
         TMR2_Tasks();
-        if( (statusTimer1 = TMR2_IsElapsed()) == true)
+        if( (value == TMR2_Counter16BitGet()))
         {
             TMR2_Stop();
         }
@@ -169,79 +179,47 @@ void TMR2_Tasks_32BitOperation( void );
     </code>
 */
 
-void TMR2_Period32BitSet( uint32_t value );
+void TMR2_Counter16BitSet ( uint16_t value );
 
 /**
   @Summary
-    Provides the timer 32-bit period value
+    Provides 16-bit current counter value
 
   @Description
-    This routine provides the timer 32-bit period value
+    This routine provides 16-bit current counter value
 
   @Param
-    None
+    None.
 
   @Returns
-    Timer 32-bit period value
+    16-bit current counter value
  
   @Example 
-    Refer to the example of TMR2_Period32BitSet();
+    Refer to the example of TMR2_Counter16BitSet();
 */
 
-uint32_t TMR2_Period32BitGet( void );
+uint16_t TMR2_Counter16BitGet( void );
 
 /**
   @Summary
-    Updates the timer's 32-bit value
+    Assigns a function pointer with a callback address.
 
   @Description
-    This routine updates the timer's 32-bit value
+    This routine assigns a function pointer with a callback address.
 
   @Param
-    value       - 32-bit Counter value
+    Address of the callback routine.
 
   @Returns
     None
-	
+ 
   @Example 
     <code>
-    uint32_t value=0xF0F0F0;
-
-    TMR2_Counter32BitSet(value));
-
-    while(1)
-    {
-        TMR2_Tasks();
-        if( (value == TMR2_Counter32BitGet()))
-        {
-            TMR2_Stop();
-        }
-    }
+        TMR2_SetInterruptHandler(&TMR2_CallBack);
     </code>
 */
 
-void TMR2_Counter32BitSet( uint32_t value );
-
-/**
-  @Summary
-    Provides 32-bit  current counter value
-
-  @Description
-    This routine provides 32-bit current counter value
-
-  @Param
-    None
-
-  @Returns
-    32-bit current counter value
- 
-  @Example 
-    Refer to the example of TMR2_Counter32BitSet();
-*/
-
-uint32_t TMR2_Counter32BitGet( void );
-
-
+void TMR2_SetInterruptHandler(void (* InterruptHandler)(void));
 
 /**
   @Summary

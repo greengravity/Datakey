@@ -19,7 +19,6 @@
 
 static uint8_t _height, _width, _rotation;
 static uint8_t _charx=0, _chary=0;
-static uint8_t _brightness = 100;
 static uint8_t _startwrite, _endwrite;
 
 
@@ -274,18 +273,11 @@ void dispSetRotation(uint8_t m) {
 }
 
 void dispSetBrightness(uint8_t brightness ) {
-    if ( brightness > 100 ) brightness = 100;
-    _brightness = brightness;
+    if ( brightness > 100 ) brightness = 100;    
     uint32_t b = OC1_TOPVALUE;
     b = ( b * ((uint32_t)brightness) ) / 100ul;
     OC1_PrimaryValueSet( OC1_TOPVALUE - ( (uint16_t)b ) );
 }
-
-uint8_t dispGetBrightness() {    
-    return _brightness;
-}       
-
-
 
 void dispStart( ) {
        
@@ -312,7 +304,7 @@ void dispStart( ) {
   _endwrite = DISPLAY_WIDTH;
   
   OC1_SecondaryValueSet(OC1_TOPVALUE);
-  dispSetBrightness(100);
+  dispSetBrightness(device_options.brightness);
   OC1_Start();
 }
 
@@ -494,19 +486,7 @@ uint8_t unicodeLookup(uint16_t ct) {
             return unicodes[c].cid;
         }
     }
-    
-    int16_t low = 0;
-    int16_t high = TOTAL_CHAR_COUNT - 1;
-    while ( true ) {
-        uint8_t offs = ( high - low ) / 2;
-        if ( unicodes[ offs ].uccp > ct ) {
-            high = offs - 1;            
-            if ( low > high ) return CHAR_ENCODEERR;
-        } else if ( unicodes[ offs ].uccp < ct ) {
-            low = offs + 1;
-            if ( low > high ) return CHAR_ENCODEERR;
-        } else return unicodes[ offs ].cid;
-    }           
+    return CHAR_ENCODEERR;
 }
 
 //Setting Writecursor
@@ -588,7 +568,6 @@ void writeTextIntern( uint8_t *text ) {
 }
 
 //Writing possible Characters from ASCII Codepage
-
 void cWriteText( const char *text ) {
     
     uint16_t len = strlen( text );

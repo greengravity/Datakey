@@ -129,7 +129,7 @@ bool OC1_IsCompareCycleComplete( void )
 
 bool OC1_FaultStatusGet( OC1_FAULTS faultNum )
 {
-    bool status;
+    bool status = 0x00;
     /* Return the status of the fault condition */
    
     switch(faultNum)
