@@ -142,7 +142,7 @@ let readpromises = []
 
 let icons = iconjson.map(jicon => {
 
-  const icon = Object.assign({ imgdata: [], path: path.resolve(icondir, jicon.icon) }, jicon)
+  const icon = Object.assign({ imgdata: [], path: path.resolve(icondir, jicon.icon), color : true }, jicon )
 
   const pr = new Promise((resolve, reject) => {
     Jimp.read(icon.path)
@@ -163,11 +163,12 @@ let icons = iconjson.map(jicon => {
           0, 0, image.bitmap.width, image.bitmap.height,
           (x, y, idx) => {
 
-            let red = image.bitmap.data[idx + 0];
-            let green = image.bitmap.data[idx + 1];
-            let blue = image.bitmap.data[idx + 2];
+            let red = image.bitmap.data[idx + 0]
+            let green = image.bitmap.data[idx + 1]
+            let blue = image.bitmap.data[idx + 2]
 
             icon.imgdata[x][y] = [red, green, blue]
+            
           }
         )
 
@@ -205,11 +206,10 @@ Promise.all(readpromises).then((values) => {
                ( ( rgb[1] & 0xfc ) << 3 ) |
                ( ( rgb[2] & 0xf8 ) >> 3 )
 
+    let sv1 = ( sval & 0xff00 ) >> 8
+    let sv2 = ( sval & 0xff )
 
-
-    let hexval = sval.toString(16)
-    while ( hexval.length < 4 ) { hexval = '0' + hexval }      
-    return '0x' + hexval
+    return getHexByteVal(sv1) + ', ' + getHexByteVal(sv2)
   }
 
 
@@ -224,7 +224,7 @@ Promise.all(readpromises).then((values) => {
   outdatac.push('#include "assets.h"')
   outdatac.push('')
   outdatac.push('// Systemfont: ' + charlist[0].height + ' pixels high')
-  outdatac.push('const uint16_t bitmapdata[] = ')
+  outdatac.push('const __prog__ uint8_t __attribute__((space(prog))) bitmapdata[] = ')
   outdatac.push('{')
 
   charlist.forEach((oc, index) => {
@@ -241,16 +241,30 @@ Promise.all(readpromises).then((values) => {
 
     outdatac.push('// @' + pos + '"' + oc.charval + '" (' + oc.width + ' pixels wide)')
     let binline = ''
+    let val = 0
+    let even=true
     for (let y = 0; y < oc.height; y++) {
       let line = ''
       for (let x = 0; x < oc.width; x++) {
         line += oc.glyph[x][y][0] > 150 ? '#' : ' '
-        if (index > 0 || y > 0 || x > 0) binline += ','
-        binline += rgbToByteVal(oc.glyph[x][y]) 
-        pos ++
+        if ( index > 0 || y > 0 || x > 0) binline += ','
+        //binline += rgbToByteVal(oc.glyph[x][y]) 
+/*        if ( even ) {
+          val = oc.glyph[x][y][0] << 8
+          even = false
+        } else {
+          even = true
+          val |= oc.glyph[x][y][0]
+          binline += val
+          val = 0
+        } */
+        binline += getHexByteVal(oc.glyph[x][y][0]) 
+        pos++
       }
       outdatac.push('// ' + line)
     }
+    //pos += Math.ceil( oc.height*oc.width / 2 )
+    //if ( !even ) binline += val
     outdatac.push(binline)
   })
 
@@ -279,7 +293,7 @@ Promise.all(readpromises).then((values) => {
         binline += ','
 
         binline += rgbToByteVal(icon.imgdata[x][y])        
-        pos ++
+        pos += 2
       }
       outdatac.push('// ' + line)
     }    
@@ -300,7 +314,11 @@ Promise.all(readpromises).then((values) => {
   outdatac.push('{')
   imglist.forEach((img, index, arr) => {
     let betweenkomma = (index < (arr.length - 1) ? ',' : '')
-    outdatac.push('  ' + '{ ' + img.width + ', ' + img.height + ', ' + img.imgoffs + ' }' + betweenkomma )
+
+    let ioffs = img.imgoffs 
+    if ( !img.color ) ioffs = ioffs | 0x8000;
+        
+    outdatac.push('  ' + '{ ' + img.width + ', ' + img.height + ', ' + ioffs + ' }' + betweenkomma )
   })  
   outdatac.push('};')  
   outdatac.push('')
@@ -320,7 +338,7 @@ Promise.all(readpromises).then((values) => {
   charlist.forEach((ch, index, arr) => {
     let c_keycodes = ["0x00", "0x00", "0x00", "0x00"]
 
-    let kc = keycodes.keycodes.find(kc=>kc.char == ch.charval )
+    let kc = keycodes.keycodes.find(kc=> ( kc.char == ch.charval || kc.char == "\n" && ch.charval == "linefeed" ) && kc.code )
     if ( kc && kc.code.length <= 4 ) {
       kc.code.forEach( (kcc, kcindex ) => {
         c_keycodes[kcindex] = kcc
@@ -391,7 +409,7 @@ Promise.all(readpromises).then((values) => {
       td.pos = tpos;
       for (let i=0; i<td.text.length;i++) {
         let c = td.text.charAt(i);
-        let c2 = charlist.find( cl=>cl.charval == c );      
+        let c2 = charlist.find( cl=> cl.charval == c || cl.charval == "linefeed" && c == "\n" );      
         if ( c2 ) {
           bytelist.push( getHexByteVal( c2.charid ) )                
         } else {
@@ -477,7 +495,7 @@ Promise.all(readpromises).then((values) => {
         if ( ch ) {
           kid = k.id ? getHexByteVal( ch.charid ) : '0x02'
         } else {
-          console.log( "Character: " + k.id + ' not found')
+          console.log( "Character: " + k.id + ' not found' )
           kid = '0x02'
         }
       } else if ( k.f.toUpperCase() === "GEN" ) {
@@ -591,7 +609,7 @@ Promise.all(readpromises).then((values) => {
   outdatah.push('  const uint8_t len;' )
   outdatah.push('} Generatormaps;')
   outdatah.push('')  
-  outdatah.push('extern const uint16_t bitmapdata[];')
+  outdatah.push('extern const __prog__ uint8_t __attribute__((space(prog))) bitmapdata[];')
   outdatah.push('extern const GFXimage bitmaps[];')
   outdatah.push('extern const GFXChar gfxchars[];')
   outdatah.push('extern const Unicodelist unicodes[];')

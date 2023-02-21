@@ -418,64 +418,36 @@ void drawImage(int16_t x, int16_t y, const GFXimage *image) {
            
     uint16_t outbuffer[MAX_IMAGE_BUFFER];
     int16_t gw = image->width;
-    int16_t gh = image->height;
+    int16_t gh = image->height;        
+    uint8_t  gray = image->bitmapOffset  >> 15;
+    uint16_t offs = image->bitmapOffset & 0x7FFF;
     uint16_t size = gw * gh;
-    
-    if ( ( ( x + gw ) <= 0 ) || 
+        
+/*    if ( ( ( x + gw ) <= 0 ) || 
         ( ( y + gh ) <= 0 ) ||           
         ( x >= _width ) ||           
-        ( y >= _height ) ) return; //check image offscreen
+        ( y >= _height ) ) return; //check image offscreen */
       
-    for (uint16_t i=0; i< size; i++) {
-        outbuffer[i] = bitmapdata[image->bitmapOffset + i];       
+    if ( gray ) {
+        for (uint16_t i=0; i< size; i++) {            
+            uint8_t gval = bitmapdata[offs + i];
+            
+            outbuffer[i] = ( ( gval & 0xf8 ) << 8 ) |
+                           ( ( gval & 0xfc ) << 3 ) |
+                           ( ( gval & 0xf8 ) >> 3 );                        
+        }
+    } else {
+        for (uint16_t i=0; i< size; i++) {
+            outbuffer[i] = bitmapdata[offs + i*2];       
+            outbuffer[i] = outbuffer[i] << 8;
+            outbuffer[i] |= bitmapdata[offs + i*2];
+        }        
     }
     
     dispStartWrite();
-    
-    if ( x >= 0 && y >= 0 && ( x + gw ) < _width && ( y + gh ) < _height   ) {
-        //Image complete on screen, need no clipping
-        dispSetAddrWindow(x, y, x + ( gw - 1 ), y + ( gh - 1 ) );
-        SPI1_transmit16bitBuffer(outbuffer, gw * gh );
-        
-    } else {
-        //Image will be clipped before draw
-        uint8_t _x;
-        uint8_t _y;        
-        uint8_t _w = gw;
-        uint8_t _h = gh;
-        uint8_t _xoff = 0;
-        uint8_t _yoff = 0;
-        
-        if ( x >= 0 ) {
-            _x = x;
-        } else {
-            _x = 0;
-            _xoff -= x;
-            _w += x;
-        }         
-        
-        if ( ( _x + _w ) > _width ) {
-            _w = _width - _x;
-        }
+    dispSetAddrWindow(x, y, x + ( gw - 1 ), y + ( gh - 1 ) );
+    SPI1_transmit16bitBuffer(outbuffer, gw * gh );
 
-        if ( y >= 0 ) {
-            _y = y;
-        } else {
-            _y = 0;
-            _yoff -= y;
-            _h += y;
-        }         
-        
-        if ( ( _y + _h ) > _height ) {
-            _h = _height - _y;
-        }
-
-        for ( int iy=0; iy<_h; iy++ ) {
-            dispSetAddrWindow(_x, _y + iy, _x + ( _w - 1 ), _y + iy );
-            SPI1_transmit16bitBuffer(outbuffer + _xoff + (_yoff+iy) * gw , _w );            
-        }
-        
-    }
     dispEndWrite();
  
 }
@@ -557,6 +529,18 @@ void cWriteTextIntern( const uint8_t *text ) {
     uint16_t len = strlen( (char*)text );
     for ( uint16_t i=0;i<len;i++) {           
         writeChar( text[i] < TOTAL_CHAR_COUNT ? &gfxchars[ text[i] ] : &gfxchars[ text[CHAR_ENCODEERR] ] );
+    }
+}
+
+void cWriteTextInternLinebreak( const uint8_t *text ) {    
+    uint16_t len = strlen( (char*)text );
+    for ( uint16_t i=0;i<len;i++) {
+        if ( text[i] == CHAR_LINEFEED ) {
+            _charx = _startwrite;
+            _chary += CHAR_HEIGHT;
+        } else {
+            writeChar( text[i] < TOTAL_CHAR_COUNT ? &gfxchars[ text[i] ] : &gfxchars[ text[CHAR_ENCODEERR] ] );
+        }
     }
 }
 

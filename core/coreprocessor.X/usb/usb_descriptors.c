@@ -74,8 +74,8 @@ const uint8_t configDescriptor1[]={
     HID_INTF,               // Class code
     BOOT_INTF_SUBCLASS,     // Subclass code
     HID_PROTOCOL_KEYBOARD,  // Protocol code
-    0,                      // Interface string index
-
+    0,                      // Interface string index    
+    
     /* HID Class-Specific Descriptor */
     0x09,//sizeof(USB_HID_DSC)+3,    // Size of this descriptor in bytes RRoj hack
     DSC_HID,                   // HID descriptor type

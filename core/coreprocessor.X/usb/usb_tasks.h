@@ -33,6 +33,8 @@
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 
+void set_USB_forbid_charge(bool forbid_charge);
+bool get_USB_forbid_charge();
 bool USB_IsWriteCharBuffer();
 void USB_WriteCharacterBuffer(uint8_t *wb, uint16_t len);
 void USB_StopWriteCharBuffer();

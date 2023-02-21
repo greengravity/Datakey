@@ -17,7 +17,7 @@
 #include "mcc_generated_files/spi1_driver.h"
 #include "mcc_generated_files/pin_manager.h"
 #include "mcc_generated_files/ext_int.h"
-#include "mcc_generated_files/adc1.h"
+//#include "mcc_generated_files/adc1.h"
 #include "mcc_generated_files/tmr2.h"
 #include "mcc_generated_files/oc1.h"
 
@@ -30,7 +30,8 @@
 #include "usb/usb.h"
 
 
-volatile UINT buttonTimer = 0, adcTimer = 0, usbTimeout = 0, keyTimeout = 0;
+volatile UINT buttonTimer = 0, adcTimer = 0, usbTimeout = 0, keyTimeout = 0, busChargeStartTimer = 0;
+
 
 // ********** Standard functions *******
 void disableVoltPower() {
@@ -41,6 +42,20 @@ void enableVoltPower() {
     VOLT_PWR_SetDigitalOutput();
     VOLT_PWR_SetLow();
 }
+
+void enableBUSCharge() {
+    CHRG_PWR_SetDigitalOutput();
+    CHRG_PWR_SetLow();    
+}
+
+void disableBUSCharge() {    
+    CHRG_PWR_SetDigitalInput();          
+}
+
+bool isBUSChargeEnabled() {
+    return _TRISC3 == 0;
+}
+
 
 void mountFS( APP_CONTEXT *ctx ) {   
     if (f_mount(&ctx->drive,"0:",1) == FR_OK) {
@@ -55,40 +70,86 @@ void unmountFS( APP_CONTEXT *ctx ) {
     f_mount(0,"0:",0);
 }
 
+uint8_t calculateBatteryPowerFromADC( int adcin ) {
+    //return adcin >> 3; 
+    double v = adcin;
+    uint8_t vr;
+    v /= 420; //Divider to get from analoginput to voltage
+    v -= 3.15; //3.15V is the bottom limit result in 0%
+    if ( v < 0 ) v = 0;
+    v = ( v / ( 3.8 - 3.15 ) ) * 100; //3.9V is the top charge limit result in 100%
+    if ( v > 100 ) v = 100;
+    
+    vr = (uint8_t)v;
+    if ( vr <= SHUTDOWN_POWER_LIMIT ) vr = SHUTDOWN_POWER_LIMIT + 1; 
+    return vr;
+}
 
-void bootPeripherals(APP_CONTEXT *ctx) {
+
+bool bootPeripherals(APP_CONTEXT *ctx) {
     EX_INT0_InterruptDisable();
     PER_PWR_SetLow();    
-    //enableVoltPower();
+    enableVoltPower();
 
     SDCard_CD_SetWPUOn();
     SDCard_CS_SetHigh();
        
     CS_D_SetHigh();
     RS_D_SetHigh();
-    
+
+    // Configure the ADC module
+    AD1CON1 = 0x8474; // Turn off the ADC module
+    AD1CON2 = 0; // Select AVdd and AVss as reference voltages
+    //AD1CON3 = 0; // Use default sample time and conversion clock
+    AD1CON3 = 0x1003;
+    AD1CHS = 0x6; // Select RB14 as the input channel
+    AD1CON1bits.ADON = 1; // Turn on the ADC module      
+             
     __delay_ms(150);
 
-/*    
-    spi_fat_open(); 
-    mountFS(ctx);
-    spi_fat_close();
-*/        
+    TMR2_Start();
+
+    disableBUSCharge(ctx);
+    USBDeviceInit();
+        
+    updateButtons(true);
+    updateButtons(true);    
+    
+    
+    ctx->adc_rw_state = 0;
+    if ( !USB_BUS_SENSE ) {
+        //Check if voltage is sufficient to start        
+        AD1CON1bits.SAMP = 1;
+        while ( !AD1CON1bits.DONE ) { }
+
+        int analogValue = ADC1BUF0;
+        ctx->power = calculateBatteryPowerFromADC( analogValue );
+        
+        disableVoltPower();
+        
+        if ( ctx->power <= SHUTDOWN_POWER_LIMIT ) {
+            return false;
+        }
+    } else {
+       ctx->power = 0xff;
+       disableVoltPower();
+    }
+        
     spi1_open(DISPLAY_CONFIG);
     dispStart();
     spi1_close();
-          
-    TMR2_Start();
-    
+                     
+    /*
+    AD1PCFGbits.PCFG14 = 0;
     ADC1_ChannelSelect(VOLT_READ);
     ADC1_Enable();
     adcTimer = 0;
     ctx->adc_rw_state = 1;
+    */
         
-    USBDeviceInit();
-        
-    updateButtons(true);
-    updateButtons(true);
+
+    
+    return true;
 }
 
 void shutdownPeripherals(APP_CONTEXT *ctx) {   
@@ -110,26 +171,38 @@ void shutdownPeripherals(APP_CONTEXT *ctx) {
     CRYCONLbits.CRYON = 0;
         
     //disableVoltPower();
-    ADC1_Disable();    //Stop Analogconverter    
-    
+    //ADC1_Disable();    //Stop Analogconverter    
+    AD1CON1bits.SAMP = 0;
+    AD1CON1bits.ADON = 0; // Turn off the ADC module 
+           
     USBDeviceDetach();
     USBModuleDisable();
 }
 
 
 void setSleep(APP_CONTEXT *ctx) {
-    //Shutdown all Peripherals    
-    shutdownPeripherals(ctx); 
-    setInitialContext( ctx );    
-    _LATB2 = 1;
-    EX_INT0_InterruptFlagClear();
-    EX_INT0_InterruptEnable();
-    Sleep();
-    Nop();
-    EX_INT0_InterruptDisable();
-    EX_INT0_InterruptFlagClear();
-    __delay_ms(100);    
-    bootPeripherals(ctx);
+    //Shutdown all Peripherals            
+    
+        
+    if ( !isPinSet() ) {
+        swipeKeys();
+    }
+    
+    
+    while ( true ) {
+        shutdownPeripherals(ctx);
+        setInitialContext( ctx );
+        _LATB2 = 1;
+        EX_INT0_InterruptFlagClear();
+        EX_INT0_InterruptEnable();
+        Sleep();
+        Nop();
+        EX_INT0_InterruptDisable();
+        EX_INT0_InterruptFlagClear();
+        __delay_ms(100); 
+        setInitialContext( ctx );
+        if ( bootPeripherals(ctx) ) break;
+    }
     
 }
 
@@ -267,14 +340,11 @@ void SPI1_Transmit32bit(uint32_t data) {
     
 }
 
-
 void SPI1_transmit16bitBuffer(uint16_t *dataTransmitted, uint16_t wordCount ) {
     for (uint16_t i=0;i<wordCount;i++ ) {
         SPI1_Transmit16bit( dataTransmitted[i] );        
     }    
 }
-
-
 
 // AES-Encryption and Decryption functions
 void prepareAES128BitCBC() {
@@ -414,4 +484,6 @@ void TMR2_CallBack(void) {
 	if (n) usbTimeout = --n;   
 	n = keyTimeout;					// 1000Hz decrement timer with zero stopped 
 	if (n) keyTimeout = --n;        
+  	n = busChargeStartTimer;		    // 1000Hz decrement timer with zero stopped 
+	if (n) busChargeStartTimer = --n;        
 }

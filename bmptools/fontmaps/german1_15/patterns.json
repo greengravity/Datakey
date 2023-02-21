@@ -148,27 +148,27 @@
 					{ "f": "CHAR", "id": "%" },
 					{ "f": "CHAR", "id": "&" },
 					{ "f": "CHAR", "id": "/" },
-					{ "f": "CHAR", "id": "?" },
-					{ "f": "CHAR", "id": "`" },
-					{ "f": "CHAR", "id": "´" }			
+					{ "f": "CHAR", "id": "?" }
 				],
 				[
-
-					{ "f": "CHAR", "id": "^" },
-					{ "f": "CHAR", "id": "°" },
 					{ "f": "CHAR", "id": "²" },
 					{ "f": "CHAR", "id": "³" },
 					{ "f": "CHAR", "id": "\\" },
-					{ "f": "CHAR", "id": "~" },
+					{ "f": "CHAR", "id": "°" },
 					{ "f": "CHAR", "id": "'" },
 					{ "f": "CHAR", "id": "#" },
 					{ "f": "CHAR", "id": "-" },
-					{ "f": "CHAR", "id": "_" }															
+					{ "f": "CHAR", "id": "_" }											
 				],	
 				[
 					{ "f": "CHAR", "id": "," },
+					{ "f": "CHAR", "id": ";" },
 					{ "f": "CHAR", "id": "." },
-					{ "f": "CHAR", "id": "|" }																
+					{ "f": "CHAR", "id": ":" },					
+					{ "f": "CHAR", "id": "|" },																
+					{ "f": "CHAR", "id": "@" },																															
+					{ "f": "CHAR", "id": "µ" }
+
 				],
 				[
 					{ "f": "BACKSPACE", "size": 2  },
@@ -209,6 +209,7 @@
 					{ "f": "CHAR", "id": "=" },
 					{ "f": "CHAR", "id": "{" },
 					{ "f": "CHAR", "id": "}" }					
+
 				],
 				[
 					{ "f": "BACKSPACE", "size": 2  },

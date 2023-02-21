@@ -15,7 +15,7 @@
 #include "display_driver.h"
 #include "usb/usb.h"
 
-#include "mcc_generated_files/adc1.h"
+//#include "mcc_generated_files/adc1.h"
 #include "mcc_generated_files/oc1.h"
 #include "mcc_generated_files/tmr2.h"
 
@@ -24,8 +24,8 @@ uint8_t contextbuffer[CTX_BUFFER_SIZE];
 
 int main(void) {
     SYSTEM_Initialize();                      
-    
-    
+     
+    ANSB |= 0x4000; //Set pin RB14 to analog
     
     ctx.ctxbuffer = contextbuffer;
     ctx.fsmounted = false;
@@ -33,16 +33,14 @@ int main(void) {
     
     device_options.brightness = 100;
     device_options.highlight_color2 = device_options.highlight_color1 = highlight_color_tab[0];
-    device_options.umode = USB_MODE_OFF;
-        
+    device_options.umode = USB_MODE_KEYBOARD;
+    
+//    setSleep(&ctx);  //Start in sleep mode
+
     setInitialContext(&ctx);
     bootPeripherals(&ctx);
-    
-/*    if ( !ctx.fsmounted ) {
-        setContext(&ctx, ERROR_SD_CD);
-    } */
                       
-    while (1) {                
+    while (1) {
         updateContext(&ctx);
         renderUI(&ctx);
     }

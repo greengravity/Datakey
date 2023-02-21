@@ -17,14 +17,21 @@
 #define SDCard_CD_SetWPUOn()           (CNPU2bits.CN25PUE = 1)
 #define SDCard_CD_SetWPUOff()          (CNPU2bits.CN25PUE = 0)
 
-extern volatile UINT buttonTimer, adcTimer, usbTimeout, keyTimeout;
+#define SHUTDOWN_POWER_LIMIT 3
+
+extern volatile UINT buttonTimer, adcTimer, usbTimeout, keyTimeout, busChargeStartTimer;
 
 
 // ********** Standard functions *******
 void disableVoltPower();
 void enableVoltPower();
+uint8_t calculateBatteryPowerFromADC( int adcin );
 
-void bootPeripherals(APP_CONTEXT *ctx);
+void enableBUSCharge();
+void disableBUSCharge();
+bool isBUSChargeEnabled();
+
+bool bootPeripherals(APP_CONTEXT *ctx);
 void shutdownPeripherals(APP_CONTEXT *ctx);
 void setSleep(APP_CONTEXT *ctx);
 

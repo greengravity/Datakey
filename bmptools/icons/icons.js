@@ -66,7 +66,71 @@
     { 
         "name": "DOT",
         "icon": "dot.png"
-    }         
+    },     
+    { 
+        "name": "SPEED",
+        "icon": "speed.png"
+    }, 
+    { 
+        "name": "CHARGE",
+        "icon": "charge.png"
+    },
+    { 
+        "name": "NOCHARGE",
+        "icon": "nocharge.png"
+    },
+    { 
+        "name": "CHARGING",
+        "icon": "charging.png"
+    },
+    { 
+        "name": "CHARGED",
+        "icon": "charged.png"
+    },   
 
+    { 
+        "name": "PIN_MARKER",
+        "icon": "pin_marker.png"
+    },
+    { 
+        "name": "PIN_GROUND",
+        "icon": "pin_ground.png"
+    },
+    { 
+        "name": "PIN_OBS1",
+        "icon": "pin_obs1.png"
+    },
+    { 
+        "name": "PIN_OBS2",
+        "icon": "pin_obs2.png"
+    },
+    { 
+        "name": "PIN_OBS3",
+        "icon": "pin_obs3.png"
+    },
+    { 
+        "name": "PIN_OBS4",
+        "icon": "pin_obs4.png"
+    },
+    { 
+        "name": "PIN_OBS5",
+        "icon": "pin_obs5.png"
+    },
+    { 
+        "name": "PIN_OBS6",
+        "icon": "pin_obs6.png"
+    },
+    { 
+        "name": "PIN_OBS7",
+        "icon": "pin_obs7.png"
+    },
+    { 
+        "name": "PIN_OBS8",
+        "icon": "pin_obs8.png"
+    },
+    { 
+        "name": "PIN_OBS9",
+        "icon": "pin_obs9.png"
+    }            
 
 ]
