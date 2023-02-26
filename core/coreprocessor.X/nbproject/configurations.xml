@@ -24,8 +24,6 @@
         <itemPath>mcc_generated_files/oc1.h</itemPath>
         <itemPath>mcc_generated_files/spi1_driver.h</itemPath>
         <itemPath>mcc_generated_files/spi1_types.h</itemPath>
-        <itemPath>mcc_generated_files/adc_module_features.h</itemPath>
-        <itemPath>mcc_generated_files/adc1.h</itemPath>
         <itemPath>mcc_generated_files/tmr2.h</itemPath>
         <itemPath>mcc_generated_files/ext_int.h</itemPath>
         <itemPath>mcc_generated_files/rtcc.h</itemPath>
@@ -81,7 +79,6 @@
         <itemPath>mcc_generated_files/traps.c</itemPath>
         <itemPath>mcc_generated_files/oc1.c</itemPath>
         <itemPath>mcc_generated_files/spi1_driver.c</itemPath>
-        <itemPath>mcc_generated_files/adc1.c</itemPath>
         <itemPath>mcc_generated_files/tmr2.c</itemPath>
         <itemPath>mcc_generated_files/ext_int.c</itemPath>
         <itemPath>mcc_generated_files/rtcc.c</itemPath>
@@ -332,7 +329,6 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

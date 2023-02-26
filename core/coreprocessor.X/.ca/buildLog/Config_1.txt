@@ -1,0 +1,155 @@
+make -f nbproject/Makefile-Config_1.mk SUBPROJECTS= .clean-conf
+make[1]: Entering directory 'E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X'
+rm -f  -r .ca/build/Config_1/production
+rm -f  -r .ca/dist/Config_1/production
+make[1]: Leaving directory 'E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X'
+[32mCLEAN SUCCESSFUL (total time: 201ms)[0m
+make -f nbproject/Makefile-Config_1.mk SUBPROJECTS= .build-conf
+make[1]: Entering directory 'E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X'
+make  -f nbproject/Makefile-Config_1.mk .ca/dist/Config_1/production/coreprocessor.X.production.hex
+make[2]: Entering directory 'E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X'
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   fs/ff.c  -o .ca/build/Config_1/production/fs/ff.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/fs/ff.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   fs/ffsystem.c  -o .ca/build/Config_1/production/fs/ffsystem.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/fs/ffsystem.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   fs/ffunicode.c  -o .ca/build/Config_1/production/fs/ffunicode.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/fs/ffunicode.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   fs/mmc.c  -o .ca/build/Config_1/production/fs/mmc.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/fs/mmc.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   mcc_generated_files/drivers/spi_master.c  -o .ca/build/Config_1/production/mcc_generated_files/drivers/spi_master.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/mcc_generated_files/drivers/spi_master.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   mcc_generated_files/pin_manager.c  -o .ca/build/Config_1/production/mcc_generated_files/pin_manager.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/mcc_generated_files/pin_manager.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   mcc_generated_files/clock.c  -o .ca/build/Config_1/production/mcc_generated_files/clock.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/mcc_generated_files/clock.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   mcc_generated_files/interrupt_manager.c  -o .ca/build/Config_1/production/mcc_generated_files/interrupt_manager.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/mcc_generated_files/interrupt_manager.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   mcc_generated_files/system.c  -o .ca/build/Config_1/production/mcc_generated_files/system.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/mcc_generated_files/system.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   mcc_generated_files/mcc.c  -o .ca/build/Config_1/production/mcc_generated_files/mcc.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/mcc_generated_files/mcc.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   mcc_generated_files/traps.c  -o .ca/build/Config_1/production/mcc_generated_files/traps.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/mcc_generated_files/traps.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   mcc_generated_files/oc1.c  -o .ca/build/Config_1/production/mcc_generated_files/oc1.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/mcc_generated_files/oc1.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   mcc_generated_files/spi1_driver.c  -o .ca/build/Config_1/production/mcc_generated_files/spi1_driver.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/mcc_generated_files/spi1_driver.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   mcc_generated_files/tmr2.c  -o .ca/build/Config_1/production/mcc_generated_files/tmr2.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/mcc_generated_files/tmr2.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   mcc_generated_files/ext_int.c  -o .ca/build/Config_1/production/mcc_generated_files/ext_int.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/mcc_generated_files/ext_int.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   usb/usb_device.c  -o .ca/build/Config_1/production/usb/usb_device.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/usb/usb_device.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   usb/usb_hal_16bit.c  -o .ca/build/Config_1/production/usb/usb_hal_16bit.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/usb/usb_hal_16bit.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   usb/usb_device_hid.c  -o .ca/build/Config_1/production/usb/usb_device_hid.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/usb/usb_device_hid.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   mcc_generated_files/rtcc.c  -o .ca/build/Config_1/production/mcc_generated_files/rtcc.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/mcc_generated_files/rtcc.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   main.c  -o .ca/build/Config_1/production/main.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/main.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   buttons.c  -o .ca/build/Config_1/production/buttons.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/buttons.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   display_driver.c  -o .ca/build/Config_1/production/display_driver.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/display_driver.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   usb/usb_descriptors.c  -o .ca/build/Config_1/production/usb/usb_descriptors.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/usb/usb_descriptors.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   assets.c  -o .ca/build/Config_1/production/assets.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/assets.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   usb/usb_tasks.c  -o .ca/build/Config_1/production/usb/usb_tasks.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/usb/usb_tasks.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   logic.c  -o .ca/build/Config_1/production/logic.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/logic.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   mcc_ext.c  -o .ca/build/Config_1/production/mcc_ext.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/mcc_ext.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   ui.c  -o .ca/build/Config_1/production/ui.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/ui.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   usb/usb_events.c  -o .ca/build/Config_1/production/usb/usb_events.o  -c -mcpu=24FJ128GB204  -MP -MMD -MF ".ca/build/Config_1/production/usb/usb_events.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_1=Config_1      -menable-large-arrays -O1 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16"
+[31mIn file included from mcc_generated_files/spi1_driver.c:26:0:
+mcc_generated_files/mcc.h:63:2: warning: #warning "This file will be removed in future MCC releases. Use system.h instead."[0m
+"E:\Program Files\Microchip\xc16\v2.00\bin\xc16-gcc.exe"   -o .ca/dist/Config_1/production/coreprocessor.X.production.elf  .ca/build/Config_1/production/fs/ff.o .ca/build/Config_1/production/fs/ffsystem.o .ca/build/Config_1/production/fs/ffunicode.o .ca/build/Config_1/production/fs/mmc.o .ca/build/Config_1/production/mcc_generated_files/drivers/spi_master.o .ca/build/Config_1/production/mcc_generated_files/pin_manager.o .ca/build/Config_1/production/mcc_generated_files/clock.o .ca/build/Config_1/production/mcc_generated_files/interrupt_manager.o .ca/build/Config_1/production/mcc_generated_files/system.o .ca/build/Config_1/production/mcc_generated_files/mcc.o .ca/build/Config_1/production/mcc_generated_files/traps.o .ca/build/Config_1/production/mcc_generated_files/oc1.o .ca/build/Config_1/production/mcc_generated_files/spi1_driver.o .ca/build/Config_1/production/mcc_generated_files/tmr2.o .ca/build/Config_1/production/mcc_generated_files/ext_int.o .ca/build/Config_1/production/mcc_generated_files/rtcc.o .ca/build/Config_1/production/usb/usb_descriptors.o .ca/build/Config_1/production/usb/usb_device.o .ca/build/Config_1/production/usb/usb_device_hid.o .ca/build/Config_1/production/usb/usb_events.o .ca/build/Config_1/production/usb/usb_hal_16bit.o .ca/build/Config_1/production/usb/usb_tasks.o .ca/build/Config_1/production/main.o .ca/build/Config_1/production/buttons.o .ca/build/Config_1/production/display_driver.o .ca/build/Config_1/production/assets.o .ca/build/Config_1/production/mcc_ext.o .ca/build/Config_1/production/logic.o .ca/build/Config_1/production/ui.o      -mcpu=24FJ128GB204        -omf=elf -DXPRJ_Config_1=Config_1      -Wl,--local-stack,,--defsym=__MPLAB_BUILD=1,,--script=p24FJ128GB204.gld,--stack=16,--check-sections,--data-init,--pack-data,--handles,--isr,--no-gc-sections,--fill-upper=0,--stackguard=16,--no-force-link,--smart-io,-Map=".ca/dist/Config_1/production/coreprocessor.X.production.map",--report-mem,--memorysummary,.ca/dist/Config_1/production/memoryfile.xml  -mdfp="E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16" 
+[31m.ca/build/Config_1/production/mcc_generated_files/traps.o(.isr.text+0x10): In function `__OscillatorFail':
+: Link Error: PC Relative branch to '_TRAPS_halt_on_error' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/mcc_generated_files/traps.o(.isr.text+0x28): In function `__StackError':
+: Link Error: PC Relative branch to '_use_failsafe_stack' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/mcc_generated_files/traps.o(.isr.text+0x2e): In function `__StackError':
+: Link Error: PC Relative branch to '_TRAPS_halt_on_error' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/mcc_generated_files/traps.o(.isr.text+0x4a): In function `__AddressError':
+: Link Error: PC Relative branch to '_TRAPS_halt_on_error' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/mcc_generated_files/traps.o(.isr.text+0x66): In function `__MathError':
+: Link Error: PC Relative branch to '_TRAPS_halt_on_error' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/mcc_generated_files/ext_int.o(.isr.text+0xc): In function `__INT0Interrupt':
+: Link Error: PC Relative branch to '_EX_INT0_CallBack' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/main.o(.isr.text+0x18): In function `__USB1Interrupt':
+: Link Error: PC Relative branch to '_USBDeviceTasks' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/display_driver.o(.text+0x94): In function `.L13':
+: Link Error: PC Relative branch to '___muldi3' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/display_driver.o(.text+0x9c): In function `.L13':
+: Link Error: PC Relative branch to '___udivdi3' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/display_driver.o(.text+0x100): In function `.L25':
+: Link Error: PC Relative branch to '___udivsi3' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/display_driver.o(.text+0x552): In function `_cWriteTextInternNLB':
+: Link Error: PC Relative branch to '_strlen' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/display_driver.o(.text+0x596): In function `_cWriteTextIntern':
+: Link Error: PC Relative branch to '_strlen' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/display_driver.o(.text+0x5da): In function `_cWriteTextInternLinebreak':
+: Link Error: PC Relative branch to '_strlen' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/display_driver.o(.text+0x630): In function `_writeTextIntern':
+: Link Error: PC Relative branch to '_strlen' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/display_driver.o(.text+0x672): In function `_cWriteText':
+: Link Error: PC Relative branch to '_strlen' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/display_driver.o(.text+0x6a2): In function `_writeText':
+: Link Error: PC Relative branch to '_strlen' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/mcc_ext.o(.text+0x52): In function `_calculateBatteryPowerFromADC':
+: Link Error: PC Relative branch to '___floatsisf' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/mcc_ext.o(.text+0x58): In function `_calculateBatteryPowerFromADC':
+: Link Error: PC Relative branch to '___divsf3' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/mcc_ext.o(.text+0x5e): In function `_calculateBatteryPowerFromADC':
+: Link Error: PC Relative branch to '___subsf3' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/mcc_ext.o(.text+0x64): In function `_calculateBatteryPowerFromADC':
+: Link Error: PC Relative branch to '___ltsf2' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/mcc_ext.o(.text+0x72): In function `_calculateBatteryPowerFromADC':
+: Link Error: PC Relative branch to '___divsf3' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/mcc_ext.o(.text+0x78): In function `_calculateBatteryPowerFromADC':
+: Link Error: PC Relat[0m
+[31mive branch to '___mulsf3' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/mcc_ext.o(.text+0x80): In function `_calculateBatteryPowerFromADC':
+: Link Error: PC Relative branch to '___gtsf2' is out of range. Suggest large-code model.
+.ca/build/Config_1/production/mcc_ext.o(.text+0x8c): In function `.L11':
+: Link Error: PC Relative branch to '___fixunssfsi' is out of range. Suggest large-code model.
+
+Info: Loading file: E:/Program Files/Microchip/MPLABX/v6.05/packs/Microchip/PIC24F-GA-GB_DFP/1.8.217/xc16/bin/../support/PIC24F/gld\\p24FJ128GB204.gld
+make[2]: *** [.ca/dist/Config_1/production/coreprocessor.X.production.hex] Error 255
+make[1]: *** [.build-conf] Error 2
+make: *** [.build-impl] Error 2[0m
+
+
+xc16-ld 2.00 (B)
+
+Default Code Model: Small
+Default Data Model: Large
+Default Scalar Model: Small
+
+"program" Memory  [Origin = 0x200, Length = 0x155f8]
+
+section                    address   length (PC units)   length (bytes) (dec)
+-------                    -------   -----------------   --------------------
+.text                        0x200              0x1158          0x1a04  (6660)
+.const                      0x1358              0x1342          0x1ce3  (7395)
+_05aaeaa063f39a14           0x269a              0x8306          0xc489  (50313)
+.text                       0xa9a0              0x7ec2          0xbe23  (48675)
+.dinit                     0x12862                0xbe           0x11d  (285)
+.text                      0x12920               0x266           0x399  (921)
+.init.delay32              0x12b86                0x1c            0x2a  (42)
+.text                      0x12ba2                0x3a            0x57  (87)
+
+                 Total "program" memory used (bytes):        0x1beca  (114378) 87%
+
+
+"data" Memory  [Origin = 0x800, Length = 0x2000]
+
+section                    address      alignment gaps    total length  (dec)
+-------                    -------      --------------    -------------------
+.nbss                        0x800                   0            0x62  (98)
+.ndata                       0x862                   0             0x4  (4)
+.nbss                        0x866                   0             0xc  (12)
+.ndata                       0x872                   0             0x2  (2)
+.nbss                        0x874                   0             0x6  (6)
+.bss                         0x87a                   0           0xa8e  (2702)
+.bss                        0x1308                   0            0x6a  (106)
+.data                       0x1372                   0             0xa  (10)
+.bss                        0x137c                   0             0x2  (2)
+_00000000067DD32063f39a14    0x1400                   0            0x20  (32)
+
+                 Total "data" memory used (bytes):          0xb9e  (2974) 36%
+
+
+Dynamic Memory Usage
+
+region                     address                      maximum length  (dec)
+------                     -------                      ---------------------
+heap                             0                                   0  (0)
+stack                       0x1420                              0x13e0  (5088)
+
+                 Maximum dynamic memory (bytes):         0x13e0  (5088)
+
+Info: Project is using a large data memory model when small data memory model is sufficient.
+
+nbproject/Makefile-Config_1.mk:464: recipe for target '.ca/dist/Config_1/production/coreprocessor.X.production.hex' failed
+make[2]: Leaving directory 'E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X'
+nbproject/Makefile-Config_1.mk:85: recipe for target '.build-conf' failed
+make[1]: Leaving directory 'E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X'
+nbproject/Makefile-impl.mk:39: recipe for target '.build-impl' failed
+[31mBUILD FAILED (exit value 2, total time: 2s)[0m

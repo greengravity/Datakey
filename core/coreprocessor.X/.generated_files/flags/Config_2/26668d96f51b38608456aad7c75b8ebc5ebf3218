@@ -1,0 +1,1 @@
+ -c -mcpu=$(MP_PROCESSOR_OPTION)      -mno-eds-warn  -g -omf=elf -DXPRJ_Config_2=$(CND_CONF)    $(COMPARISON_BUILD)  -menable-large-arrays -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"E:\projekte\gitrepos\datakey\Datakey\core\coreprocessor.X\usb\usb_device.c

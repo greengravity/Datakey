@@ -2409,11 +2409,11 @@
   @Example
     <code>
     // Set RC3 high (1)
-    IO_RC3_SetHigh();
+    CHRG_PWR_SetHigh();
     </code>
 
 */
-#define IO_RC3_SetHigh()          (_LATC3 = 1)
+#define CHRG_PWR_SetHigh()          (_LATC3 = 1)
 /**
   @Summary
     Sets the GPIO pin, RC3, low using LATC3.
@@ -2433,11 +2433,11 @@
   @Example
     <code>
     // Set RC3 low (0)
-    IO_RC3_SetLow();
+    CHRG_PWR_SetLow();
     </code>
 
 */
-#define IO_RC3_SetLow()           (_LATC3 = 0)
+#define CHRG_PWR_SetLow()           (_LATC3 = 0)
 /**
   @Summary
     Toggles the GPIO pin, RC3, using LATC3.
@@ -2457,11 +2457,11 @@
   @Example
     <code>
     // Toggle RC3
-    IO_RC3_Toggle();
+    CHRG_PWR_Toggle();
     </code>
 
 */
-#define IO_RC3_Toggle()           (_LATC3 ^= 1)
+#define CHRG_PWR_Toggle()           (_LATC3 ^= 1)
 /**
   @Summary
     Reads the value of the GPIO pin, RC3.
@@ -2483,11 +2483,11 @@
     uint16_t portValue;
 
     // Read RC3
-    postValue = IO_RC3_GetValue();
+    postValue = CHRG_PWR_GetValue();
     </code>
 
 */
-#define IO_RC3_GetValue()         _RC3
+#define CHRG_PWR_GetValue()         _RC3
 /**
   @Summary
     Configures the GPIO pin, RC3, as an input.
@@ -2507,11 +2507,11 @@
   @Example
     <code>
     // Sets the RC3 as an input
-    IO_RC3_SetDigitalInput();
+    CHRG_PWR_SetDigitalInput();
     </code>
 
 */
-#define IO_RC3_SetDigitalInput()  (_TRISC3 = 1)
+#define CHRG_PWR_SetDigitalInput()  (_TRISC3 = 1)
 /**
   @Summary
     Configures the GPIO pin, RC3, as an output.
@@ -2531,11 +2531,11 @@
   @Example
     <code>
     // Sets the RC3 as an output
-    IO_RC3_SetDigitalOutput();
+    CHRG_PWR_SetDigitalOutput();
     </code>
 
 */
-#define IO_RC3_SetDigitalOutput() (_TRISC3 = 0)
+#define CHRG_PWR_SetDigitalOutput() (_TRISC3 = 0)
 /**
   @Summary
     Sets the GPIO pin, RC4, high using LATC4.

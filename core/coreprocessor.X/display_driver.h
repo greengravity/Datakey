@@ -132,6 +132,7 @@ void unwriteChars( const GFXChar *chars, uint16_t len );
 void writeChar( const GFXChar *ch );
 void writeChars( const GFXChar *chars, uint16_t len );
 void cWriteTextInternNLB( const uint8_t *text );
+void cWriteTextInternLinebreak( const uint8_t *text );
 void cWriteTextIntern( const uint8_t *text );
 void writeTextIntern( uint8_t *text );
 

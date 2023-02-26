@@ -1373,7 +1373,7 @@ void USBDeviceAttach(void)
             SetConfigurationOptions();
 
             USBEnableInterrupts();  //Modifies global interrupt settings
-                          
+                                    
             // Enable module & attach to bus  
             while( !U1CONbits.USBEN ){U1CONbits.USBEN = 1;}
             USBDeviceState = ATTACHED_STATE;

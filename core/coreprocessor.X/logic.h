@@ -15,8 +15,12 @@
 #include "mcc_generated_files/rtcc.h"
 
 #define CTX_BUFFER_SIZE 2000
-#define PIN_SIZE 6
-#define MAX_PIN_TRIES 6
+#define MIN_PIN_SIZE 3
+#define MAX_PIN_SIZE 20
+#define DEFAULT_PIN_SIZE 8
+#define DEFAULT_PIN_TRIES 6
+#define MAX_PIN_TRIES 9
+#define MIN_PIN_TRIES 1
 
 #define MAX_TOKEN_
 #define MAX_TEXT_LEN 1023
@@ -31,10 +35,25 @@
 #define MAX_OVERVIEW_ENTRY_COUNT 24
 #define OVERVIEW_RELOAD_OFFS (MAX_OVERVIEW_ENTRY_COUNT / 2 - (OVERVIEW_LINES + 1))
 
+typedef enum {   
+    PFLD_NOTHING,
+    PFLD_GROUND,
+    PFLD_OWL,
+    PFLD_LITTLEDRAGON,
+    PFLD_TREE,
+    PFLD_STONE,
+    PFLD_SHIELD,
+    PFLD_DRAGON,               
+    PFLD_CRACKSTONE,                           
+    PFLD_SWORD,                           
+    PFLD_GRAIL,                           
+} PINFIELD;
+
 
 typedef enum {
     NEW,
     NAME,
+    USER,        
     KEY1,
     KEY2,
     URL,                
@@ -47,17 +66,27 @@ typedef enum {
     USB_MODE_KEYBOARD          
 } USB_MODE;
 
+typedef enum {
+    QUICKKEY_OFF,  
+    QUICKKEY_ON,
+} QUICKKEY_MODE;
+
 typedef struct {
     uint16_t highlight_color1;
     uint16_t highlight_color2;
     uint8_t brightness;
     USB_MODE umode;
+    QUICKKEY_MODE keymode;
+    uint8_t pin_tries;
+    uint8_t pin_len;
+    uint8_t __pad1;
 } DEVICE_OPTIONS;
 
 typedef struct {
     TOKEN_TYPE type;
     uint8_t textid; 
     uint8_t textidview; 
+    uint8_t tkname;
 } TOKEN_CONFIG;
 
 typedef enum {    
@@ -68,6 +97,7 @@ typedef enum {
     ONBUTTON_DOWN,
     REMOVECHAR,
     ANIMATION,
+    ANIMATION2,
     LOADENTRY,
     AREASWITCH,
     IO_UPDATE,
@@ -80,35 +110,66 @@ typedef enum {
     ERROR_SD_CD,
     ERROR_SD_FAILURE,
     INITIAL,
-    PIN_INPUT, 
+    PIN_INPUT,
+    VERIFY_KEY_AFTER_PIN,
     KEY_INPUT, 
     ENTRY_OVERVIEW,
     ENTRY_DETAIL,
+    GAME_TETRIS,
+    USB_PUSH,
     VIEW_TOKEN,
     EDIT_ENTRY,
     MESSAGEBOX,
     CHOOSEBOX,
-    OPTIONS1,
-    OPTIONS2
+    OPTIONS,
+    PINOPTIONS,
+    //OPTIONS2
 } CONTEXT_TYPE;
-
-
-typedef enum {  
-    MSGB_NO_RESULT = 0,
-    MSGB_YES = 1,
-    MSGB_NO = 2,
-} MSGB_RESULT;
 
 typedef enum {
     CHBX_ABORT,
     CHBX_CREATE_ENTRY,
     CHBX_DELETE_ENTRY,
-    CHBX_CONFIG,
+    CHBX_OPTIONS,
+    CHBX_PINOPTIONS,
+    CHBX_GAMES,
+    CHBX_RETURN_OVERVIEW,
+    CHBX_EDIT_TOKEN,
+    CHBX_DELETE_TOKEN,
+    CHBX_PUSH_TOKEN        
 } CHBX_SELECTIONS;
 
 typedef enum {
-    YES_NO,    
-} MSGTYPE;
+    MSGB_NO_RESULT,
+    MSGB_EDIT_ABORT_YES,
+    MSGB_EDIT_ABORT_NO,
+    MSGB_EDIT_ACCEPT_YES,
+    MSGB_EDIT_ACCEPT_NO,  
+    MSGB_DELETE_ENTRY_YES,
+    MSGB_DELETE_ENTRY_NO,
+    MSGB_DELETE_TOKEN_YES,
+    MSGB_DELETE_TOKEN_NO
+} MSGB_CHOICES;
+
+typedef enum {
+    DEVCST_BATTERY,
+    DEVCST_CHARGER,
+    DEVCST_USB,
+} DEVICE_CONNECTION_STATE;
+
+typedef enum {    
+    TETS_I,
+    TETS_O,
+    TETS_T,
+    TETS_L,
+    TETS_J,
+    TETS_Z,
+    TETS_S,     
+    TETS_EMPTY,
+} TETRIS_STONES;
+
+extern const uint8_t tetris_piecesize[];
+extern const uint8_t tetris_pieces[];
 
 
 typedef struct {
@@ -118,7 +179,7 @@ typedef struct {
 typedef struct {    
     RENDER_INFO rinf;
     TOKEN_TYPE type;    
-    MSGB_RESULT mboxresult;
+    MSGB_CHOICES mboxresult;
     uint8_t datachanged;
     uint8_t okbmap;   //old keymap
     uint8_t kbmap;    //curr keymap
@@ -130,7 +191,7 @@ typedef struct {
     uint8_t selarea;  //current working area
     uint8_t tewpx;    //textarea current writer x position
     uint8_t text[MAX_TEXT_LEN + 17];
-    uint8_t __pad1;
+    //uint8_t __pad1;
     uint16_t tavccoff;  //textarea viewport current character offset
     uint16_t tavcloff;  //textarea viewport current lineoffset
     uint16_t tewp;    //textarea current writer position
@@ -140,14 +201,38 @@ typedef struct {
 
 //Context for Pin Input
 typedef struct {
+    TETRIS_STONES field[200];
+    int currx;
+    int curry;      
+    int currlvllines;
+    TETRIS_STONES curr;
+    TETRIS_STONES next;   
+    uint8_t currrot;
+    bool gameover;
+    bool startpause;
+    bool b2btetris;
+    uint32_t lvl;
+    uint32_t score;   
+    uint32_t lines;
+} CTX_TETRIS;
+
+
+//Context for Pin Input
+typedef struct {
     bool generatenew;
+    bool pinIsInitial;
     bool verify;
     bool error;
     bool haderror;
-    uint8_t ppos;
-    uint8_t __pad1;
-    uint8_t pin[PIN_SIZE];
-    uint8_t verifypin[PIN_SIZE];        
+    bool errorchecked;
+    uint8_t ppos;    
+    uint8_t pin[MAX_PIN_SIZE];
+    uint8_t verifypin[MAX_PIN_SIZE];
+    uint8_t pinerr;
+    uint8_t px;
+    uint8_t py;
+    uint8_t field[64];    
+    uint8_t extrasteps;    
 } CTX_PIN_INPUT;
 
 typedef struct { 
@@ -158,9 +243,9 @@ typedef struct {
     uint8_t y;
     uint8_t oldx;
     uint8_t oldy;
-    uint8_t __pad1;
     uint8_t newkey[32];    
     uint8_t charlocations[64];
+    uint8_t __pad1;    
 } CTX_KEY_INPUT;
 
 typedef struct {
@@ -182,15 +267,25 @@ typedef struct {
     uint16_t entrycount;
 } CTX_ENTRY_OVERVIEW;
 
+typedef struct {
+    TOKEN_TYPE type;
+    uint8_t isset;
+    uint8_t text[48];   
+    uint8_t __pad1;
+} CTX_ENTRY_DETAIL_TOKEN;
+
+typedef struct {
+    uint16_t tlen;
+    uint8_t text[MAX_TEXT_LEN + 17];     
+} CTX_USB_PUSH;
+
 typedef struct {    
     TCHAR path[16];
     TOKEN_TYPE selected;
     TOKEN_TYPE oselected;
-    uint8_t name[80];
-    uint8_t key1[32];
-    uint8_t key2[32];
-    uint8_t url[80];
-    uint8_t info[80];
+    CTX_ENTRY_DETAIL_TOKEN tokeninfo[6];
+    uint8_t tokencount;
+    uint8_t __pad1;
     uint16_t overviewcursor;
 } CTX_ENTRY_DETAIL;
 
@@ -212,8 +307,12 @@ typedef struct {
 
 typedef struct {
     uint8_t msgtxt[50];
-    MSGB_RESULT res;
-    MSGTYPE mtype;
+    uint8_t sel;
+    uint8_t osel;
+    uint8_t  choicecount;
+    uint8_t __pad1;
+    MSGB_CHOICES mchoices[6];    
+    uint16_t mchoiceicon[6];    
 } CTX_MSG_BOX;
 
 typedef struct {
@@ -221,14 +320,9 @@ typedef struct {
     uint8_t selectid[6];
     uint8_t options;
     CHBX_SELECTIONS selected;
-    CHBX_SELECTIONS oselected;
-    uint8_t __pad1;
+    CHBX_SELECTIONS oselected;    
 } CTX_CHOOSE_BOX;
 
-typedef struct {          
-    uint8_t selected;
-    uint8_t oselected;
-} CTX_OPTIONS1;
 
 typedef struct {
     bcdTime_t time;
@@ -236,21 +330,31 @@ typedef struct {
     uint8_t oselected;    
     uint8_t holdtime;
     uint8_t __pad1;
-} CTX_OPTIONS2;
+} CTX_OPTIONS;
+
+typedef struct {
+    uint8_t selected;
+    uint8_t oselected;
+    uint8_t pin_len;
+    uint8_t __pad1;
+} CTX_PINOPTIONS;
 
 //Context storage
 typedef struct {
     uint16_t ctxptr; 
     uint16_t bufferlen;
     uint8_t *ctxbuffer;
-    uint8_t ctxtype;
-    RENDER_INFO rinf;
-    uint8_t power;   
+    uint8_t ctxtype;    
+    uint8_t power;       
     bool fsmounted;
-    bool fileopen;
-    bool rinf_pwr;
+    bool fileopen;    
+    uint8_t chrg_open;
     uint8_t adc_rw_state;
     uint8_t __pad1;
+    RENDER_INFO rinf;
+    DEVICE_CONNECTION_STATE dcstate;
+    uint8_t bus_sense;        
+    uint16_t analogtest;
     FATFS drive;
 } APP_CONTEXT;
 
@@ -258,13 +362,17 @@ extern const uint16_t highlight_color_tab[];
 extern const TOKEN_CONFIG token_configs[];
 extern DEVICE_OPTIONS device_options;
 
-
+bool isPinSet();
 bool isKeySet( );
 void setMasterKey(uint8_t *key);
 uint8_t* getMasterKey();
 void swipeKeys();
 uint8_t verifyMasterKey();
+bool isKeyEncr();
+void setKeyEncr(bool encr);
 
+
+void tet_getRotatedShape( uint8_t *shape, TETRIS_STONES piece, uint8_t rot );
 uint8_t getCharactersInLine(uint8_t* text, uint16_t coff, uint16_t maxchars );
 bool setContext(APP_CONTEXT *ctx, CONTEXT_TYPE type);
 void setInitialContext( APP_CONTEXT* ctx );

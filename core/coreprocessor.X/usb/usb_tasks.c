@@ -13,6 +13,8 @@
 #include "usb_tasks.h"
 #include "../mcc_ext.h"
 
+//#include <stdio.h>
+
 #if defined(__XC8)
     #define PACKED
 #else
@@ -254,8 +256,15 @@ static uint16_t usb_writelen;
 static uint16_t usb_currwritepos;
 static uint16_t usb_iswriting = false;
 static bool     usb_charpush = true;
+static bool     usb_forbid_charge = false;
 
+void set_USB_forbid_charge(bool forbid_charge) {
+    usb_forbid_charge = forbid_charge;
+}
 
+bool get_USB_forbid_charge() {
+    return usb_forbid_charge;
+}
 
 void USB_Interface_Init() {
         //initialize the variable holding the handle for the last
@@ -282,10 +291,13 @@ void USB_Interface_Init() {
     //Arm OUT endpoint so we can receive caps lock, num lock, etc. info from host
     keyboard.lastOUTTransmission = HIDRxPacket(HID_EP,(uint8_t*)&outputReport, sizeof(outputReport) );
 
+    
 }
 
-
-
+/*
+static uint8_t usb_wcnt = 0;
+static uint8_t usb_wcnt2 = 0;
+*/
 
 bool USB_IsWriteCharBuffer() {
     return usb_iswriting;
@@ -365,11 +377,105 @@ void USB_Interface_Tasks() {
     if(HIDTxHandleBusy(keyboard.lastINTransmission) == false)
     {
         
+       
         if ( usb_iswriting ) {
             // Clear the INPUT report buffer.  Set to all zeros
             memset(&inputReport, 0, sizeof(inputReport));
+                
+            /*
+            if ( usb_charpush ) {
+                uint8_t nums[] = { 0x27, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
+                char text[5];
+                
+                                
+                if ( usb_currwritepos < 111 ) {
+                    bool skip=false;
+                    switch (usb_currwritepos) {
+                        case 0x29:
+                        case 0x2a:
+                        case 0x2e: //`
+                        case 0x39:
+                        case 0x3a:
+                        case 0x3b:
+                        case 0x3c:
+                        case 0x3d:
+                        case 0x3e:
+                        case 0x3f:
+                        case 0x40:
+                        case 0x41:
+                        case 0x42:
+                        case 0x43:
+                        case 0x44:
+                        case 0x45:
+                        case 0x46:
+                        case 0x47:
+                        case 0x48:
+                        case 0x49:
+                        case 0x4a:
+                        case 0x4b:
+                        case 0x4c:
+                        case 0x4d:
+                        case 0x4e:
+                        case 0x4f:
+                        case 0x50:
+                        case 0x51:
+                        case 0x52:
+                        
+                            
+                            skip = true;
+                        
+                    }
+                    
+                                                           
+                    
+                    if ( !skip ) {
+                        if ( usb_wcnt2 == 0 ) {                    
+                            sprintf(text, "%02X ", usb_currwritepos );
+
+                            if ( usb_wcnt < strlen( text ) ) {
+                                if ( text[usb_wcnt] == ' ' ) { 
+                                    inputReport.keys[0] = 0x2c;
+                                } else {
+                                    if ( text[usb_wcnt] >= '0' && text[usb_wcnt] <= '9' ) {
+                                        inputReport.keys[0] = nums[ (uint8_t) ( text[usb_wcnt] - '0' ) ];
+                                    } else {                                        
+                                        inputReport.keys[0] = nums[ (uint8_t) ( text[usb_wcnt] - 'A' + 10 ) ];                                                                                
+                                    }
+                                    
+                                }
+                                usb_wcnt ++;                            
+                            }
+                            if ( usb_wcnt == strlen( text ) ) {
+                                usb_wcnt2 = 1;                            
+                                usb_wcnt = 0;                                                        
+                            }
+                        } else if ( usb_wcnt2 == 1 ) {                        
+                            inputReport.keys[0] = usb_currwritepos;  
+                            
+                            if ( usb_currwritepos == 0x08 || usb_currwritepos == 0x14 || usb_currwritepos == 0x10 ) {
+                                inputReport.modifiers.bits.rightAlt = 1;
+                                
+                                
+                            }
+                            
+                            usb_wcnt2 = 2;
+                        } else if ( usb_wcnt2 == 2 ) {
+                            inputReport.keys[0] = 0x28;                      
+                            usb_currwritepos++;
+                            usb_wcnt2 = 0;
+                        }
+                    } else {
+                        usb_currwritepos++;
+                    }
+                        
+                    
+                } else {
+                    usb_iswriting = false;
+                }                                                              
+            } */
 
             if ( usb_charpush ) {
+                // Clear the INPUT report buffer.  Set to all zeros                                
                 if ( usb_currwritepos < usb_writelen ) {
                     const GFXChar *gfxc = &gfxchars[ usb_writechars[usb_currwritepos] ];
                     usb_currwritepos ++;
@@ -379,6 +485,7 @@ void USB_Interface_Tasks() {
                     usb_iswriting = false;
                 }
             }
+
             usb_charpush = !usb_charpush;                
                         
             

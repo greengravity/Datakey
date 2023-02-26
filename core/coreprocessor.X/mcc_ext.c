@@ -17,7 +17,7 @@
 #include "mcc_generated_files/spi1_driver.h"
 #include "mcc_generated_files/pin_manager.h"
 #include "mcc_generated_files/ext_int.h"
-#include "mcc_generated_files/adc1.h"
+//#include "mcc_generated_files/adc1.h"
 #include "mcc_generated_files/tmr2.h"
 #include "mcc_generated_files/oc1.h"
 
@@ -29,8 +29,9 @@
 
 #include "usb/usb.h"
 
+//Various timer for different tasks, controlled by TMR2
+volatile UINT buttonTimer = 0, adcTimer = 0, usbTimeout = 0, keyTimeout = 0, busChargeStartTimer = 0, gameTimer = 0;
 
-volatile UINT buttonTimer = 0, adcTimer = 0, usbTimeout = 0, keyTimeout = 0;
 
 // ********** Standard functions *******
 void disableVoltPower() {
@@ -42,53 +43,114 @@ void enableVoltPower() {
     VOLT_PWR_SetLow();
 }
 
-void mountFS( APP_CONTEXT *ctx ) {   
-    if (f_mount(&ctx->drive,"0:",1) == FR_OK) {
-        ctx->fsmounted = true;
-        return;
-    }    
-    ctx->fsmounted = false;
+void enableBUSCharge() {
+    CHRG_PWR_SetDigitalOutput();
+    CHRG_PWR_SetLow();    
+}
+
+void disableBUSCharge() {    
+    CHRG_PWR_SetDigitalInput();     
+}
+
+bool isBUSChargeEnabled() {
+    return _TRISC3 == 0;
+}
+
+
+void mountFS( APP_CONTEXT *ctx ) {  
+    if ( !ctx->fsmounted ) {
+        if (f_mount(&ctx->drive,"0:",1) == FR_OK) {
+            ctx->fsmounted = true;
+            return;
+        }    
+        ctx->fsmounted = false;
+    }
 }
 
 void unmountFS( APP_CONTEXT *ctx ) {
-    ctx->fsmounted = false;
-    f_mount(0,"0:",0);
+    if ( ctx->fsmounted ) {
+        ctx->fsmounted = false;
+        f_mount(0,"0:",0);
+    }
+}
+
+uint8_t calculateBatteryPowerFromADC( int adcin ) {
+    //return adcin >> 3; 
+    double v = adcin;
+    uint8_t vr;
+    v /= 420; //Divider to get from analoginput to voltage
+    v -= 3.15; //3.15V is the bottom limit result in 0%
+    if ( v < 0 ) v = 0;
+    v = ( v / ( 3.8 - 3.15 ) ) * 100; //3.9V is the top charge limit result in 100%
+    if ( v > 100 ) v = 100;
+    
+    vr = (uint8_t)v;
+    if ( vr <= SHUTDOWN_POWER_LIMIT ) vr = SHUTDOWN_POWER_LIMIT + 1; 
+    return vr;
 }
 
 
-void bootPeripherals(APP_CONTEXT *ctx) {
-    EX_INT0_InterruptDisable();
-    PER_PWR_SetLow();    
-    //enableVoltPower();
-
+bool bootPeripherals(APP_CONTEXT *ctx) {
+    
+    MISO_SetWPDOff();
+    MISO_SetWPUOn();    
     SDCard_CD_SetWPUOn();
-    SDCard_CS_SetHigh();
-       
+    __delay_ms(50);
+    
+    SDCard_CS_SetHigh();    
     CS_D_SetHigh();
     RS_D_SetHigh();
-    
-    __delay_ms(150);
+    PER_PWR_SetLow();    
+    enableVoltPower();
 
-/*    
-    spi_fat_open(); 
-    mountFS(ctx);
-    spi_fat_close();
-*/        
+    // Configure the ADC module
+    AD1CON1bits.ADON = 1; // Turn on the ADC module      
+             
+    __delay_ms(150);
+           
+    //check if battery voltage is sufficient, otherwise abort the 
+    //boot sequence and tell the sleep method to stay in sleep mode
+    ctx->adc_rw_state = 0;
+    if ( !USB_BUS_SENSE ) {
+        //Check if voltage is sufficient to start        
+        AD1CON1bits.SAMP = 1;
+        while ( !AD1CON1bits.DONE ) { }
+
+        int analogValue = ADC1BUF0;
+        ctx->power = calculateBatteryPowerFromADC( analogValue );
+        
+        disableVoltPower();
+        
+        if ( ctx->power <= SHUTDOWN_POWER_LIMIT ) {
+            return false;
+        }
+    } else {
+       ctx->power = 0xff;
+       disableVoltPower();
+    }
+       
+    //reinitialize usb
+    USBDeviceInit();
+    
+    //start the 2ms timer that controlls all the subtimers for timeouts and repeat stuff
+    TMR2_Start();    
+    
+    //trigger buttonbuffer to get updated twice to prevent wrong input information
+    updateButtons(true);
+    updateButtons(true);
+            
+    //Boot display and clear it before we start the background led
     spi1_open(DISPLAY_CONFIG);
     dispStart();
+    clearScreen(COLOR_BLACK);
     spi1_close();
-          
-    TMR2_Start();
     
-    ADC1_ChannelSelect(VOLT_READ);
-    ADC1_Enable();
-    adcTimer = 0;
-    ctx->adc_rw_state = 1;
-        
-    USBDeviceInit();
-        
-    updateButtons(true);
-    updateButtons(true);
+    //Start background led
+    OC1_SecondaryValueSet(OC1_TOPVALUE);
+    dispSetBrightness(device_options.brightness);
+    OC1_Start();
+    
+    return true;
 }
 
 void shutdownPeripherals(APP_CONTEXT *ctx) {   
@@ -96,40 +158,85 @@ void shutdownPeripherals(APP_CONTEXT *ctx) {
     unmountFS(ctx);    
     spi_fat_close();
     
+    OC1_Stop();
+    _LATB2=1; //OC1 Pin set to high 
+        
     SDCard_CS_SetLow();
-    SDCard_CD_SetWPUOff();
     CS_D_SetLow();
     RS_D_SetLow();
     RES_D_SetLow();
     PER_PWR_SetHigh(); //Unpower Peripherie    
+
+    MISO_SetWPUOff();
+    MISO_SetWPDOn();
+    SDCard_CD_SetWPUOff();
     
-    OC1_Stop();
-    _LATB2=1; //OC1 Pin set to high 
-        
+    disableVoltPower();
+    
     TMR2_Stop();
     CRYCONLbits.CRYON = 0;
         
     //disableVoltPower();
-    ADC1_Disable();    //Stop Analogconverter    
-    
+    //ADC1_Disable();    //Stop Analogconverter    
+    AD1CON1bits.SAMP = 0;
+    AD1CON1bits.ADON = 0; // Turn off the ADC module 
+           
     USBDeviceDetach();
     USBModuleDisable();
+    disableBUSCharge(ctx);
 }
 
 
 void setSleep(APP_CONTEXT *ctx) {
-    //Shutdown all Peripherals    
-    shutdownPeripherals(ctx); 
-    setInitialContext( ctx );    
-    _LATB2 = 1;
-    EX_INT0_InterruptFlagClear();
-    EX_INT0_InterruptEnable();
-    Sleep();
-    Nop();
-    EX_INT0_InterruptDisable();
-    EX_INT0_InterruptFlagClear();
-    __delay_ms(100);    
-    bootPeripherals(ctx);
+    //Shutdown all Peripherals and set the device in a "safe" state
+            
+    if ( !isPinSet() ) {
+        swipeKeys();
+    }
+    
+    if ( isKeySet() && !isKeyEncr() ) { 
+        //Encrypt masterkey in memory and store the encryption key in the crykey register.
+        //This way the masterkey can be restored after wakeup and successfull pin entry
+        //see function hctxVerifyKeyAfterPin(APP_CONTEXT* ctx) for unencrypt routine
+        
+        uint8_t mkey[16];
+        uint8_t rndkey[16];
+        uint8_t iv[16];
+        uint8_t* mkeyp;
+        
+        memset(iv, 0x00, sizeof(iv) );
+        
+        mkeyp = getMasterKey();
+        memcpy(&mkey, mkeyp, sizeof(mkey) );
+                
+        generateRND(rndkey);
+        setMasterKey(rndkey);
+               
+        prepareAES128BitCBC();                    
+        prepare128bitEncryption( iv );
+        
+        encrypt128bit( mkey, mkey );
+        
+        prepare128bitDecryption( iv );
+        setMasterKey(mkey);
+                        
+        setKeyEncr(true);
+    }
+        
+    while ( true ) {
+        shutdownPeripherals(ctx);
+        setInitialContext( ctx );
+        _LATB2 = 1;
+        EX_INT0_InterruptFlagClear();
+        EX_INT0_InterruptEnable();
+        Sleep();
+        Nop();
+        EX_INT0_InterruptDisable();
+        EX_INT0_InterruptFlagClear();
+        __delay_ms(100); 
+        setInitialContext( ctx );
+        if ( bootPeripherals(ctx) ) break;
+    }
     
 }
 
@@ -141,57 +248,7 @@ uint16_t OC1_PrimaryValueGet() {
 }
 
 // ********* Extend Filesystem Functions *********
-
 typedef struct { uint16_t con1; uint16_t brg; uint8_t operation;} spi1_configuration;
-
-static uint8_t _cspin; 
-static spi1_configuration _spi1_config;
-static bool _spi1_spien;
-static bool fs_isstandby = false;
-
-void fs_standby() {
-    if ( !fs_isstandby ) {
-        fs_isstandby = true;
-        _cspin = SDCard_CS_GetValue();
-        SDCard_CS_SetHigh();
-        if ( SPI1CON1Lbits.SPIEN == 1 ) {
-            _spi1_spien = true;        
-            _spi1_config.con1 = SPI1CON1L;
-            _spi1_config.brg = SPI1BRGL;
-            _spi1_config.operation = TRISBbits.TRISB9;      
-            SPI1CON1Lbits.SPIEN = 0;
-        } else {
-            _spi1_spien = false;
-        }         
-    }
-}
-
-void fs_standby_file(FIL* fp) {
-    if ( !fs_isstandby ) {
-        f_sync(fp);
-        fs_standby();
-    }
-}
-
-void fs_resume() {
-    if ( fs_isstandby ) {
-         fs_isstandby = false;
-        if ( _spi1_spien ) {
-            SPI1CON1L = _spi1_config.con1;
-            SPI1BRGL = _spi1_config.brg;
-            TRISBbits.TRISB9 = _spi1_config.operation;
-            SPI1CON1Lbits.SPIEN;
-        }
-
-        if ( _cspin ) {
-            SDCard_CS_SetHigh();
-        } else {
-            SDCard_CS_SetLow();
-        }
-    }
-}
-
-
 
 
 // ************* Extending SPI-Functions ********
@@ -267,14 +324,11 @@ void SPI1_Transmit32bit(uint32_t data) {
     
 }
 
-
 void SPI1_transmit16bitBuffer(uint16_t *dataTransmitted, uint16_t wordCount ) {
     for (uint16_t i=0;i<wordCount;i++ ) {
         SPI1_Transmit16bit( dataTransmitted[i] );        
     }    
 }
-
-
 
 // AES-Encryption and Decryption functions
 void prepareAES128BitCBC() {
@@ -368,7 +422,7 @@ void decrypt128bit( uint8_t* ciphertext, uint8_t *plaintext ) {
     memcpy(plaintext, (void*)&CRYTXTC, 16);
 }
 
-//clear keyram and stop engine
+//clear keyram and stop cryptoengine
 void endEncryption( ) {        
     for ( int i= 0;i<16;i++) {
         ((uint8_t*)&CRYKEY0)[i] = 0x00;
@@ -376,6 +430,7 @@ void endEncryption( ) {
         ((uint8_t*)&CRYTXTB)[i] = 0x00;
         ((uint8_t*)&CRYTXTC)[i] = 0x00;
     }
+    
     CRYCONLbits.CRYON = 0;
     if ( switchregset ) {
         switchregset = false;
@@ -391,10 +446,11 @@ void generateRND(uint8_t *rnd) {
     CRYCONLbits.OPMOD = 0b1010; /* Select to generate a random number */
     CRYCONLbits.CRYGO = 1; /* Start the process */
     while(CRYCONLbits.CRYGO == 1){} /* Wait until the module is done */
-    memcpy(rnd, (void*)&CRYTXTA, 16);
     
     /* The random number is now located in CRYTXTA. */    
+    memcpy(rnd, (void*)&CRYTXTA, 16);
     
+    /* Disable cryon if it was disabled before */
     CRYCONLbits.CRYON = con;
 }
 
@@ -406,12 +462,17 @@ void TMR2_CallBack(void) {
 
     FatTimerCallback();
 
-	n = buttonTimer;					// 1000Hz decrement timer with zero stopped 
+    //this are all 500HZ timers with zero stop
+	n = gameTimer;					
+	if (n) gameTimer = --n;
+	n = buttonTimer;					
 	if (n) buttonTimer = --n;
 	n = adcTimer;
 	if (n) adcTimer = --n;
-	n = usbTimeout;					// 1000Hz decrement timer with zero stopped 
+	n = usbTimeout;				
 	if (n) usbTimeout = --n;   
-	n = keyTimeout;					// 1000Hz decrement timer with zero stopped 
+	n = keyTimeout;				
 	if (n) keyTimeout = --n;        
+  	n = busChargeStartTimer;	
+	if (n) busChargeStartTimer = --n;        
 }
