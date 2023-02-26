@@ -15,8 +15,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define OC1_TOPVALUE 0x3F80 
-
 static uint8_t _height, _width, _rotation;
 static uint8_t _charx=0, _chary=0;
 static uint8_t _startwrite, _endwrite;
@@ -302,10 +300,7 @@ void dispStart( ) {
   
   _startwrite = 0;
   _endwrite = DISPLAY_WIDTH;
-  
-  OC1_SecondaryValueSet(OC1_TOPVALUE);
-  dispSetBrightness(device_options.brightness);
-  OC1_Start();
+    
 }
 
 
@@ -406,7 +401,7 @@ void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) {
     drawFastHLine(x,y+h,w, color);    
 
     drawFastVLine(x,y,h, color);
-    drawFastVLine(x+w,y,h, color);        
+    drawFastVLine(x+w,y,h+1, color);        
 }
 
 void clearScreen(uint16_t color) {
@@ -440,7 +435,7 @@ void drawImage(int16_t x, int16_t y, const GFXimage *image) {
         for (uint16_t i=0; i< size; i++) {
             outbuffer[i] = bitmapdata[offs + i*2];       
             outbuffer[i] = outbuffer[i] << 8;
-            outbuffer[i] |= bitmapdata[offs + i*2];
+            outbuffer[i] |= bitmapdata[offs + i*2+1];
         }        
     }
     

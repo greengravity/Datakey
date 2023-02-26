@@ -18,6 +18,18 @@
 #include "mcc_ext.h"
 
 
+//Tetris icons corresponds to the tetrisstones in logic.h
+const uint16_t tetrisIcons[] = {
+        SYSICON_TETRIS_I,
+        SYSICON_TETRIS_O,
+        SYSICON_TETRIS_T,
+        SYSICON_TETRIS_L,
+        SYSICON_TETRIS_J,
+        SYSICON_TETRIS_Z,
+        SYSICON_TETRIS_S,
+        SYSICON_TETRIS_BG, 
+};
+
 void rndDrawKeylayoutContent( Keylayout *k, uint8_t x, uint8_t y, uint8_t yoff, IO_CONTEXT *ioctx ) {
     
     if ( k->fkt == KEYCOMMAND_CHAR ) {
@@ -279,7 +291,7 @@ void rndKeyInput(APP_CONTEXT* ctx) {
             }
 
             for (int16_t x = 0; x <= 4; x++) {
-                drawFastVLine(xoff + x * 16, yoff, 16 * 4, COLOR_WHITE);
+                drawFastVLine(xoff + x * 16, yoff, 16 * 4+1, COLOR_WHITE);
             }
             for (int16_t y = 0; y <= 4; y++) {
                 drawFastHLine(xoff, yoff + y * 16, 16 * 4, COLOR_WHITE);
@@ -339,7 +351,7 @@ void rndKeyInput(APP_CONTEXT* ctx) {
     }
 }
 
-void writeNumber(uint8_t* text, int nr) {
+void writeNumber(uint8_t* text, long nr) {
     uint8_t i=0;
     
     if ( nr == 0 ) {
@@ -428,7 +440,7 @@ void rndPinInput(APP_CONTEXT* ctx) {
             locate( 124,80 );
             cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_PIN_INF_STEPS ]));
             locate( 124,95 );            
-            writeNumber(text, PIN_SIZE - sctx->ppos );            
+            writeNumber(text, device_options.pin_len - sctx->ppos );            
             writeTextIntern( text );
             x = getLocationX();
             fillRect(x, 95, DISPLAY_WIDTH - x, 15, COLOR_BLACK);            
@@ -452,7 +464,7 @@ void rndPinInput(APP_CONTEXT* ctx) {
             locate( 124,55 );
             cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_PIN_INF_STEPS ]));
             locate( 124,70 );            
-            writeNumber(text, PIN_SIZE - sctx->ppos );            
+            writeNumber(text, device_options.pin_len - sctx->ppos );            
             writeTextIntern( text );                        
             if ( sctx->extrasteps > 0 ) {
                 cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_PIN_INF_SPLIT_STEPS ]));
@@ -465,7 +477,7 @@ void rndPinInput(APP_CONTEXT* ctx) {
             locate( 124,90 );
             cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_PIN_INF_LIVES ]));
             locate( 124,105 );              
-            writeNumber(text, MAX_PIN_TRIES - sctx->pinerr );            
+            writeNumber(text, device_options.pin_tries - sctx->pinerr );            
             writeTextIntern( text );
             
 
@@ -670,8 +682,8 @@ void rndError(APP_CONTEXT* ctx) {
 }
 
 void rngMessageBoxOption( uint16_t icon, uint8_t pos, uint16_t selcolor ) {                
-    drawRect( DISPLAY_WIDTH - 35 - pos * 20, DISPLAY_HEIGHT-47, 21, 17, selcolor );
-    drawImage(DISPLAY_WIDTH - 31 - pos * 20, DISPLAY_HEIGHT-45, &bitmaps[icon] );
+    drawRect( DISPLAY_WIDTH - 35 - pos * 22, DISPLAY_HEIGHT-47, 21, 17, selcolor );
+    drawImage(DISPLAY_WIDTH - 31 - pos * 22, DISPLAY_HEIGHT-45, &bitmaps[icon] );
 }
 
 void rndMessagebox(APP_CONTEXT* ctx) {
@@ -696,8 +708,8 @@ void rndMessagebox(APP_CONTEXT* ctx) {
 }
 
 void highlightChooseBoxEntry(uint8_t yoff, uint8_t selection, uint16_t color ) {
-    fillRect( 14, yoff + 3 + selection * 17, DISPLAY_WIDTH - 28, 1, color );    
-    fillRect( 14, yoff + 3 + selection * 17 + 17, DISPLAY_WIDTH - 28,1, color );    
+    fillRect( 14, yoff + 2 + selection * 17, DISPLAY_WIDTH - 28, 1, color );    
+    fillRect( 14, yoff + 2 + selection * 17 + 17, DISPLAY_WIDTH - 28,1, color );    
 }
 
 void rndChoosebox(APP_CONTEXT* ctx) {
@@ -717,7 +729,7 @@ void rndChoosebox(APP_CONTEXT* ctx) {
         
         setWritebounds( 14, DISPLAY_WIDTH-14 );
         for (uint8_t i =0; i<sctx->options; i++) {
-            locate( 14, yoff + 4 + i * 17  );
+            locate( 14, yoff + 3 + i * 17  );
             cWriteTextIntern( (const uint8_t*) (textdata + texte[ sctx->textid[i] ]) );
         }
         
@@ -891,7 +903,7 @@ void rndOptions(APP_CONTEXT* ctx) {
         if ( ctx->rinf == REFRESH ) {
             clearScreen(COLOR_BLACK);
             locate(0, 0);
-            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_HEAD_OPTIONS2 ]));
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_HEAD_OPTIONS ]));
             drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);
         }
         
@@ -1014,6 +1026,69 @@ void rndOptions(APP_CONTEXT* ctx) {
     }    
 }
 
+void rndPinOptions(APP_CONTEXT* ctx) {
+    CTX_PINOPTIONS *sctx;
+    sctx = (CTX_PINOPTIONS*) (ctx->ctxbuffer + ctx->ctxptr);
+    
+    uint8_t text[10];
+    
+    if ( ctx->rinf == REFRESH || ctx->rinf == ANIMATION ) {
+        uint8_t y, x1;
+                           
+        if ( ctx->rinf == REFRESH ) {
+            clearScreen(COLOR_BLACK);
+            locate(0, 0);
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_HEAD_PINOPTIONS ]));
+            drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);
+        }           
+       
+        y = 20;
+        locate(5, y);
+        cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_OPT_CHANGE_PIN ]));
+        
+        
+        y += 17;
+        int maxlen=0, tw;
+        tw = getTextWidth( (const uint8_t*) (textdata + texte[ TEXT_OPT_PIN_TRIES ]) );
+        if ( tw > maxlen ) maxlen = tw;
+        tw = getTextWidth( (const uint8_t*) (textdata + texte[ TEXT_OPT_PIN_LEN ]) );
+        if ( tw > maxlen ) maxlen = tw;
+
+        tw = getTextWidth( (const uint8_t*) (textdata + texte[ TEXT_OPT_PIN_TRIES ]) );
+        locate(5 + maxlen - tw , y);
+        cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_OPT_PIN_TRIES ]));
+        writeNumber(text, device_options.pin_tries );            
+        writeTextIntern( text ); 
+        x1 = getLocationX();
+        fillRect(x1, y, DISPLAY_WIDTH-x1, 15, COLOR_BLACK );   
+                        
+        y += 17;
+        tw = getTextWidth( (const uint8_t*) (textdata + texte[ TEXT_OPT_PIN_LEN ]) );
+        locate(5 + maxlen - tw , y);
+        cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_OPT_PIN_LEN ]));
+        writeNumber(text, sctx->pin_len );            
+        writeTextIntern( text ); 
+        x1 = getLocationX();
+        fillRect(x1, y, DISPLAY_WIDTH-x1, 15, COLOR_BLACK );   
+        
+        
+        y += 17;
+        locate(5, y);
+        setWritebounds( 5, DISPLAY_WIDTH );
+        if ( sctx->pin_len != device_options.pin_len ) {
+            cWriteTextInternLinebreak((const uint8_t*) (textdata + texte[ TEXT_OPTINF_PIN_LEN_CHANGED ]));
+        } else {
+            fillRect(0, y, DISPLAY_WIDTH, 15+17, COLOR_BLACK );
+        }
+        setWritebounds( 0, DISPLAY_WIDTH );        
+        
+        if ( sctx->oselected != sctx->selected ) {            
+            highlightEntryLine( sctx->oselected, COLOR_BLACK, DISPLAY_WIDTH );
+        }                                
+        highlightEntryLine( sctx->selected,  device_options.highlight_color1, DISPLAY_WIDTH );    
+    }
+}
+
 void rndDeviceStatus( APP_CONTEXT* ctx ) {
     if ( ctx->dcstate == DEVCST_BATTERY ) {
         drawRect(DISPLAY_WIDTH-23, 3, 20, 8, COLOR_WHITE );
@@ -1070,6 +1145,143 @@ void rndDeviceStatus( APP_CONTEXT* ctx ) {
     
 }
 
+void rndTetris(APP_CONTEXT* ctx) {
+    CTX_TETRIS *sctx;
+    sctx = (CTX_TETRIS*) (ctx->ctxbuffer + ctx->ctxptr); 
+    
+    uint8_t text[20];
+    
+    uint8_t yoff=DISPLAY_HEIGHT;        
+    if ( ctx->rinf == REFRESH || ctx->rinf == ANIMATION || ctx->rinf == ANIMATION2 ) {
+        if ( ctx->rinf == REFRESH ) {
+            clearScreen(COLOR_BLACK);
+            
+            for (int i=0;i<20;i++) {
+                drawImage( i*8, yoff - 8, &bitmaps[SYSICON_TETRIS_WALL] );
+                drawImage( i*8, yoff - 12*8, &bitmaps[SYSICON_TETRIS_WALL] );
+            }
+        }
+                  
+        uint8_t shape[16];
+        uint8_t size;
+                            
+        int fstartx;
+        int fendx;
+        int fstarty;
+        int fendy;
+        uint8_t tw;
+        uint8_t x;
+                      
+        if ( ctx->rinf == ANIMATION || ctx->rinf == REFRESH ) {
+            locate( 0,2 );
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_TETRIS_SCORE ]));        
+            locate( 0,15 );
+            writeNumber(text, sctx->score );
+            writeTextIntern( text );
+            x = getLocationX();
+            fillRect(x, 15, 55-x, 15, COLOR_BLACK );
+                    
+            locate( 55,2 );
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_TETRIS_LINES ]));        
+            locate( 55,15 );
+            writeNumber(text, sctx->lines );
+            writeTextIntern( text );
+            x = getLocationX();
+            fillRect(x, 15, 100-x, 15, COLOR_BLACK );            
+            
+            locate( 100,2 );
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_TETRIS_LEVEL ]));        
+            locate( 100,15 );         
+            writeNumber( text, sctx->lvl );
+            writeTextIntern( text );
+            x = getLocationX();
+            fillRect(x, 15, ( DISPLAY_WIDTH - (8*4) ) - x, 15, COLOR_BLACK );
+           
+            size = tetris_piecesize[sctx->next];
+                                   
+            //position the current shape in the field    
+            tet_getRotatedShape(shape, sctx->next, 0 );
+            
+            int endrow = 2;
+            if ( sctx->next == TETS_I) endrow = 1;
+            for (int x= 0;x<4;x++) {
+                for (int y=0;y<2;y++) {                    
+                    if ( shape[ x + (y) * 4] ) {                    
+                        drawImage( DISPLAY_WIDTH - (4*8) + x*8, DISPLAY_HEIGHT - (14*8) + (8*y) , &bitmaps[tetrisIcons[sctx->next]] );
+                    } else {
+                        fillRect( DISPLAY_WIDTH - (4*8) + x*8, DISPLAY_HEIGHT - (14*8) + (8*y) , 8,8, COLOR_BLACK );                        
+                    }
+                }
+            }
+            
+        }
+               
+        size = tetris_piecesize[sctx->curr];
+
+        if ( ctx->rinf == ANIMATION2 ) {
+            fstarty = sctx->curry - 1 < 0 ? 0 : sctx->curry - 1;
+            fendy = sctx->curry + size > 20 ? 20 : sctx->curry + size;
+            fstartx = sctx->currx - 3 < 0 ? 0 : sctx->currx - 3;
+            fendx = sctx->currx + size + 3 > 10 ? 10 : sctx->currx + size + 3;   
+            
+        } else {
+            fstartx = 0; 
+            fendx = 10;
+            fstarty = 0;
+            fendy = 20;
+        }
+        
+        //position the current shape in the field    
+        tet_getRotatedShape(shape, sctx->curr, sctx->currrot );          
+        
+        
+        for ( int y=fstarty;y<fendy;y++) {
+            for ( int x=fstartx;x<fendx;x++) {
+                TETRIS_STONES ts = sctx->field[ x + y * 10 ];
+                                
+                int sx = x-sctx->currx;
+                int sy = y-sctx->curry;
+                if ( sx >= 0 && sx < size && sy >= 0 && sy < size && shape[ sx + sy * 4] != 0 ) {
+                    ts = sctx->curr;
+                }
+                   
+                drawImage( y*8, yoff - ( 16 + 8 * x ), &bitmaps[tetrisIcons[ts]] );                                             
+            }
+        }  
+
+        if ( sctx->gameover ) {
+            fillRect(30, 70, 100, 40, COLOR_BLACK );
+            drawRect(30, 70, 100, 40, COLOR_WHITE );
+            
+            tw = getTextWidth( (const uint8_t*) (textdata + texte[ TEXT_TETRIS_GAME_OVER1 ]) );
+            locate( (DISPLAY_WIDTH - tw) / 2, 73 );
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_TETRIS_GAME_OVER1 ]));
+
+            tw = getTextWidth( (const uint8_t*) (textdata + texte[ TEXT_TETRIS_GAME_OVER2 ]) );
+            locate( (DISPLAY_WIDTH - tw) / 2, 90 );
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_TETRIS_GAME_OVER2 ]));
+            
+            
+        } else if ( sctx->startpause ) {
+            
+            fillRect(30, 70, 100, 40, COLOR_BLACK );
+            drawRect(30, 70, 100, 40, COLOR_WHITE );
+            
+            tw = getTextWidth( (const uint8_t*) (textdata + texte[ TEXT_TETRIS_GAME_START1 ]) );
+            locate( (DISPLAY_WIDTH - tw) / 2, 73 );
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_TETRIS_GAME_START1 ]));
+
+            tw = getTextWidth( (const uint8_t*) (textdata + texte[ TEXT_TETRIS_GAME_START2 ]) );
+            locate( (DISPLAY_WIDTH - tw) / 2, 90 );
+            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_TETRIS_GAME_START2 ]));
+            
+        }
+
+        
+    }        
+}
+
+
 void renderUI(APP_CONTEXT* ctx) {
     spi1_open(DISPLAY_CONFIG);
 
@@ -1104,9 +1316,12 @@ void renderUI(APP_CONTEXT* ctx) {
             break; 
         case OPTIONS:
             rndOptions(ctx);
-            break;              
-//        case OPTIONS2:
-//            rndOptions2(ctx);
+            break;
+        case PINOPTIONS:
+            rndPinOptions(ctx);
+            break;
+        case GAME_TETRIS:
+            rndTetris(ctx);
             break;               
         case ERROR:
             rndError(ctx);
@@ -1117,11 +1332,11 @@ void renderUI(APP_CONTEXT* ctx) {
                 clearScreen(COLOR_BLACK);
                 locate(0,0);
                 if ( ctx->ctxtype == ERROR_CONTEXT ) {
-                    cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_ERROR_CONTEXT ]));
+                    cWriteTextInternLinebreak((const uint8_t*) (textdata + texte[ TEXT_ERROR_CONTEXT ]));
                 } else if ( ctx->ctxtype == ERROR_SD_CD ) {
-                    cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_ERROR_SD_CD ]));                    
+                    cWriteTextInternLinebreak((const uint8_t*) (textdata + texte[ TEXT_ERROR_SD_CD ]));                    
                 } else if ( ctx->ctxtype == ERROR_SD_FAILURE ) {
-                    cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_ERROR_SD_FAILURE ]));
+                    cWriteTextInternLinebreak((const uint8_t*) (textdata + texte[ TEXT_ERROR_SD_FAILURE ]));
                 }                        
             }
             break;

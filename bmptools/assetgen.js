@@ -142,7 +142,7 @@ let readpromises = []
 
 let icons = iconjson.map(jicon => {
 
-  const icon = Object.assign({ imgdata: [], path: path.resolve(icondir, jicon.icon), color : true }, jicon )
+  const icon = Object.assign({ imgdata: [], path: path.resolve(icondir, jicon.icon), color : jicon.color === false ? false : true }, jicon )
 
   const pr = new Promise((resolve, reject) => {
     Jimp.read(icon.path)
@@ -248,16 +248,7 @@ Promise.all(readpromises).then((values) => {
       for (let x = 0; x < oc.width; x++) {
         line += oc.glyph[x][y][0] > 150 ? '#' : ' '
         if ( index > 0 || y > 0 || x > 0) binline += ','
-        //binline += rgbToByteVal(oc.glyph[x][y]) 
-/*        if ( even ) {
-          val = oc.glyph[x][y][0] << 8
-          even = false
-        } else {
-          even = true
-          val |= oc.glyph[x][y][0]
-          binline += val
-          val = 0
-        } */
+
         binline += getHexByteVal(oc.glyph[x][y][0]) 
         pos++
       }
@@ -292,8 +283,13 @@ Promise.all(readpromises).then((values) => {
         line += icon.imgdata[x][y][0] > 150 ? '#' : ' '
         binline += ','
 
-        binline += rgbToByteVal(icon.imgdata[x][y])        
-        pos += 2
+        if ( icon.color ) {
+          binline += rgbToByteVal(icon.imgdata[x][y])        
+          pos += 2
+        } else {
+          binline += getHexByteVal(icon.imgdata[x][y][0]) 
+          pos++
+        }
       }
       outdatac.push('// ' + line)
     }    
@@ -330,7 +326,7 @@ Promise.all(readpromises).then((values) => {
     return !( c.id == 32 || c.id == 65533 || c.id == 10 || c.id == 0 )
   })
 
-  charlist.unshift( { imgid: space_imgid, xoffset:0, xadvance:8, id:32, charval: " " } ) //space character'
+  charlist.unshift( { imgid: space_imgid, xoffset:0, xadvance:5, id:32, charval: " " } ) //space character'
   charlist.unshift( { imgid: encodeerr_imgid, xoffset:0, xadvance:15, id:65533, charval: "encodeerr" } ) //Encode error character'
   charlist.unshift( { imgid: 0, xoffset:0, xadvance:0, id:10, charval: "linefeed" } ) //linefeed character'
   charlist.unshift( { imgid: 0, xoffset:0, xadvance:0, id:0, charval: "zero" } ) //dummy zero character for zero terminated strings'

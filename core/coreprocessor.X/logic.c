@@ -33,13 +33,62 @@
 
 #define MODIFY_BUFFER_SIZE 256
 
-static uint8_t pin[PIN_SIZE];
+static uint8_t pin[MAX_PIN_SIZE];
 static uint8_t pinerr = 0;
 static bool pinset = false;
 
 static uint8_t masterkey[16];
 static bool keyset = false;
+static bool keyencr = false;
 
+
+const uint8_t tetris_piecesize[] = {
+    4 /* I */, 2 /* O */, 3 /* T */, 3 /* L */, 3 /* J */, 3 /* Z */, 3 /* S */
+};
+
+const uint8_t tetris_pieces[] = {
+     // I
+        0,0,0,0,
+        1,1,1,1,
+        0,0,0,0,
+        0,0,0,0,
+    
+     // O
+        1,1,0,0,
+        1,1,0,0,
+        0,0,0,0,
+        0,0,0,0,
+        
+     // T
+        0,1,0,0,
+        1,1,1,0,
+        0,0,0,0,
+        0,0,0,0,
+    
+     // L
+        0,0,1,0,
+        1,1,1,0,
+        0,0,0,0,
+        0,0,0,0,
+    
+     // J
+        1,0,0,0,
+        1,1,1,0,
+        0,0,0,0,
+        0,0,0,0,
+    
+     // Z
+        1,1,0,0,
+        0,1,1,0,
+        0,0,0,0,
+        0,0,0,0,
+    
+    // S
+        0,1,1,0,
+        1,1,0,0,
+        0,0,0,0,
+        0,0,0,0   
+};
 
 
 typedef enum {
@@ -87,8 +136,18 @@ bool isKeySet() {
     return keyset;
 }
 
+bool isKeyEncr() {
+    return keyencr;
+}
+
+void setKeyEncr(bool encr) {
+    keyencr = encr;
+}
+
+
 void setMasterKey(uint8_t *key) {
     keyset = true;
+    keyencr = false;
     memcpy(masterkey, key, 16);
 }
 
@@ -102,11 +161,16 @@ uint8_t* getMasterKey() {
 }
 
 void swipeKeys() {
-    memset(masterkey, 0x00, 16);
-    memcpy((void*) &CRYKEY0, masterkey, 16);
+    for ( int i=1;i<5;i++) {
+        uint8_t v = (i%2) * 0xff;        
+        memset(masterkey, v, 16);
+        memcpy((void*) &CRYKEY0, masterkey, 16);
+        memset(pin, v, MAX_PIN_SIZE);
+    }
+
     keyset = false;
-    memset(pin, 0x00, PIN_SIZE);
-    pinerr = 0;
+    keyencr = false;
+    pinerr = 0;    
 }
 
 uint8_t verifyMasterKey() {        
@@ -219,6 +283,10 @@ uint16_t _getContextTypeLen(CONTEXT_TYPE type) {
             return sizeof(CTX_VIEW_TOKEN);  
         case OPTIONS:
             return sizeof(CTX_OPTIONS);  
+        case PINOPTIONS:
+            return sizeof(CTX_PINOPTIONS);                                      
+        case GAME_TETRIS:
+            return sizeof(CTX_TETRIS);                                                  
         default:
             return 0;
     }
@@ -293,6 +361,281 @@ bool setContext(APP_CONTEXT *ctx, CONTEXT_TYPE type) {
 
 void setInitialContext(APP_CONTEXT* ctx) {
     setContext(ctx, INITIAL);
+}
+
+void tet_getNextStone( CTX_TETRIS *ctx ) {
+    //generate a random stone with the TRUE RANDOM generator of the controller, so no one can complain :-)
+    uint8_t rnd[16];
+    uint8_t i = 0;
+        
+    while ( true ) {
+        if ( i == 0 ) generateRND(rnd);
+        if ( rnd[i] < 252 ) {
+            ctx->next = rnd[i] % 7;
+            break;
+        } else {
+            i++;
+            if ( i >= 16 ) i=0;
+        }
+    }
+}
+
+void tet_getRotatedShape( uint8_t *shape, TETRIS_STONES piece, uint8_t rot ) {
+    //get the shape of a specifies stone with a specified rotation
+    
+    memcpy(shape, tetris_pieces + (piece*16), 16 );    
+
+    uint8_t size = tetris_piecesize[piece];
+	uint8_t ssize = size - 1;
+	uint8_t s1, s2, s3, s4, i, j, k, len, offs;
+    
+    for (i=0;i<rot;i++) {
+        len = size;
+        offs = 0;                
+        for (j=0;j<size/2;j++) {
+            for (k=offs;k<len-1;k++) {
+                s1 = shape[j+k*4];
+				s2 = shape[k+(ssize-j)*4];
+				s3 = shape[ssize-j+(ssize-k)*4];
+				s4 = shape[ssize-k+(j*4)];
+				
+				shape[j+k*4] = s4;
+				shape[k+(ssize-j)*4] = s1;
+				shape[ssize-j+(ssize-k)*4] = s2;
+				shape[ssize-k+(j*4)] = s3;
+            }
+			len -= 1;
+			offs += 1;			
+        }
+    }
+ 
+}
+
+
+uint8_t tet_checkCollision( CTX_TETRIS *ctx, int x, int y, int rot ) {    
+    uint8_t shape[16];
+    uint8_t size = tetris_piecesize[ctx->curr];
+    uint8_t ret = 0;
+    
+    //Check current stone on a specified position on the field
+    //to get "wallkick" abilities we return different values for left and right wall collision
+        
+    tet_getRotatedShape(shape, ctx->curr, rot );
+    for (int cx=0;cx<size;cx++) {
+        for (int cy=0;cy<size;cy++) {
+            int fx = x + cx;
+            int fy = y + cy;
+            if ( shape[cx + cy * 4] > 0 ) {
+                if ( fx < 0 ) return 2;
+                if ( fx >= 10 ) return 3;
+                if ( fy >= 20 ) return 1;
+                if ( ctx->field[fx + fy * 10] != TETS_EMPTY ) ret = 1;
+            }            
+        }
+    }
+                   
+    return ret;    
+}
+
+bool tet_placeNextStone( CTX_TETRIS *ctx ) {                 
+    //place next stone on the field
+    //if it starts with an collision its gameover
+    
+    ctx->currx = ( 10 - tetris_piecesize[ctx->next] ) / 2;
+    ctx->curry = 0;
+    ctx->currrot = 0;
+       
+    ctx->curr = ctx->next;
+    tet_getNextStone( ctx );
+    if ( tet_checkCollision( ctx, ctx->currx, ctx->curry, ctx->currrot ) != 0 ) {
+        return false;
+    }
+    
+    return true;          
+}
+
+void tet_positionStone( CTX_TETRIS *ctx ) {    
+    uint8_t shape[16];
+    uint8_t size = tetris_piecesize[ctx->curr];
+    
+    //position the current shape in the field    
+    tet_getRotatedShape(shape, ctx->curr, ctx->currrot );
+    for (int cx=0;cx<size;cx++) {
+        for (int cy=0;cy<size;cy++) {
+            int fx = ctx->currx + cx;
+            int fy = ctx->curry + cy;
+            if ( shape[cx + cy * 4] > 0 ) {
+                ctx->field[fx + fy * 10] = ctx->curr;
+            }
+        }
+    }
+    
+    //check for filled lines
+    uint8_t linecount=0;
+    for (int fy=0;fy<20;fy++) {
+        bool filled = true;
+        for (int fx=0;fx<10;fx++) {
+            if ( ctx->field[fx + fy * 10] == TETS_EMPTY ) {
+                filled = false;
+                break;
+            }
+        }
+        if ( filled ) {
+            linecount++;
+            if ( fy > 0 ) {                
+                memmove( &ctx->field[10], ctx->field, fy * 10 *sizeof(TETRIS_STONES) );
+            }
+            for ( int i=0;i<10;i++) ctx->field[i] = TETS_EMPTY;
+        }
+    }
+    
+    if ( linecount > 0 ) {
+        uint32_t smult = 10 + ctx->lvl * 2;    
+        uint32_t s = linecount;
+        ctx->lines += s;
+                                
+        ctx->currlvllines += linecount;
+        if ( ctx->currlvllines > 10 ) {
+            ctx->currlvllines-= 10;
+            ctx->lvl ++;
+        }
+        
+        switch ( linecount) {
+            case 1:
+                s=100;
+                ctx->b2btetris = false;
+                break;
+            case 2:
+                s=300;
+                ctx->b2btetris = false;
+                break;
+            case 3:
+                s=500;
+                ctx->b2btetris = false;
+                break;
+            case 4:                   
+                if ( ctx->b2btetris ) {
+                    s = 1200;
+                } else {
+                    s=800;
+                }
+                ctx->b2btetris = true;
+                break;
+        }
+        ctx->score += ( s * smult ) / 10;
+    }    
+}
+
+
+void tet_runDropTimer( CTX_TETRIS *ctx ) {
+    const int quicktimer = 25;
+    uint32_t lvl = ctx->lvl;        
+    
+    gameTimer = 300 * 5 / ( 5 + lvl ) ; 
+                
+    if ( isButtonDown(BUTTON_RIGHT) ) {        
+        gameTimer = gameTimer > quicktimer ? quicktimer : gameTimer;        
+    }
+}
+
+void tet_initialize( CTX_TETRIS *ctx ) { 
+    for ( int i=0;i<200;i++) ctx->field[i] = TETS_EMPTY;
+    ctx->lines = 0;
+    ctx->lvl = 0;
+    ctx->score = 0;
+    ctx->currrot = 0;
+    ctx->gameover = false;
+    ctx->startpause = true;
+    ctx->b2btetris = false;
+    ctx->currlvllines = 0;
+    
+    tet_getNextStone( ctx );
+    tet_placeNextStone( ctx );
+}
+
+
+void hctxTetris( APP_CONTEXT *ctx ) {
+    CTX_TETRIS *sctx;
+    sctx = (CTX_TETRIS*) (ctx->ctxbuffer + ctx->ctxptr);     
+        
+    if ( isButtonPressed(BUTTON_B) ) {
+        setContext(ctx, ENTRY_OVERVIEW);            
+        return;
+    }
+
+
+    if ( sctx->startpause ) {
+        if ( isButtonPressed(BUTTON_A) ) {
+            if ( sctx->gameover ) {                
+                tet_initialize( sctx );
+            } else {                            
+                tet_runDropTimer( sctx );
+                sctx->startpause = false;
+            }
+            ctx->rinf = ANIMATION;
+        }
+    } else {
+        if ( isButtonPressed(BUTTON_DOWN) ) {
+            if ( !tet_checkCollision( sctx, sctx->currx - 1, sctx->curry, sctx->currrot ) ) {
+                sctx->currx --;
+                ctx->rinf = ANIMATION2;
+            }
+        }
+        if ( isButtonPressed(BUTTON_UP) ) {
+            if ( !tet_checkCollision( sctx, sctx->currx + 1, sctx->curry, sctx->currrot ) ) {
+                sctx->currx ++;
+                ctx->rinf = ANIMATION2;
+            }
+        }
+        if ( isButtonPressed(BUTTON_RIGHT) ) {
+            tet_runDropTimer( sctx );      
+        }
+        if ( isButtonPressed(BUTTON_LEFT) ) {
+            int dx = 0;
+            while ( true ) {
+                uint8_t nextrot = sctx->currrot < 3 ? sctx->currrot + 1 : 0;                                
+                uint8_t cinf = tet_checkCollision( sctx, sctx->currx + dx, sctx->curry, nextrot );
+                
+                if ( cinf == 2 ) { 
+                    //check wallkick left
+                    dx ++;
+                    continue;
+                }
+                if ( cinf == 3 ) { 
+                    //check wallkick right
+                    dx --;
+                    continue;
+                }
+                if ( cinf == 0 ) {
+                    //normal roation
+                    sctx->currrot = nextrot;
+                    sctx->currx += dx;
+                    ctx->rinf = ANIMATION2;
+                }   
+                break;
+            }
+        }
+        
+        if ( !gameTimer ) {
+            ctx->rinf = ANIMATION2;
+                        
+            if ( tet_checkCollision( sctx, sctx->currx, sctx->curry + 1, sctx->currrot ) ) {
+                //place Stone  
+                ctx->rinf = ANIMATION;
+                tet_positionStone( sctx );
+                if ( !tet_placeNextStone( sctx ) ) {
+                    sctx->gameover = true;
+                    sctx->startpause = true;
+                } else {
+                    tet_runDropTimer( sctx );
+                }
+            } else {
+                sctx->curry ++;
+                tet_runDropTimer( sctx );
+            }                 
+        }
+    }
+    
 }
 
 
@@ -795,16 +1138,6 @@ static const uint8_t pinfield[] = {
     PFLD_SHIELD,      PFLD_GROUND,      PFLD_TREE,        PFLD_GROUND,      PFLD_GROUND,      PFLD_GROUND,      PFLD_GROUND,      PFLD_STONE,       
     PFLD_GROUND,      PFLD_STONE,       PFLD_GROUND,      PFLD_GROUND,      PFLD_GROUND,      PFLD_GROUND,      PFLD_STONE,       PFLD_STONE,       
     PFLD_GROUND,      PFLD_GROUND,      PFLD_GROUND,      PFLD_GROUND,      PFLD_GROUND,      PFLD_STONE,       PFLD_STONE,       PFLD_GRAIL,    
-
-/*
-    PFLD_GROUND,
-    PFLD_OWL,
-    PFLD_LITTLEDRAGON,
-    PFLD_TREE,
-    PFLD_STONE,
-    PFLD_SHIELD,
-    PFLD_DRAGON,
-*/
 };
 
 void initPinInput( APP_CONTEXT* ctx ) {    
@@ -848,7 +1181,7 @@ void hctxPinInput(APP_CONTEXT* ctx) {
             ctx->rinf = ANIMATION;         
 
             if ( !sctx->error ) {
-                if ( sctx->ppos < PIN_SIZE ) {
+                if ( sctx->ppos < device_options.pin_len ) {
                     if (sctx->verify) {
                         sctx->verifypin[ sctx->ppos ] = i;
                     } else {
@@ -920,22 +1253,23 @@ void hctxPinInput(APP_CONTEXT* ctx) {
                 }
     
 
-                if (sctx->ppos == PIN_SIZE) {
+                if (sctx->ppos == device_options.pin_len ) {
                     if (sctx->generatenew) {
                         if (sctx->verify) {
-                            if (memcmp(sctx->pin, sctx->verifypin, PIN_SIZE) == 0) {
+                            if (memcmp(sctx->pin, sctx->verifypin, device_options.pin_len) == 0) {
                                 //Pin match verification pin, set new pin and go to overview page
-                                memcpy(pin, sctx->pin, PIN_SIZE);
+                                memcpy(pin, sctx->pin, device_options.pin_len);
                                 pinerr = 0;
                                 pinset = true;
-                                setContext(ctx, ENTRY_OVERVIEW);
+                                removeContext(ctx);
+                                //setContext(ctx, ENTRY_OVERVIEW);
                             } else {
                                 //Pin differs from verification pin, retry                                
                                 sctx->error = true;
                                 sctx->verify = false;
                                 sctx->ppos = 0;
-                                memset(sctx->pin, 0x00, PIN_SIZE);
-                                memset(sctx->verifypin, 0x00, PIN_SIZE);
+                                memset(sctx->pin, 0x00, device_options.pin_len);
+                                memset(sctx->verifypin, 0x00, device_options.pin_len);
                             }
                         } else {
                             initPinInput( ctx );
@@ -943,14 +1277,14 @@ void hctxPinInput(APP_CONTEXT* ctx) {
                             sctx->ppos = 0;                           
                         }
                     } else {
-                        if (memcmp(sctx->pin, pin, PIN_SIZE) == 0) {
+                        if (memcmp(sctx->pin, pin, device_options.pin_len) == 0) {
                             pinerr = 0;
                             setContext(ctx, VERIFY_KEY_AFTER_PIN);
                         } else {
                             if ( !sctx->errorchecked ) {
                                 sctx->errorchecked = true;                           
                                 pinerr++;
-                                if (pinerr == MAX_PIN_TRIES) {
+                                if (pinerr == device_options.pin_tries) {
                                     pinerr = 0;
                                     swipeKeys();
                                     setContext(ctx, KEY_INPUT);
@@ -980,7 +1314,27 @@ void hctxPinInput(APP_CONTEXT* ctx) {
 }
 
 void hctxVerifyKeyAfterPin(APP_CONTEXT* ctx) {
+                
+    if ( isKeySet() && isKeyEncr() ) { 
+        //If the key is encrypted in nmemory, decrypt it for first
+        //The random key for decryption of the masterkey is still in the crykey register
+        //of the cryptografic engine, no further initialization before decryption needed
+                
+        uint8_t iv[16];        
+        uint8_t* mkeyp;
         
+        memset(iv, 0x00, sizeof(iv) );
+        
+        CRYCONLbits.CRYON = 1;
+        
+        mkeyp = getMasterKey();
+        decrypt128bit( mkeyp, mkeyp );
+        
+        CRYCONLbits.CRYON = 0;
+        
+        setKeyEncr(false);
+    }    
+    
     uint8_t keyres = verifyMasterKey();
     if ( keyres == 0 ) {
         setContext(ctx, ENTRY_OVERVIEW);
@@ -1020,7 +1374,8 @@ void hctxKeyInput(APP_CONTEXT* ctx) {
             setMasterKey(sctx->newkey);            
             uint8_t keyres = verifyMasterKey();            
             if ( keyres == 0 ) {
-                setContext(ctx, PIN_INPUT);
+                setContext(ctx, ENTRY_OVERVIEW);
+                pushContext(ctx, PIN_INPUT);
                 CTX_PIN_INPUT *pctx;
                 pctx = (CTX_PIN_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
                 pctx->generatenew = 1;
@@ -1586,22 +1941,31 @@ void hctxEntryOverview(APP_CONTEXT* ctx) {
         CTX_CHOOSE_BOX *cbctx;
         cbctx = (CTX_CHOOSE_BOX*) (ctx->ctxbuffer + ctx->ctxptr);        
         
+        uint8_t s=0;
+        
+        cbctx->textid[s] = TEXT_CHB_CREATE_ENTRY;
+        cbctx->selectid[s] = CHBX_CREATE_ENTRY;
+        s++;
+        
         if ( candelete ) {
-            cbctx->options = 3;
-            cbctx->textid[0] = TEXT_CHB_CREATE_ENTRY;
-            cbctx->selectid[0] = CHBX_CREATE_ENTRY;
-            cbctx->textid[1] = TEXT_CHB_DELETE_ENTRY;
-            cbctx->selectid[1] = CHBX_DELETE_ENTRY;
-            cbctx->textid[2] = TEXT_CHB_CONFIG;
-            cbctx->selectid[2] = CHBX_CONFIG;
-        } else {
-            cbctx->options = 2;
-            cbctx->textid[0] = TEXT_CHB_CREATE_ENTRY;
-            cbctx->selectid[0] = CHBX_CREATE_ENTRY;
-            cbctx->textid[2] = TEXT_CHB_CONFIG;
-            cbctx->selectid[2] = CHBX_CONFIG;                        
+            cbctx->textid[s] = TEXT_CHB_DELETE_ENTRY;
+            cbctx->selectid[s] = CHBX_DELETE_ENTRY;                       
+            s++;
         }
         
+        cbctx->textid[s] = TEXT_CHB_OPTIONS;
+        cbctx->selectid[s] = CHBX_OPTIONS;
+        s++;
+        
+        cbctx->textid[s] = TEXT_CHB_PINOPTIONS;
+        cbctx->selectid[s] = CHBX_PINOPTIONS;            
+        s++;
+        
+        cbctx->textid[s] = TEXT_CHB_GAMES;
+        cbctx->selectid[s] = CHBX_GAMES;            
+        s++;       
+        
+        cbctx->options = s;
     } else if ( isButtonPressed(BUTTON_UP) || isButtonPressed(BUTTON_DOWN) ) {
         if ( isButtonPressed(BUTTON_UP) && sctx->cursor > 0 ) sctx->cursor--;
         if ( isButtonPressed(BUTTON_DOWN) && sctx->cursor < ( sctx->entrycount - 1 ) ) sctx->cursor++;
@@ -1986,8 +2350,22 @@ void hctxChoosebox(APP_CONTEXT* ctx) {
 
             memcpy(mctx->msgtxt, (char*)(textdata + texte[TEXT_MSG_DELETE_ENTRY]), strlen( (char*)(textdata + texte[TEXT_MSG_DELETE_ENTRY]) ) + 1 );
             
-        } else if ( sel == CHBX_CONFIG ) {
-            setContext( ctx, OPTIONS );            
+        } else if ( sel == CHBX_OPTIONS ) {
+            setContext( ctx, OPTIONS );   
+        } else if ( sel == CHBX_PINOPTIONS ) {
+            setContext( ctx, PINOPTIONS ); 
+            
+            CTX_PINOPTIONS *poctx;
+            poctx = (CTX_PINOPTIONS*) (ctx->ctxbuffer + ctx->ctxptr);
+            
+            poctx->pin_len = device_options.pin_len;
+        } else if ( sel == CHBX_GAMES ) {
+            setContext( ctx, GAME_TETRIS ); 
+            
+            CTX_TETRIS *tetctx;
+            tetctx = (CTX_TETRIS*) (ctx->ctxbuffer + ctx->ctxptr);
+            
+            tet_initialize( tetctx );                        
         } else if ( sel == CHBX_RETURN_OVERVIEW ) {
             removeContext(ctx);
 
@@ -2146,7 +2524,7 @@ void hctxOptions(APP_CONTEXT* ctx) {
         } else if ( sctx->selected == 4 ) {
             sctx->selected = 8;
         } else if ( sctx->selected >= 8 ) {
-            if ( sctx->selected < 12 ) {
+            if ( sctx->selected < 11 ) {
                 sctx->selected++;
             }            
         } else if ( sctx->selected == 1 ) {
@@ -2248,25 +2626,50 @@ void hctxOptions(APP_CONTEXT* ctx) {
     }
 }
 
-/*
-void updatePowerState( APP_CONTEXT* ctx ) {
-    if ( ctx->adc_rw_state == 0 ) {                
-        if (ADC1_IsConversionComplete(VOLT_READ)) {            
-            uint16_t val = ADC1_ConversionResultGet(VOLT_READ);
-            ctx->power = (val >> 4) + 1;
-            adcTimer = 500;
-            ctx->adc_rw_state = 1;
-            disableVoltPower();
-            ctx->rinf_pwr = ANIMATION;
+void hctxPinOptions(APP_CONTEXT* ctx) {
+    CTX_PINOPTIONS *sctx;
+    sctx = (CTX_PINOPTIONS*) (ctx->ctxbuffer + ctx->ctxptr);    
+      
+    ctx->rinf = ANIMATION;
+    sctx->oselected = sctx->selected;
+    if ( isButtonPressed(BUTTON_DOWN) ) {
+        if ( sctx->selected < 2 ) sctx->selected ++;                
+    } else if ( isButtonPressed(BUTTON_UP) ) {
+        if ( sctx->selected > 0 ) sctx->selected --;                
+    } else if ( isButtonPressed(BUTTON_A) ) { 
+        if ( sctx->selected == 0 ) {
+            device_options.pin_len = sctx->pin_len;
+
+            pushContext(ctx, PIN_INPUT);
+
+            CTX_PIN_INPUT *pctx;
+            pctx = (CTX_PIN_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
+            pctx->generatenew = 1;
+            initPinInput( ctx );        
         }
-    } else if ( adcTimer == 0 ) {        
-        enableVoltPower();
-        ctx->adc_rw_state = 0;
-        ADC1_SoftwareTriggerDisable();
+    } else if ( isButtonPressed(BUTTON_RIGHT) ) {
+        if ( sctx->selected == 1 ) {
+            if ( device_options.pin_tries < MAX_PIN_TRIES ) device_options.pin_tries ++;
+        } else if ( sctx->selected == 2 ) {
+            if ( sctx->pin_len < MAX_PIN_SIZE ) sctx->pin_len ++;
+        }
+    } else if ( isButtonPressed(BUTTON_LEFT) ) {
+        if ( sctx->selected == 1 ) {
+            if ( device_options.pin_tries > MIN_PIN_TRIES ) device_options.pin_tries --;
+        } else if ( sctx->selected == 2 ) {
+            if ( sctx->pin_len > MIN_PIN_SIZE ) sctx->pin_len --;
+        }
+    } else if ( isButtonPressed( BUTTON_B ) ) {
+        replaceContext(ctx, ENTRY_OVERVIEW );       
     }
 }
-**/
 
+void loadPinOptions( APP_CONTEXT* ctx ) {
+    CTX_PINOPTIONS *sctx;
+    sctx = (CTX_PINOPTIONS*) (ctx->ctxbuffer + ctx->ctxptr);    
+    
+    sctx->pin_len = device_options.pin_len;    
+}
 
 void updateDeviceStatus( APP_CONTEXT* ctx ) {
     
@@ -2286,9 +2689,9 @@ void updateDeviceStatus( APP_CONTEXT* ctx ) {
             
             if ( AD1CON1bits.DONE ) {
                 int analogValue = ADC1BUF0;
-                //ctx->analogtest = analogValue;
                 
-                ctx->power = calculateBatteryPowerFromADC( analogValue );
+                uint8_t p = calculateBatteryPowerFromADC( analogValue );
+                if ( p < ctx->power ) ctx->power = p;
                 ctx->adc_rw_state = 0;
                 disableVoltPower();
                 adcTimer = 200;
@@ -2312,14 +2715,17 @@ void updateDeviceStatus( APP_CONTEXT* ctx ) {
     }        
 }
 
-void testPinGen(APP_CONTEXT* ctx) {
+/*void testPinGen(APP_CONTEXT* ctx) {
     CTX_PIN_INPUT *sctx;
     sctx = (CTX_PIN_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
     sctx->generatenew = 1;
-}
+}*/
 
 void updateContext(APP_CONTEXT* ctx) {            
     if (SENSE_CASE_GetValue() || ctx->power <= SHUTDOWN_POWER_LIMIT ) {
+        spi1_open(DISPLAY_CONFIG);
+        clearScreen(COLOR_BLACK);
+        spi1_close();
         setSleep(ctx);
     }
 
@@ -2359,20 +2765,20 @@ void updateContext(APP_CONTEXT* ctx) {
         
     if (SDCard_CD_GetValue()) {
         //SD-Card removed       
-        if (ctx->ctxtype != ERROR_SD_CD) {                
+        if (ctx->ctxtype != ERROR_SD_CD) {
+            unmountFS( ctx );
             setContext(ctx, ERROR_SD_CD);
-        }
-        ctx->fsmounted = false;
+        }        
     } else {
         //SD-Card inserted
-        if ( ctx->ctxtype == ERROR_SD_CD ) {
+        if ( ctx->ctxtype == ERROR_SD_CD ) {            
             setInitialContext( ctx );
         } else {                
             if (!ctx->fsmounted) {
                 if ( ctx->ctxtype != INITIAL && ctx->ctxtype != PIN_INPUT ) {
                     mountFS( ctx );
-                    if ( !ctx->fsmounted ) {
-                        setContext(ctx, ERROR_SD_CD);
+                    if ( !ctx->fsmounted ) {                        
+                        setContext(ctx, ERROR_SD_FAILURE);
                     }
                 }
             }
@@ -2432,10 +2838,13 @@ void updateContext(APP_CONTEXT* ctx) {
             break;
         case OPTIONS:
             hctxOptions(ctx);        
-            break;                 
-/*        case OPTIONS2:
-            hctxOptions2(ctx);        
-            break;              */
+            break;  
+        case PINOPTIONS:
+            hctxPinOptions(ctx);        
+            break;
+        case GAME_TETRIS:
+            hctxTetris(ctx);
+            break;
     }
     
     spi_fat_close(); //Close FAT SPI while handle logic               

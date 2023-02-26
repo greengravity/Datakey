@@ -15,8 +15,12 @@
 #include "mcc_generated_files/rtcc.h"
 
 #define CTX_BUFFER_SIZE 2000
-#define PIN_SIZE 8
-#define MAX_PIN_TRIES 6
+#define MIN_PIN_SIZE 3
+#define MAX_PIN_SIZE 20
+#define DEFAULT_PIN_SIZE 8
+#define DEFAULT_PIN_TRIES 6
+#define MAX_PIN_TRIES 9
+#define MIN_PIN_TRIES 1
 
 #define MAX_TOKEN_
 #define MAX_TEXT_LEN 1023
@@ -72,7 +76,10 @@ typedef struct {
     uint16_t highlight_color2;
     uint8_t brightness;
     USB_MODE umode;
-    QUICKKEY_MODE keymode; 
+    QUICKKEY_MODE keymode;
+    uint8_t pin_tries;
+    uint8_t pin_len;
+    uint8_t __pad1;
 } DEVICE_OPTIONS;
 
 typedef struct {
@@ -90,6 +97,7 @@ typedef enum {
     ONBUTTON_DOWN,
     REMOVECHAR,
     ANIMATION,
+    ANIMATION2,
     LOADENTRY,
     AREASWITCH,
     IO_UPDATE,
@@ -107,12 +115,14 @@ typedef enum {
     KEY_INPUT, 
     ENTRY_OVERVIEW,
     ENTRY_DETAIL,
+    GAME_TETRIS,
     USB_PUSH,
     VIEW_TOKEN,
     EDIT_ENTRY,
     MESSAGEBOX,
     CHOOSEBOX,
     OPTIONS,
+    PINOPTIONS,
     //OPTIONS2
 } CONTEXT_TYPE;
 
@@ -120,7 +130,9 @@ typedef enum {
     CHBX_ABORT,
     CHBX_CREATE_ENTRY,
     CHBX_DELETE_ENTRY,
-    CHBX_CONFIG,
+    CHBX_OPTIONS,
+    CHBX_PINOPTIONS,
+    CHBX_GAMES,
     CHBX_RETURN_OVERVIEW,
     CHBX_EDIT_TOKEN,
     CHBX_DELETE_TOKEN,
@@ -145,6 +157,21 @@ typedef enum {
     DEVCST_USB,
 } DEVICE_CONNECTION_STATE;
 
+typedef enum {    
+    TETS_I,
+    TETS_O,
+    TETS_T,
+    TETS_L,
+    TETS_J,
+    TETS_Z,
+    TETS_S,     
+    TETS_EMPTY,
+} TETRIS_STONES;
+
+extern const uint8_t tetris_piecesize[];
+extern const uint8_t tetris_pieces[];
+
+
 typedef struct {
     char msg[256];
 } CTX_ERROR;
@@ -164,12 +191,30 @@ typedef struct {
     uint8_t selarea;  //current working area
     uint8_t tewpx;    //textarea current writer x position
     uint8_t text[MAX_TEXT_LEN + 17];
-    uint8_t __pad1;
+    //uint8_t __pad1;
     uint16_t tavccoff;  //textarea viewport current character offset
     uint16_t tavcloff;  //textarea viewport current lineoffset
     uint16_t tewp;    //textarea current writer position
     uint16_t tlen;    //current length of text        
 } IO_CONTEXT;
+
+
+//Context for Pin Input
+typedef struct {
+    TETRIS_STONES field[200];
+    int currx;
+    int curry;      
+    int currlvllines;
+    TETRIS_STONES curr;
+    TETRIS_STONES next;   
+    uint8_t currrot;
+    bool gameover;
+    bool startpause;
+    bool b2btetris;
+    uint32_t lvl;
+    uint32_t score;   
+    uint32_t lines;
+} CTX_TETRIS;
 
 
 //Context for Pin Input
@@ -181,8 +226,8 @@ typedef struct {
     bool haderror;
     bool errorchecked;
     uint8_t ppos;    
-    uint8_t pin[PIN_SIZE];
-    uint8_t verifypin[PIN_SIZE];
+    uint8_t pin[MAX_PIN_SIZE];
+    uint8_t verifypin[MAX_PIN_SIZE];
     uint8_t pinerr;
     uint8_t px;
     uint8_t py;
@@ -198,9 +243,9 @@ typedef struct {
     uint8_t y;
     uint8_t oldx;
     uint8_t oldy;
-    uint8_t __pad1;
     uint8_t newkey[32];    
     uint8_t charlocations[64];
+    uint8_t __pad1;    
 } CTX_KEY_INPUT;
 
 typedef struct {
@@ -225,12 +270,13 @@ typedef struct {
 typedef struct {
     TOKEN_TYPE type;
     uint8_t isset;
-    uint8_t text[48];    
+    uint8_t text[48];   
+    uint8_t __pad1;
 } CTX_ENTRY_DETAIL_TOKEN;
 
 typedef struct {
     uint16_t tlen;
-    uint8_t text[MAX_TEXT_LEN + 17];  
+    uint8_t text[MAX_TEXT_LEN + 17];     
 } CTX_USB_PUSH;
 
 typedef struct {    
@@ -264,8 +310,8 @@ typedef struct {
     uint8_t sel;
     uint8_t osel;
     uint8_t  choicecount;
-    MSGB_CHOICES mchoices[6];
     uint8_t __pad1;
+    MSGB_CHOICES mchoices[6];    
     uint16_t mchoiceicon[6];    
 } CTX_MSG_BOX;
 
@@ -286,23 +332,28 @@ typedef struct {
     uint8_t __pad1;
 } CTX_OPTIONS;
 
-
+typedef struct {
+    uint8_t selected;
+    uint8_t oselected;
+    uint8_t pin_len;
+    uint8_t __pad1;
+} CTX_PINOPTIONS;
 
 //Context storage
 typedef struct {
     uint16_t ctxptr; 
     uint16_t bufferlen;
     uint8_t *ctxbuffer;
-    uint8_t ctxtype;
-    RENDER_INFO rinf;
-    uint8_t power;   
+    uint8_t ctxtype;    
+    uint8_t power;       
     bool fsmounted;
     bool fileopen;    
     uint8_t chrg_open;
     uint8_t adc_rw_state;
-    DEVICE_CONNECTION_STATE dcstate;
-    uint8_t bus_sense;
     uint8_t __pad1;
+    RENDER_INFO rinf;
+    DEVICE_CONNECTION_STATE dcstate;
+    uint8_t bus_sense;        
     uint16_t analogtest;
     FATFS drive;
 } APP_CONTEXT;
@@ -317,7 +368,11 @@ void setMasterKey(uint8_t *key);
 uint8_t* getMasterKey();
 void swipeKeys();
 uint8_t verifyMasterKey();
+bool isKeyEncr();
+void setKeyEncr(bool encr);
 
+
+void tet_getRotatedShape( uint8_t *shape, TETRIS_STONES piece, uint8_t rot );
 uint8_t getCharactersInLine(uint8_t* text, uint16_t coff, uint16_t maxchars );
 bool setContext(APP_CONTEXT *ctx, CONTEXT_TYPE type);
 void setInitialContext( APP_CONTEXT* ctx );

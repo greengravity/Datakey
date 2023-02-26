@@ -67,7 +67,7 @@ static volatile
 DSTATUS Stat = STA_NOINIT;	/* Disk status */
 
 static volatile
-UINT Timer1, Timer2;		/* 1000Hz decrement timer */
+UINT Timer1=0, Timer2=0;		/* 1000Hz decrement timer */
 
 static
 UINT CardType;

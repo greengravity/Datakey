@@ -131,6 +131,42 @@
     { 
         "name": "PIN_OBS9",
         "icon": "pin_obs9.png"
-    }            
+    },          
+    { 
+        "name": "TETRIS_BG",
+        "icon": "tetris_bg.png"
+    },
+    { 
+        "name": "TETRIS_WALL",
+        "icon": "tetris_wall.png"
+    },
+    { 
+        "name": "TETRIS_I",
+        "icon": "tetris_i.png"
+    },
+    { 
+        "name": "TETRIS_J",
+        "icon": "tetris_j.png"
+    },
+    { 
+        "name": "TETRIS_L",
+        "icon": "tetris_l.png"
+    },
+    { 
+        "name": "TETRIS_O",
+        "icon": "tetris_o.png"
+    },
+    { 
+        "name": "TETRIS_S",
+        "icon": "tetris_s.png"
+    },
+    { 
+        "name": "TETRIS_T",
+        "icon": "tetris_t.png"
+    },
+    { 
+        "name": "TETRIS_Z",
+        "icon": "tetris_z.png"
+    }
 
 ]
