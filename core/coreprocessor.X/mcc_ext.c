@@ -95,7 +95,7 @@ bool bootPeripherals(APP_CONTEXT *ctx) {
     MISO_SetWPDOff();
     MISO_SetWPUOn();    
     SDCard_CD_SetWPUOn();
-    __delay_ms(50);
+    __delay_ms(100);
     
     SDCard_CS_SetHigh();    
     CS_D_SetHigh();
@@ -129,8 +129,6 @@ bool bootPeripherals(APP_CONTEXT *ctx) {
        disableVoltPower();
     }
        
-    //reinitialize usb
-    USBDeviceInit();
     
     //start the 2ms timer that controlls all the subtimers for timeouts and repeat stuff
     TMR2_Start();    
@@ -139,11 +137,17 @@ bool bootPeripherals(APP_CONTEXT *ctx) {
     updateButtons(true);
     updateButtons(true);
             
-    //Boot display and clear it before we start the background led
+    //Initialize SD-Card
+    disk_initialize(0);
+    
+    //Boot display and clear it before we start the background led    
     spi1_open(DISPLAY_CONFIG);
     dispStart();
     clearScreen(COLOR_BLACK);
     spi1_close();
+
+    //reinitialize usb
+    USBDeviceInit();
     
     //Start background led
     OC1_SecondaryValueSet(OC1_TOPVALUE);
@@ -184,6 +188,8 @@ void shutdownPeripherals(APP_CONTEXT *ctx) {
     USBDeviceDetach();
     USBModuleDisable();
     disableBUSCharge(ctx);
+    
+    disk_deinit();
 }
 
 

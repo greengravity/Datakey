@@ -31,6 +31,7 @@ void spi_fat_close();
 void FatTimerCallback(void);
 DWORD get_fattime(void);
 
+void disk_deinit();
 DSTATUS disk_initialize (BYTE pdrv);
 DSTATUS disk_status (BYTE pdrv);
 DRESULT disk_read (BYTE pdrv, BYTE* buff, LBA_t sector, UINT count);

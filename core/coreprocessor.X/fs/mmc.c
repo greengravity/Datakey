@@ -304,6 +304,12 @@ DSTATUS disk_status (
 }
 
 
+void disk_deinit() {
+    BYTE s;
+    s = Stat;
+    s |= (STA_NODISK | STA_NOINIT);
+    Stat = s;
+}
 
 /*-----------------------------------------------------------------------*/
 /* Initialize Disk Drive                                                 */
@@ -582,26 +588,3 @@ void FatTimerCallback(void ) {
 	}
 	Stat = s;    
 }
-
-/*
-void TMR1_CallBack(void)
-{
-	BYTE s;
-	UINT n;
-
-	n = Timer1;					// 1000Hz decrement timer with zero stopped 
-	if (n) Timer1 = --n;
-	n = Timer2;
-	if (n) Timer2 = --n;
-
-
-	// Update socket status
-	s = Stat;
-	if (MMC_CD) {
-		s &= ~STA_NODISK;
-	} else {
-		s |= (STA_NODISK | STA_NOINIT);
-	}
-	Stat = s;
-}
-*/
