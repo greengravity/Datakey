@@ -169,7 +169,7 @@ section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200               0xfde          0x17cd  (6093)
 .const                      0x11de              0x153a          0x1fd7  (8151)
-_06243aa0640c7371           0x2718              0x6144          0x91e6  (37350)
+_05a88aa06414a705           0x2718              0x6144          0x91e6  (37350)
 .text                       0x885c              0xa5b4          0xf88e  (63630)
 .dinit                     0x12e10                0xc0           0x120  (288)
 .text                      0x12ed0               0x374           0x52e  (1326)
@@ -192,7 +192,7 @@ section                    address      alignment gaps    total length  (dec)
 .bss                        0x1312                   0            0x6a  (106)
 .data                       0x137c                   0             0xe  (14)
 .bss                        0x138a                   0             0x2  (2)
-_0000000005FE75A0640c7371    0x1400                   0            0x20  (32)
+_0000000005EF75A06414a705    0x1400                   0            0x20  (32)
 
                  Total "data" memory used (bytes):          0xbac  (2988) 36%
 
@@ -3356,9 +3356,9 @@ __c30_signature
  .bss               0x12e2         0x30 build/default/production/mcc_ext.o
                     0x12e2                  _switchregister
 
-_0000000005FE75A0640c7371
+_0000000005EF75A06414a705
                     0x1400         0x20
- _0000000005FE75A0640c7371
+ _0000000005EF75A06414a705
                     0x1400         0x20 build/default/production/usb/usb_device.o
                     0x1400                  _BDT
 
@@ -3471,9 +3471,9 @@ _0000000005FE75A0640c7371
  .const             0xa6fc         0x18 build/default/production/mcc_generated_files/spi1_driver.o
  .const             0xa714          0x4 build/default/production/mcc_ext.o
 
-_06243aa0640c7371
+_05a88aa06414a705
                   0x002718       0x6144
- _06243aa0640c7371
+ _05a88aa06414a705
                   0x002718       0x6144 build/default/production/assets.o
                   0x002718                  _bitmapdata
 
