@@ -169,7 +169,7 @@ section                    address   length (PC units)   length (bytes) (dec)
 -------                    -------   -----------------   --------------------
 .text                        0x200               0xfde          0x17cd  (6093)
 .const                      0x11de              0x153a          0x1fd7  (8151)
-_05a88aa06414a705           0x2718              0x6144          0x91e6  (37350)
+_06273aa064304218           0x2718              0x6144          0x91e6  (37350)
 .text                       0x885c              0xa5b4          0xf88e  (63630)
 .dinit                     0x12e10                0xc0           0x120  (288)
 .text                      0x12ed0               0x374           0x52e  (1326)
@@ -192,7 +192,7 @@ section                    address      alignment gaps    total length  (dec)
 .bss                        0x1312                   0            0x6a  (106)
 .data                       0x137c                   0             0xe  (14)
 .bss                        0x138a                   0             0x2  (2)
-_0000000005EF75A06414a705    0x1400                   0            0x20  (32)
+_00000000066D75A064304218    0x1400                   0            0x20  (32)
 
                  Total "data" memory used (bytes):          0xbac  (2988) 36%
 
@@ -1253,7 +1253,7 @@ __CONFIG1
 .comment
  *(.comment)
 
-.debug_info       0x000000      0x1d409
+.debug_info       0x000000      0x1d435
  *(.debug_info)
  .debug_info      0x000000       0x28c7 build/default/production/fs/ff.o
  .debug_info      0x0028c7        0x12d build/default/production/fs/ffsystem.o
@@ -1277,37 +1277,37 @@ __CONFIG1
  .debug_info      0x00c9df       0x134a build/default/production/usb/usb_hal_16bit.o
  .debug_info      0x00dd29       0x1159 build/default/production/usb/usb_tasks.o
  .debug_info      0x00ee82        0xd19 build/default/production/main.o
- .debug_info      0x00fb9b        0x52a build/default/production/buttons.o
- .debug_info      0x0100c5       0x1316 build/default/production/display_driver.o
- .debug_info      0x0113db        0x52b build/default/production/assets.o
- .debug_info      0x011906       0x29cc build/default/production/mcc_ext.o
- .debug_info      0x0142d2       0x522c build/default/production/logic.o
- .debug_info      0x0194fe       0x30a6 build/default/production/ui.o
- .debug_info      0x01c5a4         0x8c e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(divsi3.DA_o)
- .debug_info      0x01c630         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(feqltle.DA_o)
- .debug_info      0x01c6bd         0x8b e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(fgtge.DA_o)
- .debug_info      0x01c748         0x90 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(fixunssfsi.DA_o)
- .debug_info      0x01c7d8         0x8f e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(floatsisf.DA_o)
- .debug_info      0x01c867         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(funpack.DA_o)
- .debug_info      0x01c8f4         0x8c e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(modsi3.DA_o)
- .debug_info      0x01c980         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.DA_o)
- .debug_info      0x01ca0d         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(umodsi3.DA_o)
- .debug_info      0x01ca9a         0x9d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(addsf3x.DA_o)
- .debug_info      0x01cb37         0x9d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(divsf3x.DA_o)
- .debug_info      0x01cbd4         0x9d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(mulsf3x.DA_o)
- .debug_info      0x01cc71         0xa0 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(dnrmpackfx.DA_o)
- .debug_info      0x01cd11         0xa2 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(unpackdnrmfx.DA_o)
- .debug_info      0x01cdb3         0x9c e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(typefx.DA_o)
- .debug_info      0x01ce4f         0x9f e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(propnanfx.DA_o)
- .debug_info      0x01ceee         0x9d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(spackfx.DA_o)
- .debug_info      0x01cf8b         0x9e e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(unpackfx.DA_o)
- .debug_info      0x01d029         0x8e e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(fcompare.DA_o)
- .debug_info      0x01d0b7         0x8f e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(floatdisf.DA_o)
- .debug_info      0x01d146         0x91 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(floatundisf.DA_o)
- .debug_info      0x01d1d7         0x8b e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(fpack.DA_o)
- .debug_info      0x01d262         0x8e e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(funpack2.DA_o)
- .debug_info      0x01d2f0         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(umuldi3.DA_o)
- .debug_info      0x01d37d         0x8c e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
+ .debug_info      0x00fb9b        0x540 build/default/production/buttons.o
+ .debug_info      0x0100db       0x1316 build/default/production/display_driver.o
+ .debug_info      0x0113f1        0x52b build/default/production/assets.o
+ .debug_info      0x01191c       0x29cc build/default/production/mcc_ext.o
+ .debug_info      0x0142e8       0x522c build/default/production/logic.o
+ .debug_info      0x019514       0x30bc build/default/production/ui.o
+ .debug_info      0x01c5d0         0x8c e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(divsi3.DA_o)
+ .debug_info      0x01c65c         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(feqltle.DA_o)
+ .debug_info      0x01c6e9         0x8b e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(fgtge.DA_o)
+ .debug_info      0x01c774         0x90 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(fixunssfsi.DA_o)
+ .debug_info      0x01c804         0x8f e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(floatsisf.DA_o)
+ .debug_info      0x01c893         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(funpack.DA_o)
+ .debug_info      0x01c920         0x8c e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(modsi3.DA_o)
+ .debug_info      0x01c9ac         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(udivsi3.DA_o)
+ .debug_info      0x01ca39         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(umodsi3.DA_o)
+ .debug_info      0x01cac6         0x9d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(addsf3x.DA_o)
+ .debug_info      0x01cb63         0x9d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(divsf3x.DA_o)
+ .debug_info      0x01cc00         0x9d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(mulsf3x.DA_o)
+ .debug_info      0x01cc9d         0xa0 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(dnrmpackfx.DA_o)
+ .debug_info      0x01cd3d         0xa2 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(unpackdnrmfx.DA_o)
+ .debug_info      0x01cddf         0x9c e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(typefx.DA_o)
+ .debug_info      0x01ce7b         0x9f e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(propnanfx.DA_o)
+ .debug_info      0x01cf1a         0x9d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(spackfx.DA_o)
+ .debug_info      0x01cfb7         0x9e e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(unpackfx.DA_o)
+ .debug_info      0x01d055         0x8e e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(fcompare.DA_o)
+ .debug_info      0x01d0e3         0x8f e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(floatdisf.DA_o)
+ .debug_info      0x01d172         0x91 e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(floatundisf.DA_o)
+ .debug_info      0x01d203         0x8b e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(fpack.DA_o)
+ .debug_info      0x01d28e         0x8e e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(funpack2.DA_o)
+ .debug_info      0x01d31c         0x8d e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(umuldi3.DA_o)
+ .debug_info      0x01d3a9         0x8c e:/program files/microchip/xc16/v2.00/bin/bin/../../lib\libc99-pic30-elf.a(mulsi3.DA_o)
  *(.gnu.linkonce.wi.*)
 
 .debug_abbrev     0x000000       0x2cbb
@@ -3356,9 +3356,9 @@ __c30_signature
  .bss               0x12e2         0x30 build/default/production/mcc_ext.o
                     0x12e2                  _switchregister
 
-_0000000005EF75A06414a705
+_00000000066D75A064304218
                     0x1400         0x20
- _0000000005EF75A06414a705
+ _00000000066D75A064304218
                     0x1400         0x20 build/default/production/usb/usb_device.o
                     0x1400                  _BDT
 
@@ -3471,9 +3471,9 @@ _0000000005EF75A06414a705
  .const             0xa6fc         0x18 build/default/production/mcc_generated_files/spi1_driver.o
  .const             0xa714          0x4 build/default/production/mcc_ext.o
 
-_05a88aa06414a705
+_06273aa064304218
                   0x002718       0x6144
- _05a88aa06414a705
+ _06273aa064304218
                   0x002718       0x6144 build/default/production/assets.o
                   0x002718                  _bitmapdata
 

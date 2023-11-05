@@ -14,6 +14,10 @@
 #define FCY    8000000UL
 #include <libpic30.h>
 
+//#define BOARD_BREADBOARD
+//#define BOARD_PROD_REV2
+#define BOARD_PROD_REV2
+
 
 #endif	/* XC_MAIN_H */
 

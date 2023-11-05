@@ -294,7 +294,11 @@ void dispStart( ) {
   _height = ST7735_TFTHEIGHT;
   dispInit(Rcmd2red);
   dispInit(Rcmd3);
-  dispSetRotation( 1 );  
+#if defined BOARD_PROD_REV1
+  dispSetRotation( 3 );  
+#else
+    dispSetRotation( 1 );
+#endif  
   
   clearScreen(COLOR_BLACK);
   

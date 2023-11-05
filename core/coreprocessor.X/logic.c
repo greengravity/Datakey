@@ -161,6 +161,7 @@ uint8_t* getMasterKey() {
 }
 
 void swipeKeys() {
+    //Securely Shredd the keys by alternating write 0x00 and 0xff into there memory
     for ( int i=1;i<5;i++) {
         uint8_t v = (i%2) * 0xff;        
         memset(masterkey, v, 16);

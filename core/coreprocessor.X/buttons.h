@@ -10,6 +10,7 @@
 #ifndef XC_BUTTONS_H
 #define	XC_BUTTONS_H
 
+#include "main.h"
 #include <xc.h> // include processor files - each processor file is guarded.  
 #include "mcc_generated_files/pin_manager.h"
 #include <stdbool.h>
@@ -23,35 +24,38 @@
 
 #define BUTTON_COUNT 6
 
-/*
- * Breadboard Config
+#if defined BOARD_BREADBOARD
+
+// Breadboard Config
 #define BUTTON_LEFT_READ (!BTN2_GetValue())
 #define BUTTON_UP_READ (!BTN3_GetValue())
 #define BUTTON_RIGHT_READ (!BTN5_GetValue())
 #define BUTTON_DOWN_READ (!BTN1_GetValue())
 #define BUTTON_A_READ (!BTN4_GetValue())
 #define BUTTON_B_READ (!BTN6_GetValue())
-*/
 
-/*
- * Production Config
+#elif defined BOARD_PROD_REV1
+
+// Test Config 
+#define BUTTON_LEFT_READ  (!BTN6_GetValue())
+#define BUTTON_UP_READ    (!BTN5_GetValue())
+#define BUTTON_RIGHT_READ (!BTN3_GetValue())
+#define BUTTON_DOWN_READ  (!BTN4_GetValue())
+#define BUTTON_A_READ     (!BTN1_GetValue())
+#define BUTTON_B_READ     (!BTN2_GetValue()) 
+
+
+#else
+
+//  Production Config
 #define BUTTON_LEFT_READ (!BTN1_GetValue())
 #define BUTTON_UP_READ (!BTN3_GetValue())
 #define BUTTON_RIGHT_READ (!BTN4_GetValue())
 #define BUTTON_DOWN_READ (!BTN2_GetValue())
 #define BUTTON_A_READ (!BTN6_GetValue())
 #define BUTTON_B_READ (!BTN5_GetValue())
-*/
 
-/* 
- * Test Config 
- */
-#define BUTTON_LEFT_READ (!BTN4_GetValue())
-#define BUTTON_UP_READ (!BTN2_GetValue())
-#define BUTTON_RIGHT_READ (!BTN1_GetValue())
-#define BUTTON_DOWN_READ (!BTN3_GetValue())
-#define BUTTON_A_READ (!BTN6_GetValue())
-#define BUTTON_B_READ (!BTN5_GetValue())
+#endif
 
 
 void updateButtons(bool force);
