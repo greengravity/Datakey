@@ -4,58 +4,18 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/logic.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_device.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_device.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/ff.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/logic.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_tasks.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/ff.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/assets.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_device_hid.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_ext.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/traps.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/nbproject/Makefile-impl.mk</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/assets.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/ui.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/ui.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_events.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_device_hid.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_ext.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/pin_manager.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/drivers/spi_master.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/docs/spi.dox</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_hal_pic24f.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/rtcc.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/nbproject/Makefile-default.mk</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/rtcc.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_ch9.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/diskio.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/mmc.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/spi1_driver.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/main.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/main.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/oc1.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_descriptors.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/tmr2.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_hal_16bit.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/tmr2.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/pin_manager.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_config.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/docs/spi_basic.dox</file>
             <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/ffconf.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_hal.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_device_local.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/logic.c</file>
             <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/display_driver.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/display_driver.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/buttons.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_tasks.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/mcc.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/usb/usb_common.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/usb/utilities/Readme%20Signed%20Driver%20Package.txt</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/mcc.h</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_generated_files/ext_int.c</file>
-            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/buttons.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/ff.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/main.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/assets.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_ext.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/main.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/assets.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/fs/diskio.h</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/ui.c</file>
+            <file>file:/E:/projekte/gitrepos/datakey/Datakey/core/coreprocessor.X/mcc_ext.c</file>
         </group>
     </open-files>
 </project-private>
