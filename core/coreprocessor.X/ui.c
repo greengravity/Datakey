@@ -17,6 +17,7 @@
 #include "mcc_generated_files/rtcc.h"
 #include "mcc_ext.h"
 
+#include "sha/sha.h"
 
 //Tetris icons corresponds to the tetrisstones in logic.h
 const uint16_t tetrisIcons[] = {
@@ -46,21 +47,25 @@ void rndDrawKeylayoutContent( Keylayout *k, uint8_t x, uint8_t y, uint8_t yoff, 
             icon = SYSICON_BACKSPACE;
         } else if ( k->fkt == KEYCOMMAND_OK ) {
             icon = SYSICON_OK;
-        } else if ( k->fkt == KEYCOMMAND_ABORT ) {
-            icon = SYSICON_ABORT;
         } else if ( k->fkt == KEYCOMMAND_LF ) {
             icon = SYSICON_ENTER;
-        } else if ( k->fkt == KEYCOMMAND_GEN ) {
-        
-            int len = strlen( (const char*)( textdata + generatormaps[ k->id ].name ) );
-            int plen = 0;
-            for ( int i=0;i<len;i++ ) {
-                plen += gfxchars[ textdata[ generatormaps[ k->id ].name+i ] ].xadv;
-            }
+        } else { 
+            if ( ioctx->inp == TOKEN ) {
+                if ( k->fkt == KEYCOMMAND_ABORT ) {
+                    icon = SYSICON_ABORT;
+                } else if ( k->fkt == KEYCOMMAND_GEN ) {
 
-            int8_t xoff = ( ( ( ( k->span_pos + 1 ) * 16 ) - plen ) / 2 ) + 1;
-            locate( x * 16 + xoff, yoff+ y*16+1);                                              
-            cWriteTextIntern( (const uint8_t *)(textdata + generatormaps[ k->id ].name ) );              
+                    int len = strlen( (const char*)( textdata + generatormaps[ k->id ].name ) );
+                    int plen = 0;
+                    for ( int i=0;i<len;i++ ) {
+                        plen += gfxchars[ textdata[ generatormaps[ k->id ].name+i ] ].xadv;
+                    }
+
+                    int8_t xoff = ( ( ( ( k->span_pos + 1 ) * 16 ) - plen ) / 2 ) + 1;
+                    locate( x * 16 + xoff, yoff+ y*16+1);                                              
+                    cWriteTextIntern( (const uint8_t *)(textdata + generatormaps[ k->id ].name ) );              
+                }
+            }
         }
         
         if ( icon ) {
@@ -183,8 +188,12 @@ void rndIO(IO_CONTEXT *ioctx) {
         case REFRESH:
             clearScreen(COLOR_BLACK);
             
-            locate(0,0);               
-            cWriteTextIntern((const uint8_t*) (textdata + texte[ token_configs[ioctx->type].textid ]));
+            locate(0,0);
+            if ( ioctx->inp == TOKEN ) {
+                cWriteTextIntern((const uint8_t*) (textdata + texte[ token_configs[ioctx->type].textid ]));
+            } else if ( ioctx->inp == MASTERKEY ) {
+                cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_ENTER_NEW_KEY ]));
+            }
             drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);
                  
             rndIOTextarea( ioctx );
@@ -269,87 +278,11 @@ void rndIO(IO_CONTEXT *ioctx) {
 void rndKeyInput(APP_CONTEXT* ctx) {
     CTX_KEY_INPUT *sctx;
     sctx = (CTX_KEY_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
-
-    int16_t xoff = (DISPLAY_WIDTH - 16 * 4) / 2;
-    int16_t yoff = (DISPLAY_HEIGHT - 16 * 4) - 1;
-
-    if (sctx->haderror && !sctx->error) {
-        //delete error message
-        fillRect(0, 15, DISPLAY_WIDTH, 15, COLOR_BLACK);
-    }
-
-    switch (ctx->rinf) {
-        case REFRESH:
-        {
-            clearScreen(COLOR_BLACK);
-            for (int16_t x = 0; x < 4; x++) {
-                for (int16_t y = 0; y < 4; y++) {
-                    GFXChar ch = gfxchars[ hexchars[y * 4 + x] ];
-                    locate(xoff + 1 + x * 16 + ((16 - ch.xadv) / 2), yoff + 1 + y * 16);
-                    writeChars(&ch, 1);
-                }
-            }
-
-            for (int16_t x = 0; x <= 4; x++) {
-                drawFastVLine(xoff + x * 16, yoff, 16 * 4+1, COLOR_WHITE);
-            }
-            for (int16_t y = 0; y <= 4; y++) {
-                drawFastHLine(xoff, yoff + y * 16, 16 * 4, COLOR_WHITE);
-            }
-
-            drawRect(xoff + sctx->x * 16, yoff + sctx->y * 16, 16, 16, device_options.highlight_color1);
-
-            locate(0, 0);
-            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_ENTER_NEW_KEY ]));
-
-
-            if (sctx->error) {
-                locate(0, 15);
-                cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_ENTER_NEW_KEY_ERROR ]));
-            }
-
-            locate(0, 15);
-        }
-            break;
-        case ANIMATION:
-        {
-            drawRect(xoff + sctx->oldx * 16, yoff + sctx->oldy * 16, 16, 16, COLOR_WHITE);
-            drawRect(xoff + sctx->x * 16, yoff + sctx->y * 16, 16, 16, device_options.highlight_color1);
-        }
-            break;
-        case ONBUTTON_PRESS:
-        {
-            drawRect(xoff + sctx->x * 16, yoff + sctx->y * 16, 16, 16, device_options.highlight_color2);
-
-            sctx->charlocations[(sctx->kpos - 1) * 2] = getLocationX();
-            sctx->charlocations[(sctx->kpos - 1) * 2 + 1] = getLocationY();
-
-            GFXChar ch = gfxchars[ hexchars[sctx->newkey[ sctx->kpos - 1 ] ] ];
-            writeChars(&ch, 1);
-        }
-            break;
-        case ONBUTTON_RELEASE:
-        {
-            drawRect(xoff + sctx->x * 16, yoff + sctx->y * 16, 16, 16, device_options.highlight_color1);
-        }
-            break;
-        case REMOVECHAR:
-        {
-            if (sctx->kpos >= 0) {
-
-                uint8_t x = sctx->charlocations[sctx->kpos * 2];
-                uint8_t y = sctx->charlocations[sctx->kpos * 2 + 1];
-
-                locate(x, y);
-                GFXChar ch = gfxchars[ hexchars[sctx->newkey[ sctx->kpos] ] ];
-                unwriteChars(&ch, 1);
-                locate(x, y);
-
-            }
-        }
-        default: break;
-    }
-}
+    
+    if (ctx->rinf == IO_UPDATE) {                
+        rndIO( &sctx->io );                                   
+    }    
+}    
 
 void writeNumber(uint8_t* text, long nr) {
     uint8_t i=0;
@@ -796,65 +729,6 @@ void rndViewToken(APP_CONTEXT* ctx) {
                    
 }
 
-/*
-void rndOptions1(APP_CONTEXT* ctx) {
-    CTX_OPTIONS1 *sctx;
-    sctx = (CTX_OPTIONS1*) (ctx->ctxbuffer + ctx->ctxptr);         
-    
-    if ( ctx->rinf == REFRESH || ctx->rinf == ANIMATION ) {
-        uint8_t y;
-        uint8_t x;
-        
-        if ( ctx->rinf == REFRESH ) {
-            clearScreen(COLOR_BLACK);
-            locate(0, 0);
-            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_HEAD_OPTIONS1 ]));
-            drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);
-        }
-                        
-        y = 20;
-        drawImage( 5, y, &bitmaps[SYSICON_USB] );
-        locate(25, y);
-        if ( device_options.umode == USB_MODE_OFF ) {
-            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_OPTV_USB_OFF ]));
-        } else if ( device_options.umode == USB_MODE_KEYBOARD ) {
-            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_OPTV_USB_KEYBOARD ]));            
-        }
-        x = getLocationX();
-        fillRect(x, y, DISPLAY_WIDTH-x, 15, COLOR_BLACK );
-                        
-        y+=17;
-        drawImage( 5, y, &bitmaps[SYSICON_BRIGHTNESS] );
-        locate(25, y);
-
-        fillRect(23, y+1, 2, 13, COLOR_BLACK ); 
-        fillRect(25+64, y+1, 2, 13, COLOR_BLACK );
-        for (int i=0;i<64;i++) {
-            uint16_t gcb;
-            uint16_t gradient_color;
-                        
-            gcb = i*4;
-            gradient_color = ( ( gcb & 0xf8 ) << 8 ) | ( ( gcb & 0xfc ) << 3 ) | ( ( gcb & 0xf8 ) >> 3 );
-                        
-            fillRect(25+i, y+1, 1, 13, gradient_color );            
-        }
-        int bloc = device_options.brightness;
-        bloc = ( bloc * 64 ) / 100;
-        fillRect(25+bloc, y+1, 1, 13, device_options.highlight_color1 );
-        fillRect(25+bloc-1, y+1, 1, 13, COLOR_BLACK );
-        fillRect(25+bloc+1, y+1, 1, 13, COLOR_BLACK );
-          
-        y+=17;
-        drawImage( 5, y, &bitmaps[SYSICON_COLOR] );
-        locate(25, y);
-        
-        fillRect( 25, y+3, 64, 9, device_options.highlight_color1 );
-        
-        highlightEntryLine(sctx->oselected, COLOR_BLACK, DISPLAY_WIDTH);
-        highlightEntryLine(sctx->selected, device_options.highlight_color1, DISPLAY_WIDTH );
-    }           
-}
-*/
 
 void setPositiontab(uint8_t selection,  uint8_t y, uint8_t x1, uint8_t x2, uint32_t *positiontab ) {
     uint32_t v, v2;
@@ -1348,3 +1222,18 @@ void renderUI(APP_CONTEXT* ctx) {
     
     spi1_close();
 }
+
+
+/*
+ * Wrting Hexdata
+    for (int16_t i = 0; i < 32; i++) {
+        GFXChar ch = gfxchars[ hexchars[ ( hash[ i ] >> 4 ) ] ];                
+        writeChars(&ch, 1);
+
+        GFXChar ch2 = gfxchars[ hexchars[ ( hash[ i ] & 0x0f ) ] ];                
+        writeChars(&ch2, 1);
+
+        GFXChar ch3 = gfxchars[ CHAR_SPACE ];
+        writeChars(&ch3, 1);
+    }            
+*/    

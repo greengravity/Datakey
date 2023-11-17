@@ -28,6 +28,9 @@
         <itemPath>mcc_generated_files/ext_int.h</itemPath>
         <itemPath>mcc_generated_files/rtcc.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="f3" displayName="sha" projectFiles="true">
+        <itemPath>sha/sha.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="f2" displayName="usb" projectFiles="true">
         <itemPath>usb/usb.h</itemPath>
         <itemPath>usb/usb_ch9.h</itemPath>
@@ -82,6 +85,9 @@
         <itemPath>mcc_generated_files/tmr2.c</itemPath>
         <itemPath>mcc_generated_files/ext_int.c</itemPath>
         <itemPath>mcc_generated_files/rtcc.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f3" displayName="sha" projectFiles="true">
+        <itemPath>sha/sha.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="usb" projectFiles="true">
         <itemPath>usb/usb_descriptors.c</itemPath>
@@ -329,6 +335,7 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
@@ -343,7 +350,7 @@
                   value="${memories.instruction.ram.ranges}"/>
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="0-157f7"/>
-        <property key="poweroptions.powerenable" value="true"/>
+        <property key="poweroptions.powerenable" value="false"/>
         <property key="programmertogo.imagename" value=""/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>
@@ -425,7 +432,7 @@
                   value="${memories.instruction.ram.ranges}"/>
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="0-157f7"/>
-        <property key="poweroptions.powerenable" value="true"/>
+        <property key="poweroptions.powerenable" value="false"/>
         <property key="programmertogo.imagename" value=""/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>

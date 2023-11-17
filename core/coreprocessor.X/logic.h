@@ -22,7 +22,7 @@
 #define MAX_PIN_TRIES 9
 #define MIN_PIN_TRIES 1
 
-#define MAX_TOKEN_
+#define TEXT_WORK_TRESHHOLD 17
 #define MAX_TEXT_LEN 1023
 #define TEXTAREA_WIDTH 150
 #define TEXTAREA_VIEWPORT_LINES 3
@@ -60,6 +60,11 @@ typedef enum {
     INFO,
     CHECK,
 } TOKEN_TYPE;
+
+typedef enum {
+    MASTERKEY,
+    TOKEN,                            
+}INPUT_TYPE;
 
 typedef enum {
     USB_MODE_OFF,
@@ -148,7 +153,8 @@ typedef enum {
     MSGB_DELETE_ENTRY_YES,
     MSGB_DELETE_ENTRY_NO,
     MSGB_DELETE_TOKEN_YES,
-    MSGB_DELETE_TOKEN_NO
+    MSGB_DELETE_TOKEN_NO,
+    MSGB_MKEY_ERROR_OK,
 } MSGB_CHOICES;
 
 typedef enum {
@@ -178,6 +184,7 @@ typedef struct {
 
 typedef struct {    
     RENDER_INFO rinf;
+    INPUT_TYPE inp;
     TOKEN_TYPE type;    
     MSGB_CHOICES mboxresult;
     uint8_t datachanged;
@@ -190,8 +197,8 @@ typedef struct {
     uint8_t oselarea; //old working area 
     uint8_t selarea;  //current working area
     uint8_t tewpx;    //textarea current writer x position
-    uint8_t text[MAX_TEXT_LEN + 17];
-    //uint8_t __pad1;
+    uint8_t text[MAX_TEXT_LEN + TEXT_WORK_TRESHHOLD];
+    uint8_t __pad1;
     uint16_t tavccoff;  //textarea viewport current character offset
     uint16_t tavcloff;  //textarea viewport current lineoffset
     uint16_t tewp;    //textarea current writer position
@@ -236,16 +243,17 @@ typedef struct {
 } CTX_PIN_INPUT;
 
 typedef struct { 
+    IO_CONTEXT io;
     bool error;
-    bool haderror;
+    bool haderror;    
+/*  uint8_t newkey[32]; 
     uint8_t kpos;
     uint8_t x;
     uint8_t y;
     uint8_t oldx;
-    uint8_t oldy;
-    uint8_t newkey[32];    
+    uint8_t oldy;         
     uint8_t charlocations[64];
-    uint8_t __pad1;    
+    uint8_t __pad1;    */
 } CTX_KEY_INPUT;
 
 typedef struct {
@@ -276,7 +284,7 @@ typedef struct {
 
 typedef struct {
     uint16_t tlen;
-    uint8_t text[MAX_TEXT_LEN + 17];     
+    uint8_t text[MAX_TEXT_LEN + TEXT_WORK_TRESHHOLD];     
 } CTX_USB_PUSH;
 
 typedef struct {    
@@ -297,7 +305,7 @@ typedef struct {
 } CTX_EDIT_ENTRY;
 
 typedef struct {    
-    uint8_t text[MAX_TEXT_LEN + 17];
+    uint8_t text[MAX_TEXT_LEN + TEXT_WORK_TRESHHOLD];
     TOKEN_TYPE type;
     uint8_t __pad1;
     uint16_t tlen;

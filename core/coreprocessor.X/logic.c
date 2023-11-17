@@ -26,6 +26,7 @@
 #include "fs/diskio.h"
 #include "fs/ff.h"
 #include "display_driver.h"
+#include "sha/sha.h"
 
 #include "usb/usb.h"
 #include "usb/usb_tasks.h"
@@ -151,10 +152,12 @@ void setMasterKey(uint8_t *key) {
     memcpy(masterkey, key, 16);
 }
 
+/*
 void setMasterTestKey( ) {
     uint8_t testkey[16] = {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f};        
     setMasterKey(testkey);    
 }
+*/
 
 uint8_t* getMasterKey() {
     return masterkey;
@@ -822,14 +825,13 @@ HCTX_IO_RESULT hctxIO( IO_CONTEXT *ioctx, APP_CONTEXT* ctx ) {
                     ioctx->datachanged = true;
                     ioctx->rinf = ONBUTTON_PRESS;
                 }                               
-            } else if ( k->fkt == KEYCOMMAND_GEN ) {                
+            } else if ( k->fkt == KEYCOMMAND_GEN && ioctx->inp == TOKEN ) {                
                 Generatormaps *gm = (Generatormaps *)&generatormaps[ k->id ];
                 uint8_t len = strlen( (char *)( textdata + gm->charset ) );
                 uint8_t rng = ( 0xff / len ) * len;
                 uint8_t rand[16];
                 uint8_t randoff = 0xff;
-                        
-                                                
+                                                                        
                 for ( uint8_t ch = 0; ch< gm->len; ch++ ) {
                     while ( true ) {
                         if ( randoff >= 0x10 ) {
@@ -850,7 +852,7 @@ HCTX_IO_RESULT hctxIO( IO_CONTEXT *ioctx, APP_CONTEXT* ctx ) {
                 }
                 
                 ioctx->rinf = ONBUTTON_PRESS;
-            } else if ( k->fkt == KEYCOMMAND_ABORT ) {
+            } else if ( k->fkt == KEYCOMMAND_ABORT && ioctx->inp == TOKEN ) {
                 if ( ioctx->datachanged ) {
                     pushContext(ctx, MESSAGEBOX);
                     CTX_MSG_BOX *mctx;
@@ -870,22 +872,28 @@ HCTX_IO_RESULT hctxIO( IO_CONTEXT *ioctx, APP_CONTEXT* ctx ) {
                     return IOR_ABORT;
                 }
             } else if ( k->fkt == KEYCOMMAND_OK ) {
-                if ( ioctx->datachanged && ioctx->type != NEW ) {
-                    pushContext(ctx, MESSAGEBOX);
-                    CTX_MSG_BOX *mctx;
-                    mctx = (CTX_MSG_BOX*) (ctx->ctxbuffer + ctx->ctxptr);
-                    
-                    mctx->mchoices[0] = MSGB_EDIT_ACCEPT_YES;
-                    mctx->mchoiceicon[0] = SYSICON_OK;
-                    mctx->mchoices[1] = MSGB_EDIT_ACCEPT_NO;
-                    mctx->mchoiceicon[1] = SYSICON_ABORT;
-                    mctx->choicecount = 2;
-                    mctx->sel = 0;
-                                       
-                    memcpy(mctx->msgtxt, (char*)(textdata + texte[TEXT_MSG_OVERWRITE]), strlen( (char*)(textdata + texte[TEXT_MSG_OVERWRITE]) ) + 1 );
-                                        
-                    return IOR_CTX_SWITCH;
-                } else {                    
+                if ( ioctx->inp == TOKEN ) {
+                    if ( ioctx->datachanged && ioctx->type != NEW ) {
+                        pushContext(ctx, MESSAGEBOX);
+                        CTX_MSG_BOX *mctx;
+                        mctx = (CTX_MSG_BOX*) (ctx->ctxbuffer + ctx->ctxptr);
+
+                        mctx->mchoices[0] = MSGB_EDIT_ACCEPT_YES;
+                        mctx->mchoiceicon[0] = SYSICON_OK;
+                        mctx->mchoices[1] = MSGB_EDIT_ACCEPT_NO;
+                        mctx->mchoiceicon[1] = SYSICON_ABORT;
+                        mctx->choicecount = 2;
+                        mctx->sel = 0;
+
+                        memcpy(mctx->msgtxt, (char*)(textdata + texte[TEXT_MSG_OVERWRITE]), strlen( (char*)(textdata + texte[TEXT_MSG_OVERWRITE]) ) + 1 );
+
+                        return IOR_CTX_SWITCH;
+                    } else {                    
+                        memmove( ioctx->text, ioctx->text+1, ioctx->tlen ); //remove startlinefeed and add zero termination char to the end to save it properly on disk
+                        ioctx->text[ioctx->tlen-1] = 0x00;
+                        return IOR_OK;
+                    }
+                } else if ( ioctx->inp == MASTERKEY ) {
                     memmove( ioctx->text, ioctx->text+1, ioctx->tlen ); //remove startlinefeed and add zero termination char to the end to save it properly on disk
                     ioctx->text[ioctx->tlen-1] = 0x00;
                     return IOR_OK;
@@ -1152,6 +1160,21 @@ void initPinInput( APP_CONTEXT* ctx ) {
     memcpy(sctx->field, &pinfield , 64 );
 }
 
+void initKeyInput( APP_CONTEXT* ctx ) {
+    CTX_KEY_INPUT *sctx;
+    sctx = (CTX_KEY_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
+        
+    sctx->io.inp = MASTERKEY; 
+    sctx->io.type = NEW;
+    sctx->io.rinf = REFRESH;
+    sctx->io.kbmap = DEFAULT_KEYMAP;
+    sctx->io.text[0] = CHAR_LINEFEED;
+    sctx->io.tlen = 1;
+    sctx->io.tewp = 1;        
+    ctx->rinf = IO_UPDATE;
+    
+}
+
 PINFIELD getPinfieldObj(APP_CONTEXT* ctx, uint8_t x, uint8_t y) {
     CTX_PIN_INPUT *sctx;
     sctx = (CTX_PIN_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
@@ -1289,7 +1312,8 @@ void hctxPinInput(APP_CONTEXT* ctx) {
                                     pinerr = 0;
                                     swipeKeys();
                                     setContext(ctx, KEY_INPUT);
-                                    ctx->rinf = REFRESH;
+                                    initKeyInput( ctx );
+                                    //ctx->rinf = REFRESH;
                                 }
                                 if ( sctx->extrasteps == 0 ) {
                                     sctx->error = true;
@@ -1342,38 +1366,43 @@ void hctxVerifyKeyAfterPin(APP_CONTEXT* ctx) {
     } else if ( keyres == 1 ) {
         swipeKeys();
         setContext(ctx, KEY_INPUT);
+        initKeyInput( ctx );
     } else if ( keyres == 2 ) {
         setContext(ctx, ERROR_SD_FAILURE);
     }    
     
 }
 
+void calcKeyFromText( uint8_t* text, uint8_t* key ) {
+    SHA256_CTX ctx;
+    uint8_t hash[32];
+    
+    sha256_init(&ctx);
+    sha256_update(&ctx, text, sizeof(text) );
+    sha256_final(&ctx, hash );
+    memcpy(key, hash, 16 );
+}
+
+
 void hctxKeyInput(APP_CONTEXT* ctx) {
     CTX_KEY_INPUT *sctx;
     sctx = (CTX_KEY_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
 
-    sctx->oldx = sctx->x;
-    sctx->oldy = sctx->y;
     sctx->haderror = sctx->error;
+    HCTX_IO_RESULT res = hctxIO( &sctx->io, ctx );
+        
+    if ( res == IOR_UNCHANGED ) {
+        ctx->rinf = UNCHANGED;
+    } else if ( res == IOR_UPDATED ) {
+        ctx->rinf = IO_UPDATE;     
+    } else if ( res == IOR_OK ) {
+        uint8_t newkey[32];
+        
+        if ( sctx->io.tlen > 0 ) {     
+            calcKeyFromText( sctx->io.text, newkey );
+            setMasterKey(newkey);
 
-    if (isButtonPressed(BUTTON_A)) {
-        //add the selected char as half-byte to the newkey
-        sctx->newkey[sctx->kpos] = (sctx->y * 4 + sctx->x);
-        sctx->kpos++;
-        if (sctx->kpos == 32) {
-            //condense the 1 byte per character to 1 byte per 2 character to obtain a valid encryption key
-            int j = 0;
-            for (int i = 0; i < 32; i++) {
-                if (i % 2 == 0) {
-                    sctx->newkey[j] = sctx->newkey[i] << 4;
-                } else {
-                    sctx->newkey[j] = sctx->newkey[j] | sctx->newkey[i];
-                    j++;
-                }
-            }
-            //set and verify the inputed masterkey
-            setMasterKey(sctx->newkey);            
-            uint8_t keyres = verifyMasterKey();            
+            uint8_t keyres = verifyMasterKey();
             if ( keyres == 0 ) {
                 setContext(ctx, ENTRY_OVERVIEW);
                 pushContext(ctx, PIN_INPUT);
@@ -1382,47 +1411,29 @@ void hctxKeyInput(APP_CONTEXT* ctx) {
                 pctx->generatenew = 1;
                 initPinInput( ctx );
             } else if ( keyres == 1 ) {
-                sctx->kpos = 0;
-                sctx->error = true;
+                //add startlinefeed again to prepare the editor
+                memmove( sctx->io.text+1, sctx->io.text, sctx->io.tlen ); 
+                sctx->io.text[0] = CHAR_LINEFEED;
+
+                pushContext(ctx, MESSAGEBOX);
+                CTX_MSG_BOX *mctx;
+                mctx = (CTX_MSG_BOX*) (ctx->ctxbuffer + ctx->ctxptr);
+
+                mctx->mchoices[0] = MSGB_MKEY_ERROR_OK;
+                mctx->mchoiceicon[0] = SYSICON_OK;
+                mctx->choicecount = 1;
+                mctx->sel = 0;
+
+                memcpy(mctx->msgtxt, (char*)(textdata + texte[TEXT_ENTER_NEW_KEY_ERROR]), strlen( (char*)(textdata + texte[TEXT_ENTER_NEW_KEY_ERROR]) ) + 1 );
+
                 ctx->rinf = REFRESH;
             } else if ( keyres == 2 ) {
                 setContext(ctx, ERROR_SD_FAILURE);
-            }
+            }                
         } else {
-            sctx->error = false;
-            ctx->rinf = ONBUTTON_PRESS;
+            memmove( sctx->io.text+1, sctx->io.text, sctx->io.tlen );
         }
-    } else if (isButtonReleased(BUTTON_A)) {
-        if (sctx->kpos > 0) {
-            ctx->rinf = ONBUTTON_RELEASE;
-        }
-    } else if (isButtonDown(BUTTON_A)) {
-        //no further handling
-    } else if (isButtonPressed(BUTTON_B)) {
-        sctx->kpos = sctx->kpos > 0 ? sctx->kpos - 1 : 0;
-        ctx->rinf = REMOVECHAR;
-        sctx->error = false;
-    } else if (isButtonPressed(BUTTON_LEFT)) {
-        //left
-        sctx->x = sctx->x > 0 ? sctx->x - 1 : 3;
-        ctx->rinf = ANIMATION;
-        sctx->error = false;
-    } else if (isButtonPressed(BUTTON_RIGHT)) {
-        //right
-        sctx->x = sctx->x < 3 ? sctx->x + 1 : 0;
-        ctx->rinf = ANIMATION;
-        sctx->error = false;
-    } else if (isButtonPressed(BUTTON_DOWN)) {
-        //up
-        sctx->y = sctx->y < 3 ? sctx->y + 1 : 0;
-        ctx->rinf = ANIMATION;
-        sctx->error = false;
-    } else if (isButtonPressed(BUTTON_UP)) {
-        //down
-        sctx->y = sctx->y > 0 ? sctx->y - 1 : 3;
-        ctx->rinf = ANIMATION;
-        sctx->error = false;
-    }
+    }        
 }
 
 FRESULT errAbortFileEntryHandling(FIL *file, TCHAR* unlinkpath ) {
@@ -2290,6 +2301,13 @@ void hctxMessagebox(APP_CONTEXT* ctx) {
                 
                 loadEntryDetail( ctx );
             }            
+        } else if ( result == MSGB_MKEY_ERROR_OK ) {
+            removeContext(ctx);
+            
+            CTX_KEY_INPUT *prevctx;
+            prevctx = (CTX_KEY_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
+            prevctx->io.rinf = REFRESH;            
+            ctx->rinf = IO_UPDATE;
         }
                                
     }   
@@ -2326,6 +2344,7 @@ void hctxChoosebox(APP_CONTEXT* ctx) {
             if ( replaceContext(ctx, EDIT_ENTRY ) ) {
                 CTX_EDIT_ENTRY *ectx;
                 ectx = (CTX_EDIT_ENTRY*) (ctx->ctxbuffer + ctx->ctxptr);
+                ectx->io.inp = TOKEN; 
                 ectx->io.type = NEW;
                 ectx->io.rinf = REFRESH;
                 ectx->io.kbmap = DEFAULT_KEYMAP;
@@ -2399,7 +2418,8 @@ void hctxChoosebox(APP_CONTEXT* ctx) {
                 CTX_EDIT_ENTRY *edctx;
                 edctx = (CTX_EDIT_ENTRY*) (ctx->ctxbuffer + ctx->ctxptr); 
 
-                memcpy( edctx->path, path, 16 );                        
+                memcpy( edctx->path, path, 16 ); 
+                edctx->io.inp = TOKEN;
                 edctx->io.type = currtoken;
                 edctx->io.text[0] = CHAR_LINEFEED;            
                 ctx->rinf = IO_UPDATE;
@@ -2800,6 +2820,7 @@ void updateContext(APP_CONTEXT* ctx) {
 //                testPinGen( ctx);
             } else {
                 setContext(ctx, KEY_INPUT);
+                initKeyInput( ctx );
             }
                     
 

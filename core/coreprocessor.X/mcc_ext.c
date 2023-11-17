@@ -39,17 +39,64 @@ void disableVoltPower() {
 }
 
 void enableVoltPower() {
-    VOLT_PWR_SetDigitalOutput();
     VOLT_PWR_SetLow();
+    VOLT_PWR_SetDigitalOutput();    
+}
+
+void disablePullups() {    
+    //Set all buttons and sdcard-detection to low output 
+    BTN1_SetLow();
+    BTN1_SetDigitalOutput();
+
+    BTN2_SetLow();
+    BTN2_SetDigitalOutput();
+
+    BTN3_SetLow();
+    BTN3_SetDigitalOutput();
+
+    BTN4_SetLow();
+    BTN4_SetDigitalOutput();
+
+    BTN5_SetLow();
+    BTN5_SetDigitalOutput();
+
+    BTN6_SetLow();
+    BTN6_SetDigitalOutput();
+       
+    SDCard_CD_SetLow();
+    SDCard_CD_SetDigitalOutput();
+    
+    //Disable all pullups except the case sensor
+    CNPU1 = 0x0000;
+    CNPU2 = 0x0080;
+    CNPU3 = 0x0000;
+    
+}
+
+void enablePullups() {
+    //Set all buttons and sdcard-detection to low output     
+    BTN1_SetDigitalInput();
+    BTN2_SetDigitalInput();
+    BTN3_SetDigitalInput();
+    BTN4_SetDigitalInput();
+    BTN5_SetDigitalInput();
+    BTN6_SetDigitalInput();   
+    SDCard_CD_SetDigitalInput();
+              
+    //Enable all pullups again
+    CNPU1 = 0x0700;
+    CNPU2 = 0x4280;
+    CNPU3 = 0x000C;
+    
 }
 
 void enableBUSCharge() {
-    CHRG_PWR_SetDigitalOutput();
     CHRG_PWR_SetLow();    
+    CHRG_PWR_SetDigitalOutput();       
 }
 
 void disableBUSCharge() {    
-    CHRG_PWR_SetDigitalInput();     
+    CHRG_PWR_SetDigitalInput();
 }
 
 bool isBUSChargeEnabled() {
@@ -90,11 +137,15 @@ uint8_t calculateBatteryPowerFromADC( int adcin ) {
 }
 
 
+
+
+
 bool bootPeripherals(APP_CONTEXT *ctx) {
     
+    enablePullups();
+    
     MISO_SetWPDOff();
-    MISO_SetWPUOn();    
-    SDCard_CD_SetWPUOn();
+    MISO_SetWPUOn();        
     __delay_ms(100);
     
     SDCard_CS_SetHigh();    
@@ -152,7 +203,7 @@ bool bootPeripherals(APP_CONTEXT *ctx) {
     //Start background led
     OC1_SecondaryValueSet(OC1_TOPVALUE);
     dispSetBrightness(device_options.brightness);
-    OC1_Start();
+    OC1_Start();   
     
     return true;
 }
@@ -164,16 +215,17 @@ void shutdownPeripherals(APP_CONTEXT *ctx) {
     
     OC1_Stop();
     _LATB2=1; //OC1 Pin set to high 
-        
+         
     SDCard_CS_SetLow();
     CS_D_SetLow();
-    RS_D_SetLow();
-    RES_D_SetLow();
+    RS_D_SetLow();        
     PER_PWR_SetHigh(); //Unpower Peripherie    
+    SCLK_SetLow();
+    MOSI_SetLow();
+    RES_D_SetLow();
 
     MISO_SetWPUOff();
     MISO_SetWPDOn();
-    SDCard_CD_SetWPUOff();
     
     disableVoltPower();
     
@@ -190,6 +242,8 @@ void shutdownPeripherals(APP_CONTEXT *ctx) {
     disableBUSCharge(ctx);
     
     disk_deinit();
+    
+    disablePullups();
 }
 
 
