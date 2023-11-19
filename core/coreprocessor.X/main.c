@@ -36,7 +36,7 @@ int main(void) {
     AD1CON3 = 0x1003;
     AD1CHS = 0x6; // Select RB14 as the input channel
     
-    disableBUSCharge(ctx);
+    enableBUSCharge();
     USBDeviceInit();    
     
     ctx.ctxbuffer = contextbuffer;

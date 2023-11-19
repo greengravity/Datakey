@@ -34,17 +34,6 @@
 #define BUTTON_A_READ (!BTN4_GetValue())
 #define BUTTON_B_READ (!BTN6_GetValue())
 
-#elif defined BOARD_PROD_REV1
-
-// Test Config 
-#define BUTTON_LEFT_READ  (!BTN6_GetValue())
-#define BUTTON_UP_READ    (!BTN5_GetValue())
-#define BUTTON_RIGHT_READ (!BTN3_GetValue())
-#define BUTTON_DOWN_READ  (!BTN4_GetValue())
-#define BUTTON_A_READ     (!BTN1_GetValue())
-#define BUTTON_B_READ     (!BTN2_GetValue()) 
-
-
 #else
 
 //  Production Config

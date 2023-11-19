@@ -6,7 +6,7 @@ build/default/production/mcc_ext.o: mcc_ext.c main.h mcc_ext.h fs/ff.h \
  mcc_generated_files/oc1.h fs/diskio.h fs/ff.h display_driver.h buttons.h \
  usb/usb.h usb/usb_config.h usb/../mcc_generated_files/pin_manager.h \
  usb/usb_ch9.h usb/usb_common.h usb/usb_device.h usb/usb_hal.h \
- usb/usb_hal_pic24f.h
+ usb/usb_hal_pic24f.h usb/usb_tasks.h
 
 main.h:
 
@@ -59,3 +59,5 @@ usb/usb_device.h:
 usb/usb_hal.h:
 
 usb/usb_hal_pic24f.h:
+
+usb/usb_tasks.h:

@@ -40,7 +40,7 @@ void enableBUSCharge();
 void disableBUSCharge();
 bool isBUSChargeEnabled();
 
-bool bootPeripherals(APP_CONTEXT *ctx);
+bool bootPeripherals(APP_CONTEXT *ctx, bool wakeFromSleep);
 void shutdownPeripherals(APP_CONTEXT *ctx);
 void setSleep(APP_CONTEXT *ctx);
 
