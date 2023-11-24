@@ -177,7 +177,7 @@ void swipeKeys() {
     pinerr = 0;    
 }
 
-uint8_t verifyMasterKey() {        
+uint8_t verifyMasterKey( bool createInitialStructure  ) {        
     UINT rwbytes;
     uint8_t data[48];
     uint8_t cipher[16];
@@ -214,51 +214,56 @@ uint8_t verifyMasterKey() {
             result = 2;
         }                                                
     } else {
+        if ( createInitialStructure ) {
+            if ( f_open(&file, "VERIFY", FA_WRITE | FA_CREATE_ALWAYS ) == FR_OK ) {
 
-        if ( f_open(&file, "VERIFY", FA_WRITE | FA_CREATE_ALWAYS ) == FR_OK ) {
-        
-            //create new verifikation file
-            generateRND(data);
-            generateRND(data+16);
-            
-            memset(&iv, 0x00, 16);
-            for (int i=0;i<16;i++) {
-                data[i+32] = data[i] ^ data[i+16];                
-            }
+                //create new verifikation file
+                generateRND(data);
+                generateRND(data+16);
 
-            //encrypt all 3 blocks
-            prepareAES128BitCBC();            
-            prepare128bitEncryption( iv );
+                memset(&iv, 0x00, 16);
+                for (int i=0;i<16;i++) {
+                    data[i+32] = data[i] ^ data[i+16];                
+                }
 
-            for (int i=0;i<3;i++) {
-                encrypt128bit( data+(i*16), data+(i*16) );                
-            }
+                //encrypt all 3 blocks
+                prepareAES128BitCBC();            
+                prepare128bitEncryption( iv );
 
-            endEncryption( );
+                for (int i=0;i<3;i++) {
+                    encrypt128bit( data+(i*16), data+(i*16) );                
+                }
 
-            //after encryption, the 3rd block should only calculate right if the correct key is used
-            if ( f_write(&file, data, 48, &rwbytes) == FR_OK && rwbytes == 48 ) {               
-                result = 0;
-            } else {
-                result = 2;   
-            }  
-            f_close(&file);
-        } else {
-            result = 2;
-        }        
-    }
-       
-    if ( result ==  0 ) {
-        if ( f_stat("KS", &fno) != FR_OK ) {
-            //create Keystore directory if not exits
-            f_mkdir( "KS" );
-            if ( f_stat("KS", &fno) == FR_OK && ( fno.fattrib & AM_DIR ) ) {
-                result = 0;
+                endEncryption( );
+
+                //after encryption, the 3rd block should only calculate right if the correct key is used
+                if ( f_write(&file, data, 48, &rwbytes) == FR_OK && rwbytes == 48 ) {               
+                    result = 0;
+                } else {
+                    result = 2;   
+                }  
+                f_close(&file);
             } else {
                 result = 2;
+            }        
+        
+
+            if ( result ==  0 ) {
+                if ( f_stat("KS", &fno) != FR_OK ) {
+                    //create Keystore directory if not exits
+                    f_mkdir( "KS" );
+                    if ( f_stat("KS", &fno) == FR_OK && ( fno.fattrib & AM_DIR ) ) {
+                        result = 0;
+                    } else {
+                        result = 2;
+                    }
+                }
             }
+        } else {
+            result = 1;
         }
-    } 
+    }
+    
     
     return result;
 }
@@ -1305,24 +1310,25 @@ void hctxPinInput(APP_CONTEXT* ctx) {
                             pinerr = 0;
                             setContext(ctx, VERIFY_KEY_AFTER_PIN);
                         } else {
+                        
                             if ( !sctx->errorchecked ) {
-                                sctx->errorchecked = true;                           
+                                sctx->errorchecked = true;                                 
+                                if ( sctx->extrasteps == 0 ) {
+                                    sctx->error = true;
+                                }
+                                
                                 pinerr++;
                                 if (pinerr == device_options.pin_tries) {
                                     pinerr = 0;
                                     swipeKeys();
                                     setContext(ctx, KEY_INPUT);
                                     initKeyInput( ctx );
-                                    //ctx->rinf = REFRESH;
-                                }
-                                if ( sctx->extrasteps == 0 ) {
-                                    sctx->error = true;
                                 }
                             } else {                                
                                 sctx->extrasteps--;
                                 if ( sctx->extrasteps == 0 ) {
                                     sctx->error = true;
-                                }
+                                }  
                             }
                         }
                     }
@@ -1360,7 +1366,7 @@ void hctxVerifyKeyAfterPin(APP_CONTEXT* ctx) {
         setKeyEncr(false);
     }    
     
-    uint8_t keyres = verifyMasterKey();
+    uint8_t keyres = verifyMasterKey( false );
     if ( keyres == 0 ) {
         setContext(ctx, ENTRY_OVERVIEW);
     } else if ( keyres == 1 ) {
@@ -1402,7 +1408,7 @@ void hctxKeyInput(APP_CONTEXT* ctx) {
             calcKeyFromText( sctx->io.text, newkey );
             setMasterKey(newkey);
 
-            uint8_t keyres = verifyMasterKey();
+            uint8_t keyres = verifyMasterKey( true );
             if ( keyres == 0 ) {
                 setContext(ctx, ENTRY_OVERVIEW);
                 pushContext(ctx, PIN_INPUT);
@@ -2829,16 +2835,16 @@ void updateContext(APP_CONTEXT* ctx) {
             break;
 
         case KEY_INPUT:        
-            hctxKeyInput(ctx);        
+            hctxKeyInput(ctx);
             break;
-        case PIN_INPUT:        
-            hctxPinInput(ctx);        
+        case PIN_INPUT:
+            hctxPinInput(ctx);
             break;
         case VERIFY_KEY_AFTER_PIN:
             hctxVerifyKeyAfterPin(ctx);
             break;            
         case ENTRY_OVERVIEW:
-            hctxEntryOverview(ctx);                 
+            hctxEntryOverview(ctx);
             break;
         case ENTRY_DETAIL:
             hctxEntryDetail(ctx);

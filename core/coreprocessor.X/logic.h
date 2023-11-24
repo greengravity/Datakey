@@ -375,7 +375,7 @@ bool isKeySet( );
 void setMasterKey(uint8_t *key);
 uint8_t* getMasterKey();
 void swipeKeys();
-uint8_t verifyMasterKey();
+uint8_t verifyMasterKey( bool createInitialStructure );
 bool isKeyEncr();
 void setKeyEncr(bool encr);
 
