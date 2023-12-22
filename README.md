@@ -17,7 +17,7 @@ Its like entering the name with a gamecontroller on a gamingconsole.
 Everything entered will be encrypted with a masterkey and stored on a micro-sd card.
 The masterkey is a secret that only the user know, if it get lost, you may not be able to restore your data anymore.
 
-Usually the masterkey is stored in the device, so you dont need to carry it around.
+Usually the masterkey is stored in the device, so you dont need to rember it all the time.
 But if you or someone else mess up the pincode verification, the masterkey get deleted from the device (for security reasons).
 Thats why it is important to have the masterkey stored or memorized safely.
 
@@ -37,9 +37,9 @@ It should be safe to use it like that.
 + TETRIS :)
 
 # What do you need to start?
-The Device
-An micro sd-card, formated with a Fat32 filesystem.
-A micro-usb cable to charge the device
+- The Device
+* An micro sd-card, formated with a Fat32 filesystem.
++ A micro-usb cable to charge the device
 
 Enter the sd-card to the slot on the side of the device and open it.
 You will be questioned about the masterkey.
@@ -53,11 +53,11 @@ Gratulations, you can now add/modify entries in your list, using the context men
 # Build the Device
 To build the device you need a bunch of things
 
-The electrical components (see components.csv in the Docs)
-The Printboard (see datakeyboard/ for the kicad project or datakeyboard/gerber for the gerberfiles to send to your pcb-maker)
-The MPLAB X IDE from microchip as well as an programmer device like the PICKit to build and programm the pic24fj128gb204 microcontroller
-A 3D Printer to print the housing.
-A tiny piece of thin copper or iron and something to cut it, it become the inlay for the housing to trigger the pogopins when open or close the cap.
+ The electrical components (see components.csv in the Docs)
+ The Printboard (see datakeyboard/ for the kicad project or datakeyboard/gerber for the gerberfiles to send to your pcb-maker)
+ The MPLAB X IDE from microchip as well as an programmer device like the PICKit to build and programm the pic24fj128gb204 microcontroller
+ A 3D Printer to print the housing.
+ A tiny piece of thin copper or iron and something to cut it, it become the inlay for the housing to trigger the pogopins when open or close the cap.
 
 A possibility to solder SMD-Parts
 Checkout c0pperdragon and his amazing HotPlate project on github for this (also available on tindie)
