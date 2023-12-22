@@ -1,10 +1,10 @@
-## Datastorage
-# What is it?
+### Datastorage
+## What is it?
 In short, it is a physical offline-device to store secret information like account data or banking informations.
 While mobile apps can do things like this, its always possible to have some spyware installed with the last gaming app or whatever.
 Because of that i dont trust mobiles too much and so i decided to make this little project.
 
-#How it Works?
+# How it Works?
 It is pretty simple, the device have 6 Buttons for input and a 1.7" Display for output.
 Just enter your pincode and you will be able to browse through your entries.
 
@@ -27,16 +27,16 @@ like entering the data with a keyboard.
 This type of communication is pretty much one-way, so the connected system cannot control the output of the device.
 It should be safe to use it like that.
 
-#Features
-128-Bit AES-CBC encryption over all entries
-Offline input/output
-USB-Keyboard function to push data to connected systems
-USB-Charging
-Long standby because of low power consumption ( about 2 years - 8.5müAmp usage with 150mAh Battery )
-Usage of Fat32 filesystem, so you can backup your data on your PC, this is safe because the data is completely encrypted, but make sure the masterkey stay separated from the data (dont store the masterkey on the pc too)
-TETRIS :)
+# Features
+- 128-Bit AES-CBC encryption over all entries
+* Offline input/output
+* USB-Keyboard function to push data to connected systems
+* USB-Charging
+* Long standby because of low power consumption ( about 2 years - 8.5müAmp usage with 150mAh Battery )
+* Usage of Fat32 filesystem, so you can backup your data on your PC, this is safe because the data is completely encrypted, but make sure the masterkey stay separated from the data (dont store the masterkey on the pc too)
++ TETRIS :)
 
-#What do you need to start?
+# What do you need to start?
 The Device
 An micro sd-card, formated with a Fat32 filesystem.
 A micro-usb cable to charge the device
@@ -50,7 +50,7 @@ Enter one and Reenter it, you can use all 6 buttons for it.
 You should end up on an empty screen showing the entrylist.
 Gratulations, you can now add/modify entries in your list, using the context menus.
 
-#Build the Device
+# Build the Device
 To build the device you need a bunch of things
 
 The electrical components (see components.csv in the Docs)
