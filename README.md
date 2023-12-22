@@ -1,31 +1,31 @@
 ### Datastorage
 ## What is it?
-In short, it is a physical offline-device to store secret information like account data or banking informations.
-While mobile apps can do things like this, its always possible to have some spyware installed with the last gaming app or whatever.
-Because of that i dont trust mobiles too much and so i decided to make this little project.
+In short, it is a physical offline-device to store secret information like account data or banking informations.  
+While mobile apps can do things like this, its always possible to have some spyware installed with the last gaming app or whatever.  
+Because of that i dont trust mobiles too much and so i decided to make this little project.  
 
 # How it Works?
-It is pretty simple, the device have 6 Buttons for input and a 1.7" Display for output.
-Just enter your pincode and you will be able to browse through your entries.
+It is pretty simple, the device have 6 Buttons for input and a 1.7" Display for output.  
+Just enter your pincode and you will be able to browse through your entries.  
 
-Every entry have a name and up to 5 additional tokens to store informations like username/password or other things.
-You can add/delete or modify entries directly on the device, without the need of a mobile-device or computer.
+Every entry have a name and up to 5 additional tokens to store informations like username/password or other things.  
+You can add/delete or modify entries directly on the device, without the need of a mobile-device or computer.  
 
-The tokens itself are entered with a virtual keyboard on the device.
-Its like entering the name with a gamecontroller on a gamingconsole.
+The tokens itself are entered with a virtual keyboard on the device.  
+Its like entering the name with a gamecontroller on a gamingconsole.  
 
-Everything entered will be encrypted with a masterkey and stored on a micro-sd card.
-The masterkey is a secret that only the user know, if it get lost, you may not be able to restore your data anymore.
+Everything entered will be encrypted with a masterkey and stored on a micro-sd card.  
+The masterkey is a secret that only the user know, if it get lost, you may not be able to restore your data anymore.  
 
-Usually the masterkey is stored in the device, so you dont need to rember it all the time.
-But if you or someone else mess up the pincode verification, the masterkey get deleted from the device (for security reasons).
-Thats why it is important to have the masterkey stored or memorized safely.
+Usually the masterkey is stored in the device, so you dont need to rember it all the time.  
+But if you or someone else mess up the pincode verification, the masterkey get deleted from the device (for security reasons).  
+Thats why it is important to have the masterkey stored or memorized safely.  
 
-The Device can also act as an keyboard.
-After you connected the device to your pc via usb, you can select an entry/token and push it to the pc.
-like entering the data with a keyboard.
-This type of communication is pretty much one-way, so the connected system cannot control the output of the device.
-It should be safe to use it like that.
+The Device can also act as an keyboard.  
+After you connected the device to your pc via usb, you can select an entry/token and push it to the pc.  
+like entering the data with a keyboard.  
+This type of communication is pretty much one-way, so the connected system cannot control the output of the device.  
+It should be safe to use it like that.  
 
 # Features
 - 128-Bit AES-CBC encryption over all entries
@@ -41,14 +41,14 @@ It should be safe to use it like that.
 * An micro sd-card, formated with a Fat32 filesystem.
 + A micro-usb cable to charge the device
 
-Enter the sd-card to the slot on the side of the device and open it.
-You will be questioned about the masterkey.
-Enter one, the longer the better.
-Then you will be questioned about your pincode.
-This looks like a game, but it is actually just a disguise as an additional security layer.
-Enter one and Reenter it, you can use all 6 buttons for it.
-You should end up on an empty screen showing the entrylist.
-Gratulations, you can now add/modify entries in your list, using the context menus.
+Enter the sd-card to the slot on the side of the device and open it.  
+You will be questioned about the masterkey.  
+Enter one, the longer the better.  
+Then you will be questioned about your pincode.  
+This looks like a game, but it is actually just a disguise as an additional security layer.  
+Enter one and Reenter it, you can use all 6 buttons for it.  
+You should end up on an empty screen showing the entrylist.  
+Gratulations, you can now add/modify entries in your list, using the context menus.  
 
 # Build the Device
 To build the device you need a bunch of things
