@@ -53,16 +53,11 @@ Gratulations, you can now add/modify entries in your list, using the context men
 # Build the Device
 To build the device you need a bunch of things
 
-The electrical components (see components.csv in the Docs)
-
-The Printboard (see datakeyboard/ for the kicad project or datakeyboard/gerber for the gerberfiles to send to your pcb-maker)
- 
-The MPLAB X IDE from microchip as well as an programmer device like the PICKit to build and programm the pic24fj128gb204 microcontroller
-
-A 3D Printer to print the housing.
-
-A tiny piece of thin copper or iron and something to cut it, it become the inlay for the housing to trigger the pogopins when open or close the cap.
-
+The electrical components (see components.csv in the Docs)  
+The Printboard (see datakeyboard/ for the kicad project or datakeyboard/gerber for the gerberfiles to send to your pcb-maker)  
+The MPLAB X IDE from microchip as well as an programmer device like the PICKit to build and programm the pic24fj128gb204 microcontroller  
+A 3D Printer to print the housing.  
+A tiny piece of thin copper or iron and something to cut it, it become the inlay for the housing to trigger the pogopins when open or close the cap.  
 A possibility to solder SMD-Parts
 
 Checkout c0pperdragon and his amazing HotPlate project on github for this (also available on tindie)
