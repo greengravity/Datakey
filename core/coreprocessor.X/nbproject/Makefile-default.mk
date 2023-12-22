@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=fs/ff.c fs/ffsystem.c fs/ffunicode.c fs/mmc.c mcc_generated_files/drivers/spi_master.c mcc_generated_files/pin_manager.c mcc_generated_files/clock.c mcc_generated_files/interrupt_manager.c mcc_generated_files/system.c mcc_generated_files/mcc.c mcc_generated_files/traps.c mcc_generated_files/oc1.c mcc_generated_files/spi1_driver.c mcc_generated_files/tmr2.c mcc_generated_files/ext_int.c mcc_generated_files/rtcc.c sha/sha.c usb/usb_descriptors.c usb/usb_device.c usb/usb_device_hid.c usb/usb_events.c usb/usb_hal_16bit.c usb/usb_tasks.c main.c buttons.c display_driver.c assets.c mcc_ext.c logic.c ui.c
+SOURCEFILES_QUOTED_IF_SPACED=fs/ff.c fs/ffsystem.c fs/ffunicode.c fs/mmc.c mcc_generated_files/drivers/spi_master.c mcc_generated_files/pin_manager.c mcc_generated_files/clock.c mcc_generated_files/interrupt_manager.c mcc_generated_files/system.c mcc_generated_files/mcc.c mcc_generated_files/traps.c mcc_generated_files/oc1.c mcc_generated_files/spi1_driver.c mcc_generated_files/tmr2.c mcc_generated_files/ext_int.c mcc_generated_files/rtcc.c sha/sha.c usb/usb_descriptors.c usb/usb_device.c usb/usb_device_hid.c usb/usb_events.c usb/usb_hal_16bit.c usb/usb_tasks.c main.c buttons.c display_driver.c mcc_ext.c logic.c ui.c assets.c assets/assets_english_en-GB.c assets/assets_english_en-US.c assets/assets_german_de-DE.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/fs/ff.o ${OBJECTDIR}/fs/ffsystem.o ${OBJECTDIR}/fs/ffunicode.o ${OBJECTDIR}/fs/mmc.o ${OBJECTDIR}/mcc_generated_files/drivers/spi_master.o ${OBJECTDIR}/mcc_generated_files/pin_manager.o ${OBJECTDIR}/mcc_generated_files/clock.o ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o ${OBJECTDIR}/mcc_generated_files/system.o ${OBJECTDIR}/mcc_generated_files/mcc.o ${OBJECTDIR}/mcc_generated_files/traps.o ${OBJECTDIR}/mcc_generated_files/oc1.o ${OBJECTDIR}/mcc_generated_files/spi1_driver.o ${OBJECTDIR}/mcc_generated_files/tmr2.o ${OBJECTDIR}/mcc_generated_files/ext_int.o ${OBJECTDIR}/mcc_generated_files/rtcc.o ${OBJECTDIR}/sha/sha.o ${OBJECTDIR}/usb/usb_descriptors.o ${OBJECTDIR}/usb/usb_device.o ${OBJECTDIR}/usb/usb_device_hid.o ${OBJECTDIR}/usb/usb_events.o ${OBJECTDIR}/usb/usb_hal_16bit.o ${OBJECTDIR}/usb/usb_tasks.o ${OBJECTDIR}/main.o ${OBJECTDIR}/buttons.o ${OBJECTDIR}/display_driver.o ${OBJECTDIR}/assets.o ${OBJECTDIR}/mcc_ext.o ${OBJECTDIR}/logic.o ${OBJECTDIR}/ui.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/fs/ff.o.d ${OBJECTDIR}/fs/ffsystem.o.d ${OBJECTDIR}/fs/ffunicode.o.d ${OBJECTDIR}/fs/mmc.o.d ${OBJECTDIR}/mcc_generated_files/drivers/spi_master.o.d ${OBJECTDIR}/mcc_generated_files/pin_manager.o.d ${OBJECTDIR}/mcc_generated_files/clock.o.d ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o.d ${OBJECTDIR}/mcc_generated_files/system.o.d ${OBJECTDIR}/mcc_generated_files/mcc.o.d ${OBJECTDIR}/mcc_generated_files/traps.o.d ${OBJECTDIR}/mcc_generated_files/oc1.o.d ${OBJECTDIR}/mcc_generated_files/spi1_driver.o.d ${OBJECTDIR}/mcc_generated_files/tmr2.o.d ${OBJECTDIR}/mcc_generated_files/ext_int.o.d ${OBJECTDIR}/mcc_generated_files/rtcc.o.d ${OBJECTDIR}/sha/sha.o.d ${OBJECTDIR}/usb/usb_descriptors.o.d ${OBJECTDIR}/usb/usb_device.o.d ${OBJECTDIR}/usb/usb_device_hid.o.d ${OBJECTDIR}/usb/usb_events.o.d ${OBJECTDIR}/usb/usb_hal_16bit.o.d ${OBJECTDIR}/usb/usb_tasks.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/buttons.o.d ${OBJECTDIR}/display_driver.o.d ${OBJECTDIR}/assets.o.d ${OBJECTDIR}/mcc_ext.o.d ${OBJECTDIR}/logic.o.d ${OBJECTDIR}/ui.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/fs/ff.o ${OBJECTDIR}/fs/ffsystem.o ${OBJECTDIR}/fs/ffunicode.o ${OBJECTDIR}/fs/mmc.o ${OBJECTDIR}/mcc_generated_files/drivers/spi_master.o ${OBJECTDIR}/mcc_generated_files/pin_manager.o ${OBJECTDIR}/mcc_generated_files/clock.o ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o ${OBJECTDIR}/mcc_generated_files/system.o ${OBJECTDIR}/mcc_generated_files/mcc.o ${OBJECTDIR}/mcc_generated_files/traps.o ${OBJECTDIR}/mcc_generated_files/oc1.o ${OBJECTDIR}/mcc_generated_files/spi1_driver.o ${OBJECTDIR}/mcc_generated_files/tmr2.o ${OBJECTDIR}/mcc_generated_files/ext_int.o ${OBJECTDIR}/mcc_generated_files/rtcc.o ${OBJECTDIR}/sha/sha.o ${OBJECTDIR}/usb/usb_descriptors.o ${OBJECTDIR}/usb/usb_device.o ${OBJECTDIR}/usb/usb_device_hid.o ${OBJECTDIR}/usb/usb_events.o ${OBJECTDIR}/usb/usb_hal_16bit.o ${OBJECTDIR}/usb/usb_tasks.o ${OBJECTDIR}/main.o ${OBJECTDIR}/buttons.o ${OBJECTDIR}/display_driver.o ${OBJECTDIR}/mcc_ext.o ${OBJECTDIR}/logic.o ${OBJECTDIR}/ui.o ${OBJECTDIR}/assets.o ${OBJECTDIR}/assets/assets_english_en-GB.o ${OBJECTDIR}/assets/assets_english_en-US.o ${OBJECTDIR}/assets/assets_german_de-DE.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/fs/ff.o.d ${OBJECTDIR}/fs/ffsystem.o.d ${OBJECTDIR}/fs/ffunicode.o.d ${OBJECTDIR}/fs/mmc.o.d ${OBJECTDIR}/mcc_generated_files/drivers/spi_master.o.d ${OBJECTDIR}/mcc_generated_files/pin_manager.o.d ${OBJECTDIR}/mcc_generated_files/clock.o.d ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o.d ${OBJECTDIR}/mcc_generated_files/system.o.d ${OBJECTDIR}/mcc_generated_files/mcc.o.d ${OBJECTDIR}/mcc_generated_files/traps.o.d ${OBJECTDIR}/mcc_generated_files/oc1.o.d ${OBJECTDIR}/mcc_generated_files/spi1_driver.o.d ${OBJECTDIR}/mcc_generated_files/tmr2.o.d ${OBJECTDIR}/mcc_generated_files/ext_int.o.d ${OBJECTDIR}/mcc_generated_files/rtcc.o.d ${OBJECTDIR}/sha/sha.o.d ${OBJECTDIR}/usb/usb_descriptors.o.d ${OBJECTDIR}/usb/usb_device.o.d ${OBJECTDIR}/usb/usb_device_hid.o.d ${OBJECTDIR}/usb/usb_events.o.d ${OBJECTDIR}/usb/usb_hal_16bit.o.d ${OBJECTDIR}/usb/usb_tasks.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/buttons.o.d ${OBJECTDIR}/display_driver.o.d ${OBJECTDIR}/mcc_ext.o.d ${OBJECTDIR}/logic.o.d ${OBJECTDIR}/ui.o.d ${OBJECTDIR}/assets.o.d ${OBJECTDIR}/assets/assets_english_en-GB.o.d ${OBJECTDIR}/assets/assets_english_en-US.o.d ${OBJECTDIR}/assets/assets_german_de-DE.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/fs/ff.o ${OBJECTDIR}/fs/ffsystem.o ${OBJECTDIR}/fs/ffunicode.o ${OBJECTDIR}/fs/mmc.o ${OBJECTDIR}/mcc_generated_files/drivers/spi_master.o ${OBJECTDIR}/mcc_generated_files/pin_manager.o ${OBJECTDIR}/mcc_generated_files/clock.o ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o ${OBJECTDIR}/mcc_generated_files/system.o ${OBJECTDIR}/mcc_generated_files/mcc.o ${OBJECTDIR}/mcc_generated_files/traps.o ${OBJECTDIR}/mcc_generated_files/oc1.o ${OBJECTDIR}/mcc_generated_files/spi1_driver.o ${OBJECTDIR}/mcc_generated_files/tmr2.o ${OBJECTDIR}/mcc_generated_files/ext_int.o ${OBJECTDIR}/mcc_generated_files/rtcc.o ${OBJECTDIR}/sha/sha.o ${OBJECTDIR}/usb/usb_descriptors.o ${OBJECTDIR}/usb/usb_device.o ${OBJECTDIR}/usb/usb_device_hid.o ${OBJECTDIR}/usb/usb_events.o ${OBJECTDIR}/usb/usb_hal_16bit.o ${OBJECTDIR}/usb/usb_tasks.o ${OBJECTDIR}/main.o ${OBJECTDIR}/buttons.o ${OBJECTDIR}/display_driver.o ${OBJECTDIR}/assets.o ${OBJECTDIR}/mcc_ext.o ${OBJECTDIR}/logic.o ${OBJECTDIR}/ui.o
+OBJECTFILES=${OBJECTDIR}/fs/ff.o ${OBJECTDIR}/fs/ffsystem.o ${OBJECTDIR}/fs/ffunicode.o ${OBJECTDIR}/fs/mmc.o ${OBJECTDIR}/mcc_generated_files/drivers/spi_master.o ${OBJECTDIR}/mcc_generated_files/pin_manager.o ${OBJECTDIR}/mcc_generated_files/clock.o ${OBJECTDIR}/mcc_generated_files/interrupt_manager.o ${OBJECTDIR}/mcc_generated_files/system.o ${OBJECTDIR}/mcc_generated_files/mcc.o ${OBJECTDIR}/mcc_generated_files/traps.o ${OBJECTDIR}/mcc_generated_files/oc1.o ${OBJECTDIR}/mcc_generated_files/spi1_driver.o ${OBJECTDIR}/mcc_generated_files/tmr2.o ${OBJECTDIR}/mcc_generated_files/ext_int.o ${OBJECTDIR}/mcc_generated_files/rtcc.o ${OBJECTDIR}/sha/sha.o ${OBJECTDIR}/usb/usb_descriptors.o ${OBJECTDIR}/usb/usb_device.o ${OBJECTDIR}/usb/usb_device_hid.o ${OBJECTDIR}/usb/usb_events.o ${OBJECTDIR}/usb/usb_hal_16bit.o ${OBJECTDIR}/usb/usb_tasks.o ${OBJECTDIR}/main.o ${OBJECTDIR}/buttons.o ${OBJECTDIR}/display_driver.o ${OBJECTDIR}/mcc_ext.o ${OBJECTDIR}/logic.o ${OBJECTDIR}/ui.o ${OBJECTDIR}/assets.o ${OBJECTDIR}/assets/assets_english_en-GB.o ${OBJECTDIR}/assets/assets_english_en-US.o ${OBJECTDIR}/assets/assets_german_de-DE.o
 
 # Source Files
-SOURCEFILES=fs/ff.c fs/ffsystem.c fs/ffunicode.c fs/mmc.c mcc_generated_files/drivers/spi_master.c mcc_generated_files/pin_manager.c mcc_generated_files/clock.c mcc_generated_files/interrupt_manager.c mcc_generated_files/system.c mcc_generated_files/mcc.c mcc_generated_files/traps.c mcc_generated_files/oc1.c mcc_generated_files/spi1_driver.c mcc_generated_files/tmr2.c mcc_generated_files/ext_int.c mcc_generated_files/rtcc.c sha/sha.c usb/usb_descriptors.c usb/usb_device.c usb/usb_device_hid.c usb/usb_events.c usb/usb_hal_16bit.c usb/usb_tasks.c main.c buttons.c display_driver.c assets.c mcc_ext.c logic.c ui.c
+SOURCEFILES=fs/ff.c fs/ffsystem.c fs/ffunicode.c fs/mmc.c mcc_generated_files/drivers/spi_master.c mcc_generated_files/pin_manager.c mcc_generated_files/clock.c mcc_generated_files/interrupt_manager.c mcc_generated_files/system.c mcc_generated_files/mcc.c mcc_generated_files/traps.c mcc_generated_files/oc1.c mcc_generated_files/spi1_driver.c mcc_generated_files/tmr2.c mcc_generated_files/ext_int.c mcc_generated_files/rtcc.c sha/sha.c usb/usb_descriptors.c usb/usb_device.c usb/usb_device_hid.c usb/usb_events.c usb/usb_hal_16bit.c usb/usb_tasks.c main.c buttons.c display_driver.c mcc_ext.c logic.c ui.c assets.c assets/assets_english_en-GB.c assets/assets_english_en-US.c assets/assets_german_de-DE.c
 
 
 
@@ -245,12 +245,6 @@ ${OBJECTDIR}/display_driver.o: display_driver.c  .generated_files/flags/default/
 	@${RM} ${OBJECTDIR}/display_driver.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  display_driver.c  -o ${OBJECTDIR}/display_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/display_driver.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/assets.o: assets.c  .generated_files/flags/default/48b9d89a9801f22c20ef4612e4e1d95a70fa0a09 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/assets.o.d 
-	@${RM} ${OBJECTDIR}/assets.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  assets.c  -o ${OBJECTDIR}/assets.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/assets.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
 ${OBJECTDIR}/mcc_ext.o: mcc_ext.c  .generated_files/flags/default/8fcddca484ef9fc0fb7416720a9317073f357cd9 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/mcc_ext.o.d 
@@ -268,6 +262,30 @@ ${OBJECTDIR}/ui.o: ui.c  .generated_files/flags/default/5400cc1b31ac72759fa00864
 	@${RM} ${OBJECTDIR}/ui.o.d 
 	@${RM} ${OBJECTDIR}/ui.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ui.c  -o ${OBJECTDIR}/ui.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/ui.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/assets.o: assets.c  .generated_files/flags/default/48b9d89a9801f22c20ef4612e4e1d95a70fa0a09 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/assets.o.d 
+	@${RM} ${OBJECTDIR}/assets.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  assets.c  -o ${OBJECTDIR}/assets.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/assets.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/assets/assets_english_en-GB.o: assets/assets_english_en-GB.c  .generated_files/flags/default/6a2514210ec0de2f6790f32e826c74b537e73fb2 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/assets" 
+	@${RM} ${OBJECTDIR}/assets/assets_english_en-GB.o.d 
+	@${RM} ${OBJECTDIR}/assets/assets_english_en-GB.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  assets/assets_english_en-GB.c  -o ${OBJECTDIR}/assets/assets_english_en-GB.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/assets/assets_english_en-GB.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/assets/assets_english_en-US.o: assets/assets_english_en-US.c  .generated_files/flags/default/d69339ba247a4b7360169fcd0ce8e1c286c615d1 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/assets" 
+	@${RM} ${OBJECTDIR}/assets/assets_english_en-US.o.d 
+	@${RM} ${OBJECTDIR}/assets/assets_english_en-US.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  assets/assets_english_en-US.c  -o ${OBJECTDIR}/assets/assets_english_en-US.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/assets/assets_english_en-US.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/assets/assets_german_de-DE.o: assets/assets_german_de-DE.c  .generated_files/flags/default/289ea77061b502ad2e29275331177d938723bd9c .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/assets" 
+	@${RM} ${OBJECTDIR}/assets/assets_german_de-DE.o.d 
+	@${RM} ${OBJECTDIR}/assets/assets_german_de-DE.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  assets/assets_german_de-DE.c  -o ${OBJECTDIR}/assets/assets_german_de-DE.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/assets/assets_german_de-DE.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1  -mno-eds-warn  -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
 else
 ${OBJECTDIR}/fs/ff.o: fs/ff.c  .generated_files/flags/default/ec62124b78934d5633e8e4011c7ee38429182179 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
@@ -426,12 +444,6 @@ ${OBJECTDIR}/display_driver.o: display_driver.c  .generated_files/flags/default/
 	@${RM} ${OBJECTDIR}/display_driver.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  display_driver.c  -o ${OBJECTDIR}/display_driver.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/display_driver.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
-${OBJECTDIR}/assets.o: assets.c  .generated_files/flags/default/9c17a582d7b79c05f15d5389b9685f73c6294a88 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/assets.o.d 
-	@${RM} ${OBJECTDIR}/assets.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  assets.c  -o ${OBJECTDIR}/assets.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/assets.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
-	
 ${OBJECTDIR}/mcc_ext.o: mcc_ext.c  .generated_files/flags/default/315eb7678addaeeb541d5cd4ad280f27fe22a79c .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/mcc_ext.o.d 
@@ -449,6 +461,30 @@ ${OBJECTDIR}/ui.o: ui.c  .generated_files/flags/default/913b7ca5328e0fee6a8d2630
 	@${RM} ${OBJECTDIR}/ui.o.d 
 	@${RM} ${OBJECTDIR}/ui.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ui.c  -o ${OBJECTDIR}/ui.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/ui.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/assets.o: assets.c  .generated_files/flags/default/9c17a582d7b79c05f15d5389b9685f73c6294a88 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/assets.o.d 
+	@${RM} ${OBJECTDIR}/assets.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  assets.c  -o ${OBJECTDIR}/assets.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/assets.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/assets/assets_english_en-GB.o: assets/assets_english_en-GB.c  .generated_files/flags/default/5d276ae6b43fd5fa0319428f77713ef6513dffd8 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/assets" 
+	@${RM} ${OBJECTDIR}/assets/assets_english_en-GB.o.d 
+	@${RM} ${OBJECTDIR}/assets/assets_english_en-GB.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  assets/assets_english_en-GB.c  -o ${OBJECTDIR}/assets/assets_english_en-GB.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/assets/assets_english_en-GB.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/assets/assets_english_en-US.o: assets/assets_english_en-US.c  .generated_files/flags/default/11b47a96ac9d8b79daf947c3e55f6c980fd32170 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/assets" 
+	@${RM} ${OBJECTDIR}/assets/assets_english_en-US.o.d 
+	@${RM} ${OBJECTDIR}/assets/assets_english_en-US.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  assets/assets_english_en-US.c  -o ${OBJECTDIR}/assets/assets_english_en-US.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/assets/assets_english_en-US.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
+	
+${OBJECTDIR}/assets/assets_german_de-DE.o: assets/assets_german_de-DE.c  .generated_files/flags/default/94b89d17cd8796267b2466e3219425f8ba0a81d3 .generated_files/flags/default/da39a3ee5e6b4b0d3255bfef95601890afd80709
+	@${MKDIR} "${OBJECTDIR}/assets" 
+	@${RM} ${OBJECTDIR}/assets/assets_german_de-DE.o.d 
+	@${RM} ${OBJECTDIR}/assets/assets_german_de-DE.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  assets/assets_german_de-DE.c  -o ${OBJECTDIR}/assets/assets_german_de-DE.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MP -MMD -MF "${OBJECTDIR}/assets/assets_german_de-DE.o.d"      -mno-eds-warn  -g -omf=elf -DXPRJ_default=$(CND_CONF)    $(COMPARISON_BUILD)  -mlarge-code -O2 -msmart-io=1 -Wall -msfr-warn=off    -mdfp="${DFP_DIR}/xc16"
 	
 endif
 

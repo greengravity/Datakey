@@ -4,6 +4,11 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <logicalFolder name="f4" displayName="assets" projectFiles="true">
+        <itemPath>assets/assets_english_en-GB.h</itemPath>
+        <itemPath>assets/assets_english_en-US.h</itemPath>
+        <itemPath>assets/assets_german_de-DE.h</itemPath>
+      </logicalFolder>
       <logicalFolder name="f1" displayName="fs" projectFiles="true">
         <itemPath>fs/diskio.h</itemPath>
         <itemPath>fs/ff.h</itemPath>
@@ -46,10 +51,11 @@
       <itemPath>main.h</itemPath>
       <itemPath>buttons.h</itemPath>
       <itemPath>display_driver.h</itemPath>
-      <itemPath>assets.h</itemPath>
       <itemPath>mcc_ext.h</itemPath>
       <itemPath>logic.h</itemPath>
       <itemPath>ui.h</itemPath>
+      <itemPath>assets.h</itemPath>
+      <itemPath>assets_common.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -58,6 +64,11 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="f4" displayName="assets" projectFiles="true">
+        <itemPath>assets/assets_english_en-GB.c</itemPath>
+        <itemPath>assets/assets_english_en-US.c</itemPath>
+        <itemPath>assets/assets_german_de-DE.c</itemPath>
+      </logicalFolder>
       <logicalFolder name="f1" displayName="fs" projectFiles="true">
         <itemPath>fs/ff.c</itemPath>
         <itemPath>fs/ffsystem.c</itemPath>
@@ -100,10 +111,10 @@
       <itemPath>main.c</itemPath>
       <itemPath>buttons.c</itemPath>
       <itemPath>display_driver.c</itemPath>
-      <itemPath>assets.c</itemPath>
       <itemPath>mcc_ext.c</itemPath>
       <itemPath>logic.c</itemPath>
       <itemPath>ui.c</itemPath>
+      <itemPath>assets.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -335,7 +346,6 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>

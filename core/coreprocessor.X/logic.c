@@ -1379,12 +1379,18 @@ void hctxVerifyKeyAfterPin(APP_CONTEXT* ctx) {
     
 }
 
-void calcKeyFromText( uint8_t* text, uint8_t* key ) {
+void calcKeyFromText( uint8_t* text, uint16_t textlen, uint8_t* key ) {
     SHA256_CTX ctx;
     uint8_t hash[32];
+    int i;       
     
     sha256_init(&ctx);
-    sha256_update(&ctx, text, sizeof(text) );
+    for (i=0;i<textlen;i++) {
+        hash[0] = gfxchars[ text[i] ].uccp >> 8;
+        hash[1] = gfxchars[ text[i] ].uccp & 0xff;
+        
+        sha256_update(&ctx, hash, 2 );
+    }                            
     sha256_final(&ctx, hash );
     memcpy(key, hash, 16 );
 }
@@ -1405,7 +1411,7 @@ void hctxKeyInput(APP_CONTEXT* ctx) {
         uint8_t newkey[32];
         
         if ( sctx->io.tlen > 0 ) {     
-            calcKeyFromText( sctx->io.text, newkey );
+            calcKeyFromText( sctx->io.text, sctx->io.tlen, newkey );
             setMasterKey(newkey);
 
             uint8_t keyres = verifyMasterKey( true );
@@ -1458,9 +1464,9 @@ FRESULT readEntryToken( TCHAR *path, TOKEN_TYPE type, uint8_t *text, uint16_t ma
     FIL file;
     UINT affected;
     uint8_t buffer[TOKEN_READ_MOD_BUFFERSIZE];
-    int i, j;    
+    int i, j, k;    
     uint8_t tokenpos;
-    FSIZE_t readoffs;
+    FSIZE_t readoffs;   
     
     res = f_stat( path, &fno);
     if ( res == FR_OK && fno.fsize >= 48  && fno.fsize % 16 == 0 ) {
@@ -1508,6 +1514,25 @@ FRESULT readEntryToken( TCHAR *path, TOKEN_TYPE type, uint8_t *text, uint16_t ma
                 
                 for ( j=0; j<TOKEN_READ_MOD_BUFFERSIZE;j+=16 ) {
                     decrypt128bit( buffer+j, buffer+j );
+                    for (k=0;k<16;k+=2) {                        
+                        uint16_t ct = buffer[j+k];
+                        uint16_t ct2 = buffer[j+k+1];
+                                
+                        ct = ct << 8;
+                        ct |= ct2;
+                        
+                        text[*tlen] = unicodeLookup( ct );                               
+                        *tlen += 1;
+                                              
+                        if ( text[*tlen-1] == 0 || *tlen >= maxlen ) {
+                            text[*tlen-1] = 0x00;
+                            f_close(&file);
+                            endEncryption();
+                            return FR_OK;                             
+                        }
+                    }
+                    
+/*                    
                     uint8_t* boff = memchr(buffer+j, 0x00, 16);
                     if ( boff != NULL ) {
                         int len = ( boff - (buffer + j) ) + 1;
@@ -1526,7 +1551,8 @@ FRESULT readEntryToken( TCHAR *path, TOKEN_TYPE type, uint8_t *text, uint16_t ma
                         endEncryption();
                         return FR_OK;                        
                     }
-                }                
+ */ 
+                }                 
             }
             return errAbortFileEntryHandling( &file, NULL );
         }
@@ -1542,11 +1568,11 @@ FRESULT modifyEntry( TCHAR *path, uint8_t *text, uint16_t len, TOKEN_TYPE type )
     FIL file;
     UINT affected;
     uint8_t buffer[TOKEN_READ_MOD_BUFFERSIZE];
-    int i, j, k;    
+    int i, j, k, l;    
     uint8_t tokenpos;
     uint8_t freetokenpos;
     uint8_t lasttokenpos;
-    uint16_t tokenoffs=0;
+    uint16_t tokencnt=0;
     FSIZE_t readoffs;
     
     generateRND( nonse ); //random nonse to add after nametag
@@ -1606,9 +1632,9 @@ FRESULT modifyEntry( TCHAR *path, uint8_t *text, uint16_t len, TOKEN_TYPE type )
             //advance to the token to overwrite
             for ( int mode =0;mode < 3; mode++) {
                 if ( mode == 0) {
-                    tokenoffs = ( TOKEN_BLOCK_SIZE / TOKEN_READ_MOD_BUFFERSIZE ) * tokenpos;
+                    tokencnt = ( TOKEN_BLOCK_SIZE / TOKEN_READ_MOD_BUFFERSIZE ) * tokenpos;
                 } else if ( mode == 1 ) {
-                    tokenoffs = TOKEN_BLOCK_SIZE / TOKEN_READ_MOD_BUFFERSIZE;
+                    tokencnt = TOKEN_BLOCK_SIZE / TOKEN_READ_MOD_BUFFERSIZE;
                     if ( lasttokenpos == 0xff || lasttokenpos < tokenpos ) {
                         //expand file and get back to current position
                         readoffs += TOKEN_BLOCK_SIZE;
@@ -1618,28 +1644,30 @@ FRESULT modifyEntry( TCHAR *path, uint8_t *text, uint16_t len, TOKEN_TYPE type )
                         lasttokenpos += 1;
                     }
                 } else if ( mode == 2 ) {
-                    tokenoffs = ( lasttokenpos - tokenpos ) * ( TOKEN_BLOCK_SIZE / TOKEN_READ_MOD_BUFFERSIZE );
+                    tokencnt = ( lasttokenpos - tokenpos ) * ( TOKEN_BLOCK_SIZE / TOKEN_READ_MOD_BUFFERSIZE );
                 }
                 
-                for ( i=0; i<tokenoffs; i++ ) {
+                for ( i=0; i<tokencnt; i++ ) {
                     res = f_read( &file, buffer, TOKEN_READ_MOD_BUFFERSIZE, &affected );
                     if ( res != FR_OK || affected < TOKEN_READ_MOD_BUFFERSIZE ) return errAbortFileEntryHandling( &file, path );
 
-                    for (k=0;k<sizeof(buffer);k+=16) decrypt128bit( buffer+k, buffer+k );
+                    for (k=0;k<TOKEN_READ_MOD_BUFFERSIZE;k+=16) decrypt128bit( buffer+k, buffer+k );
                     switch128BitDecryptEncrypt();                                
 
                     if ( mode == 1 ) {
                         //modify tokendata
-                        if ( i*TOKEN_READ_MOD_BUFFERSIZE > len ) {
-                            for (k=0;k<TOKEN_READ_MOD_BUFFERSIZE;k+=16) memcpy(buffer+k, nonse, 16);
-                        } else {
-                            memcpy(buffer, text+i*TOKEN_READ_MOD_BUFFERSIZE, len - i*TOKEN_READ_MOD_BUFFERSIZE);
-
-                            j = len/16*16;
-                            if ( len %16 != 0 ) j+= 16;
-                                                       
-                            for (k=j;k<TOKEN_READ_MOD_BUFFERSIZE;k+=16) memcpy(buffer+k, nonse, 16);
-                        }
+                        for (k=0;k<TOKEN_READ_MOD_BUFFERSIZE;k+=2) {
+                            l = i * TOKEN_READ_MOD_BUFFERSIZE + k;
+                            j = l / 2;
+                            
+                            if ( j < len ) {
+                                buffer[k]   = (uint8_t )( gfxchars[ text[j] ].uccp >> 8 );
+                                buffer[k+1] = (uint8_t )( gfxchars[ text[j] ].uccp & 0xFF );
+                            } else {
+                                buffer[k]   = nonse[  l     % 16 ];
+                                buffer[k+1] = nonse[( l+1 ) % 16 ];
+                            }
+                        }                                                   
                     }
                     
                     for (k=0;k<TOKEN_READ_MOD_BUFFERSIZE;k+=16) encrypt128bit( buffer+k, buffer+k );
@@ -1654,7 +1682,7 @@ FRESULT modifyEntry( TCHAR *path, uint8_t *text, uint16_t len, TOKEN_TYPE type )
             }
                         
             readoffs = lasttokenpos+1;
-            readoffs = readoffs * TOKEN_BLOCK_SIZE + 48;            
+            readoffs = readoffs * TOKEN_BLOCK_SIZE + 48;
             res = f_lseek( &file, readoffs );
             if ( res != FR_OK ) return errAbortFileEntryHandling( &file, path );
             
@@ -1668,7 +1696,7 @@ FRESULT modifyEntry( TCHAR *path, uint8_t *text, uint16_t len, TOKEN_TYPE type )
 }
 
 
-FRESULT createNewEntry( TCHAR *path, uint8_t *text, uint16_t len ) {    
+FRESULT createNewEntry( TCHAR *path ) {  //, uint8_t *text, uint16_t len ) {    
     uint8_t cipher[16];
     uint8_t plain[16];   
     FILINFO fno;
@@ -2180,7 +2208,7 @@ void hctxEditEntry(APP_CONTEXT* ctx) {
         //Input done
         if ( sctx->io.type == NEW ) {
             //create an empty entry
-            FRESULT fres = createNewEntry(sctx->path, (uint8_t *)(sctx->io.text), sctx->io.tlen );
+            FRESULT fres = createNewEntry(sctx->path);
             if ( fres != FR_OK ) {
                 setContext( ctx, ERROR_SD_FAILURE  );
             }

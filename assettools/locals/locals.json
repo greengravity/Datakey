@@ -1,0 +1,17 @@
+[
+	{	
+		"name": "english_en-US",
+		"textfile": "english.json",
+		"fontfolder": "en-US"
+	},
+	{	
+		"name": "german_de-DE",
+		"textfile": "german.json",
+		"fontfolder": "de-DE"
+	},
+	{	
+		"name": "english_en-GB",
+		"textfile": "english.json",
+		"fontfolder": "en-GB"
+	}
+]

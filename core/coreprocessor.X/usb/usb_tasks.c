@@ -252,6 +252,7 @@ signed int LocalSOFCount;
 static signed int OldSOFCount;
 
 static uint8_t *usb_writechars;
+static uint8_t usb_currwritepos2;
 static uint16_t usb_writelen;
 static uint16_t usb_currwritepos;
 static uint16_t usb_iswriting = false;
@@ -307,6 +308,7 @@ void USB_WriteCharacterBuffer(uint8_t *wb, uint16_t len) {
     usb_writechars = wb;
     usb_writelen = len;
     usb_currwritepos = 0;
+    usb_currwritepos2 = 0;
     usb_iswriting = true;
 }
 
@@ -478,9 +480,31 @@ void USB_Interface_Tasks() {
                 // Clear the INPUT report buffer.  Set to all zeros                                
                 if ( usb_currwritepos < usb_writelen ) {
                     const GFXChar *gfxc = &gfxchars[ usb_writechars[usb_currwritepos] ];
-                    usb_currwritepos ++;
-                    inputReport.modifiers.value = gfxc->scancode[0];
-                    memcpy( inputReport.keys, gfxc->scancode+1 ,3 );
+                    
+                    if ( usb_currwritepos2 == 0 ) {
+                        usb_currwritepos2 = 1;
+                        inputReport.modifiers.value = gfxc->scancode[0];
+                        inputReport.keys[0] = gfxc->scancode[1];
+                    } else if ( usb_currwritepos2 == 1 ) {
+                        usb_currwritepos2 = 2;
+                        if ( gfxc->scancode[2] != 0 || gfxc->scancode[3] != 0 ) {
+                            //2nd character after deadkeybutton
+                            inputReport.modifiers.value = gfxc->scancode[2];
+                            inputReport.keys[0] = gfxc->scancode[3];
+                        } else {
+                            //no character
+                            inputReport.modifiers.value = 0;
+                            inputReport.keys[0] = 0;                            
+                        }
+                                                
+                    } else if ( usb_currwritepos2 == 2 ) {                        
+                        usb_currwritepos2 = 0;
+                        inputReport.modifiers.value = 0;
+                        inputReport.keys[0] = 0;                                                    
+                        usb_currwritepos ++;
+                    }
+                    
+                    //memcpy( inputReport.keys, gfxc->scancode+1 ,1 );
                 } else {
                     usb_iswriting = false;
                 }

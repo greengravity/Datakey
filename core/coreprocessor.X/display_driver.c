@@ -419,9 +419,15 @@ void drawImage(int16_t x, int16_t y, const GFXimage *image) {
     int16_t gw = image->width;
     int16_t gh = image->height;        
     uint8_t  gray = image->bitmapOffset  >> 15;
-    uint16_t offs = image->bitmapOffset & 0x7FFF;
-    uint16_t size = gw * gh;
-        
+    uint16_t offs = image->bitmapOffset & 0x7FFF;    
+    uint16_t outcolor;
+    uint16_t blocklen = 0;    
+    uint16_t blocktype = 0;
+    uint16_t size = bitmapdata[offs++] << 8;
+    size |= bitmapdata[offs++];    
+    uint8_t outoffs=0;
+    uint8_t lowbyte=0;    
+    
 /*    if ( ( ( x + gw ) <= 0 ) || 
         ( ( y + gh ) <= 0 ) ||           
         ( x >= _width ) ||           
@@ -429,18 +435,58 @@ void drawImage(int16_t x, int16_t y, const GFXimage *image) {
       
     if ( gray ) {
         for (uint16_t i=0; i< size; i++) {            
-            uint8_t gval = bitmapdata[offs + i];
-            
-            outbuffer[i] = ( ( gval & 0xf8 ) << 8 ) |
-                           ( ( gval & 0xfc ) << 3 ) |
-                           ( ( gval & 0xf8 ) >> 3 );                        
+            if ( blocklen == 0 ) {                
+                blocktype = bitmapdata[offs] & 0x80;
+                blocklen = bitmapdata[offs++] & 0x7f;            
+            } else {
+                if ( blocktype == 0 ) {
+                    uint8_t gval = bitmapdata[offs++];
+                    outcolor = ( ( gval & 0xf8 ) << 8 ) |
+                               ( ( gval & 0xfc ) << 3 ) |
+                               ( ( gval & 0xf8 ) >> 3 ); 
+                                                            
+                    for (;blocklen>0; blocklen--) {
+                        outbuffer[outoffs++] = outcolor; 
+                    }
+                } else {
+                    uint8_t gval = bitmapdata[offs++];
+                    outcolor = ( ( gval & 0xf8 ) << 8 ) |
+                               ( ( gval & 0xfc ) << 3 ) |
+                               ( ( gval & 0xf8 ) >> 3 );                     
+                    outbuffer[outoffs++] = outcolor; 
+                    blocklen--;
+                } 
+            }
         }
     } else {
-        for (uint16_t i=0; i< size; i++) {
-            outbuffer[i] = bitmapdata[offs + i*2];       
-            outbuffer[i] = outbuffer[i] << 8;
-            outbuffer[i] |= bitmapdata[offs + i*2+1];
-        }        
+        for (uint16_t i=0; i< size; i++) {   
+            if ( blocklen == 0 ) {                
+                blocktype = bitmapdata[offs] & 0x80;
+                blocklen = bitmapdata[offs++] & 0x7f;
+            } else {
+                if ( blocktype == 0 ) {
+                    outcolor = bitmapdata[offs++];
+
+                    for (;blocklen>0; blocklen--) {
+                        if ( !lowbyte ) {                        
+                            outbuffer[outoffs] = outcolor << 8;
+                        } else {
+                            outbuffer[outoffs++] |= outcolor;
+                        }
+                        lowbyte = !lowbyte;
+                    }
+                } else {
+                    outcolor = bitmapdata[offs++];
+                    if ( !lowbyte ) {
+                        outbuffer[outoffs] = outcolor << 8;
+                    } else {
+                        outbuffer[outoffs++] |= outcolor;
+                    }  
+                    lowbyte = !lowbyte;
+                    blocklen--;                
+                } 
+            }   
+        }
     }
     
     dispStartWrite();
@@ -449,15 +495,6 @@ void drawImage(int16_t x, int16_t y, const GFXimage *image) {
 
     dispEndWrite();
  
-}
-
-uint8_t unicodeLookup(uint16_t ct) {
-    for ( uint8_t c=0;c<TOTAL_CHAR_COUNT;c++ ) {
-        if ( unicodes[c].uccp == ct ) {
-            return unicodes[c].cid;
-        }
-    }
-    return CHAR_ENCODEERR;
 }
 
 //Setting Writecursor

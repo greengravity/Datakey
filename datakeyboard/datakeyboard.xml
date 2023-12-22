@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>E:\projekte\gitrepos\datakey\Datakey\datakeyboard\datakeyboard.kicad_sch</source>
-    <date>10.11.2023 14:27:21</date>
+    <date>07.12.2023 20:37:16</date>
     <tool>Eeschema (6.0.9)</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -382,6 +382,15 @@
       <property name="Sheetfile" value="datakeyboard.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>deca2053-c3e6-4112-b498-40c4eea17055</tstamps>
+    </comp>
+    <comp ref="R14">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder</footprint>
+      <libsource lib="Device" part="R_Small" description="Resistor, small symbol"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="datakeyboard.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c213b547-e739-4726-a3fd-495573c71a5a</tstamps>
     </comp>
     <comp ref="SW1">
       <value>SW_Push</value>
@@ -802,6 +811,7 @@
       <node ref="Q2" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="R10" pin="2" pintype="passive"/>
       <node ref="R11" pin="1" pintype="passive"/>
+      <node ref="R14" pin="1" pintype="passive"/>
       <node ref="R7" pin="1" pintype="passive"/>
       <node ref="U1" pin="10" pinfunction="VUSB3V3" pintype="input"/>
       <node ref="U1" pin="17" pinfunction="AVDD" pintype="power_in"/>
@@ -836,6 +846,7 @@
     </net>
     <net code="8" name="/CASE">
       <node ref="JCASE1" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="R14" pin="2" pintype="passive"/>
       <node ref="U1" pin="43" pinfunction="RB7" pintype="bidirectional"/>
     </net>
     <net code="9" name="/CHRG">

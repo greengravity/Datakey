@@ -1,82 +1,20 @@
-"Source:","E:\projekte\gitrepos\datakey\Datakey\datakeyboard\datakeyboard.kicad_sch"
-"Date:","10.11.2023 14:27:21"
-"Tool:","Eeschema (6.0.9)"
-"Generator:","E:\Program Files\KiCad\6.0\bin\scripting\plugins/bom_csv_grouped_by_value.py"
-"Component Count:","48"
-
-"Individual Components:"
-
-"Item","Qty","Reference(s)","Value","LibPart","Footprint","Datasheet"
-"","","C1","10uF","Device:C_Small","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","~"
-"","","C2","10uF","Device:C_Small","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","~"
-"","","C3","10uF","Device:C_Small","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","~"
-"","","C5","100nF","Device:C_Small","Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder","~"
-"","","C6","100nF","Device:C_Small","Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder","~"
-"","","C7","100nF","Device:C_Small","Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder","~"
-"","","C8","100nF","Device:C_Small","Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder","~"
-"","","C9","100nF","Device:C_Small","Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder","~"
-"","","C10","100nF","Device:C_Small","Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder","~"
-"","","C11","100nF","Device:C_Small","Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder","~"
-"","","D1","LED","Device:LED","Diode_SMD:D_1206_3216Metric_Pad1.42x1.75mm_HandSolder","~"
-"","","D2","LED","Device:LED","Diode_SMD:D_1206_3216Metric_Pad1.42x1.75mm_HandSolder","~"
-"","","D3","BAS40-06","Library:BAS40-06","Package_TO_SOT_SMD:SOT-23","http://www.vishay.com/docs/85701/bas40v.pdf"
-"","","JBAT1","Conn_01x01","Connector_Generic:Conn_01x01","TestPoint:TestPoint_Pad_2.0x2.0mm","~"
-"","","JBAT2","Conn_01x01","Connector_Generic:Conn_01x01","TestPoint:TestPoint_Pad_2.0x2.0mm","~"
-"","","JCARD1","Micro_SD_Card_Det","Connector:Micro_SD_Card_Det","Library:microSD_Unknown","https://www.hirose.com/product/en/download_file/key_name/DM3/category/Catalog/doc_file_id/49662/?file_category_id=4&item_id=195&is_series=1"
-"","","JCASE1","Conn_01x01","Connector_Generic:Conn_01x01","TestPoint:TestPoint_Pad_2.0x2.0mm","~"
-"","","JCASE2","Conn_01x01","Connector_Generic:Conn_01x01","TestPoint:TestPoint_Pad_2.0x2.0mm","~"
-"","","JDISP1","Conn_01x08","Connector_Generic:Conn_01x08","Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical","~"
-"","","JPICKKIT1","Conn_01x06","Connector_Generic:Conn_01x06","Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical","~"
-"","","JUSB1","USB_OTG","Connector:USB_OTG","Library:USB_Micro-B_Unknown"," ~"
-"","","Q1","NX2301P","Transistor_FET:BSS83P","Package_TO_SOT_SMD:SOT-23","http://www.farnell.com/datasheets/1835997.pdf"
-"","","Q2","NX2301P","Transistor_FET:BSS83P","Package_TO_SOT_SMD:SOT-23","http://www.farnell.com/datasheets/1835997.pdf"
-"","","Q3","NX2301P","Transistor_FET:BSS83P","Package_TO_SOT_SMD:SOT-23","http://www.farnell.com/datasheets/1835997.pdf"
-"","","Q4","NX2301P","Transistor_FET:BSS83P","Package_TO_SOT_SMD:SOT-23","http://www.farnell.com/datasheets/1835997.pdf"
-"","","Q5","NX2301P","Transistor_FET:BSS83P","Package_TO_SOT_SMD:SOT-23","http://www.farnell.com/datasheets/1835997.pdf"
-"","","R1","100","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"","","R2","1k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"","","R3","1k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"","","R4","1k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"","","R5","2.2k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"","","R6","10k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"","","R7","10k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"","","R8","100k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"","","R9","10k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"","","R10","10k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"","","R11","10k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"","","R12","10k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"","","R13","10k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"","","SW1","SW_Push","Switch:SW_Push","Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm","~"
-"","","SW2","SW_Push","Switch:SW_Push","Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm","~"
-"","","SW3","SW_Push","Switch:SW_Push","Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm","~"
-"","","SW4","SW_Push","Switch:SW_Push","Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm","~"
-"","","SW5","SW_Push","Switch:SW_Push","Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm","~"
-"","","SW6","SW_Push","Switch:SW_Push","Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm","~"
-"","","U1","PIC24FJ128GB204","Library:PIC24FJ128GB204","Package_QFP:TQFP-44_10x10mm_P0.8mm",""
-"","","U2","MCP73831-2-OT","Battery_Management:MCP73831-2-OT","Package_TO_SOT_SMD:SOT-23-5","http://ww1.microchip.com/downloads/en/DeviceDoc/20001984g.pdf"
-"","","U3","STLQ015M30R","Regulator_Linear:AP131-30","Package_TO_SOT_SMD:SOT-23-5","http://www.diodes.com/_files/datasheets/AP131.pdf"
-
-
-
-"Collated Components:"
-
-"Item","Qty","Reference(s)","Value","LibPart","Footprint","Datasheet"
-"1","3","C1, C2, C3","10uF","Device:C_Small","Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder","~"
-"2","7","C5, C6, C7, C8, C9, C10, C11","100nF","Device:C_Small","Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder","~"
-"3","2","D1, D2","LED","Device:LED","Diode_SMD:D_1206_3216Metric_Pad1.42x1.75mm_HandSolder","~"
-"4","1","D3","BAS40-06","Library:BAS40-06","Package_TO_SOT_SMD:SOT-23","http://www.vishay.com/docs/85701/bas40v.pdf"
-"5","4","JBAT1, JBAT2, JCASE1, JCASE2","Conn_01x01","Connector_Generic:Conn_01x01","TestPoint:TestPoint_Pad_2.0x2.0mm","~"
-"6","1","JCARD1","Micro_SD_Card_Det","Connector:Micro_SD_Card_Det","Library:microSD_Unknown","https://www.hirose.com/product/en/download_file/key_name/DM3/category/Catalog/doc_file_id/49662/?file_category_id=4&item_id=195&is_series=1"
-"7","1","JDISP1","Conn_01x08","Connector_Generic:Conn_01x08","Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical","~"
-"8","1","JPICKKIT1","Conn_01x06","Connector_Generic:Conn_01x06","Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical","~"
-"9","1","JUSB1","USB_OTG","Connector:USB_OTG","Library:USB_Micro-B_Unknown"," ~"
-"10","5","Q1, Q2, Q3, Q4, Q5","NX2301P","Transistor_FET:BSS83P","Package_TO_SOT_SMD:SOT-23","http://www.farnell.com/datasheets/1835997.pdf"
-"11","1","R1","100","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"12","3","R2, R3, R4","1k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"13","1","R5","2.2k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"14","7","R6, R7, R9, R10, R11, R12, R13","10k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"15","1","R8","100k","Device:R_Small","Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder","~"
-"16","6","SW1, SW2, SW3, SW4, SW5, SW6","SW_Push","Switch:SW_Push","Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm","~"
-"17","1","U1","PIC24FJ128GB204","Library:PIC24FJ128GB204","Package_QFP:TQFP-44_10x10mm_P0.8mm",""
-"18","1","U2","MCP73831-2-OT","Battery_Management:MCP73831-2-OT","Package_TO_SOT_SMD:SOT-23-5","http://ww1.microchip.com/downloads/en/DeviceDoc/20001984g.pdf"
-"19","1","U3","STLQ015M30R","Regulator_Linear:AP131-30","Package_TO_SOT_SMD:SOT-23-5","http://www.diodes.com/_files/datasheets/AP131.pdf"
+Item,Qty,Reference(s),Value,LibPart,Footprint,Datasheet
+1,3,"C1, C2, C3",10uF,Device:C_Small,Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder,~
+2,7,"C5, C6, C7, C8, C9, C10, C11",100nF,Device:C_Small,Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder,~
+3,2,"D1, D2",LED,Device:LED,Diode_SMD:D_1206_3216Metric_Pad1.42x1.75mm_HandSolder,~
+4,1,D3,BAS40-06,Library:BAS40-06,Package_TO_SOT_SMD:SOT-23,http://www.vishay.com/docs/85701/bas40v.pdf
+5,4,"JBAT1, JBAT2, JCASE1, JCASE2",Conn_01x01,Connector_Generic:Conn_01x01,TestPoint:TestPoint_Pad_2.0x2.0mm,~
+6,1,JCARD1,Micro_SD_Card_Det,Connector:Micro_SD_Card_Det,Library:microSD_Unknown,https://www.hirose.com/product/en/download_file/key_name/DM3/category/Catalog/doc_file_id/49662/?file_category_id=4&item_id=195&is_series=1
+7,1,JDISP1,Conn_01x08,Connector_Generic:Conn_01x08,Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical,~
+8,1,JPICKKIT1,Conn_01x06,Connector_Generic:Conn_01x06,Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical,~
+9,1,JUSB1,USB_OTG,Connector:USB_OTG,Library:USB_Micro-B_Unknown, ~
+10,5,"Q1, Q2, Q3, Q4, Q5",NX2301P,Transistor_FET:BSS83P,Package_TO_SOT_SMD:SOT-23,http://www.farnell.com/datasheets/1835997.pdf
+11,1,R1,100,Device:R_Small,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,~
+12,3,"R2, R3, R4",1k,Device:R_Small,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,~
+13,1,R5,2.2k,Device:R_Small,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,~
+14,7,"R6, R7, R9, R10, R11, R12, R13",10k,Device:R_Small,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,~
+15,2,"R8, R14",100k,Device:R_Small,Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder,~
+16,6,"SW1, SW2, SW3, SW4, SW5, SW6",SW_Push,Switch:SW_Push,Button_Switch_SMD:SW_Push_1P1T_NO_6x6mm_H9.5mm,~
+17,1,U1,PIC24FJ128GB204,Library:PIC24FJ128GB204,Package_QFP:TQFP-44_10x10mm_P0.8mm,
+18,1,U2,MCP73831-2-OT,Battery_Management:MCP73831-2-OT,Package_TO_SOT_SMD:SOT-23-5,http://ww1.microchip.com/downloads/en/DeviceDoc/20001984g.pdf
+19,1,U3,STLQ015M30R,Regulator_Linear:AP131-30,Package_TO_SOT_SMD:SOT-23-5,http://www.diodes.com/_files/datasheets/AP131.pdf

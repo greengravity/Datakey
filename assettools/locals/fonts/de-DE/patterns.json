@@ -1,0 +1,310 @@
+{
+	"patternmap": [
+		null,
+		"1TO9",
+		null,
+
+		"ATOZ",		
+		"aTOz",
+		"SYSTEMMENU",
+
+		"SON2",
+		"SOND",
+		"SON3"
+	],
+	"patterns": [
+		{
+			"name": "SYSTEMMENU",
+			"text": "Menu",
+			"defx": 0,
+			"defy": 0,
+			"keys": [
+				[
+					{ "f": "OK", "size": 2 },
+					{ "f": "ABORT", "size": 2 },
+					{ "f": "GEN", "id": "az", "size": 6 }
+				],
+				[
+					{ "f": "SPACE" , "size": 2 },					
+					{ "f": "BACKSPACE", "size": 2  },
+					{ "f": "GEN", "id": "az19", "size": 6 }
+				],
+				[
+					{ "f": "EMPTY", "size": 4 },
+					{ "f": "GEN", "id": "az19%", "size": 6 }					
+				],
+				[
+					{ "f": "EMPTY", "size": 4 },
+					{ "f": "GEN", "id": "hex", "size": 6 }
+				]
+			]
+		},
+		{
+			"default": true,
+			"name": "ATOZ",
+			"text": "A-Z",
+			"keys": [
+				[
+					{ "f": "CHAR", "id": "Q" },
+					{ "f": "CHAR", "id": "W" },
+					{ "f": "CHAR", "id": "E" },
+					{ "f": "CHAR", "id": "R" },
+					{ "f": "CHAR", "id": "T" },
+					{ "f": "CHAR", "id": "Z" },
+					{ "f": "CHAR", "id": "U" },
+					{ "f": "CHAR", "id": "I" },
+					{ "f": "CHAR", "id": "O" },
+					{ "f": "CHAR", "id": "P" }					
+				],
+				[
+					{ "f": "CHAR", "id": "A" },
+					{ "f": "CHAR", "id": "S" },
+					{ "f": "CHAR", "id": "D" },
+					{ "f": "CHAR", "id": "F" },
+					{ "f": "CHAR", "id": "G" },
+					{ "f": "CHAR", "id": "H" },
+					{ "f": "CHAR", "id": "J" },
+					{ "f": "CHAR", "id": "K" },
+					{ "f": "CHAR", "id": "L" },
+					{ "f": "CHAR", "id": "Ö" }													
+				],	
+				[
+					{ "f": "CHAR", "id": "Y" },
+					{ "f": "CHAR", "id": "X" },
+					{ "f": "CHAR", "id": "C" },
+					{ "f": "CHAR", "id": "V" },
+					{ "f": "CHAR", "id": "B" },
+					{ "f": "CHAR", "id": "N" },
+					{ "f": "CHAR", "id": "M" },
+					{ "f": "CHAR", "id": "Ä" },
+					{ "f": "CHAR", "id": "Ü" },
+					{ "f": "CHAR", "id": "ß" }									
+				],
+				[
+					{ "f": "CHAR", "id": "." },													
+					{ "f": "BACKSPACE", "size": 2  },
+					{ "f": "SPACE" , "size": 5 },
+					{ "f": "LF", "size":2 }						
+				]		
+			]
+		},
+		{
+			"name": "aTOz",
+			"text": "a-z",
+			"keys": [	
+				[
+					{ "f": "CHAR", "id": "q" },
+					{ "f": "CHAR", "id": "w" },
+					{ "f": "CHAR", "id": "e" },
+					{ "f": "CHAR", "id": "r" },
+					{ "f": "CHAR", "id": "t" },
+					{ "f": "CHAR", "id": "z" },
+					{ "f": "CHAR", "id": "u" },
+					{ "f": "CHAR", "id": "i" },
+					{ "f": "CHAR", "id": "o" },
+					{ "f": "CHAR", "id": "p" }					
+				],
+				[
+					{ "f": "CHAR", "id": "a" },
+					{ "f": "CHAR", "id": "s" },
+					{ "f": "CHAR", "id": "d" },
+					{ "f": "CHAR", "id": "f" },
+					{ "f": "CHAR", "id": "g" },
+					{ "f": "CHAR", "id": "h" },
+					{ "f": "CHAR", "id": "j" },
+					{ "f": "CHAR", "id": "k" },
+					{ "f": "CHAR", "id": "l" },
+					{ "f": "CHAR", "id": "ö" }													
+				],	
+				[
+					{ "f": "CHAR", "id": "y" },
+					{ "f": "CHAR", "id": "x" },
+					{ "f": "CHAR", "id": "c" },
+					{ "f": "CHAR", "id": "v" },
+					{ "f": "CHAR", "id": "b" },
+					{ "f": "CHAR", "id": "n" },
+					{ "f": "CHAR", "id": "m" },
+					{ "f": "CHAR", "id": "ä" },
+					{ "f": "CHAR", "id": "ü" },
+					{ "f": "CHAR", "id": "ß" }									
+				],
+				[
+					{ "f": "CHAR", "id": "." },													
+					{ "f": "BACKSPACE", "size": 2  },
+					{ "f": "SPACE" , "size": 5 },
+					{ "f": "LF", "size":2 }						
+				]					
+			]
+		},
+		{
+			"name": "SOND",
+			"text": "!-ü",
+			"keys": [
+				[
+					{ "f": "CHAR", "id": "!" },
+					{ "f": "CHAR", "id": "\"" },
+					{ "f": "CHAR", "id": "§" },
+					{ "f": "CHAR", "id": "$" },
+					{ "f": "CHAR", "id": "%" },
+					{ "f": "CHAR", "id": "&" },
+					{ "f": "CHAR", "id": "/" },
+					{ "f": "CHAR", "id": "?" },
+					{ "f": "CHAR", "id": "^" },
+					{"f":"CHAR","id":"~"}
+				],
+				[
+					{ "f": "CHAR", "id": "²" },
+					{ "f": "CHAR", "id": "³" },
+					{ "f": "CHAR", "id": "\\" },
+					{ "f": "CHAR", "id": "°" },
+					{ "f": "CHAR", "id": "'" },
+					{ "f": "CHAR", "id": "#" },
+					{ "f": "CHAR", "id": "-" },
+					{ "f": "CHAR", "id": "_" },
+					{"f":"CHAR","id":"`"},	
+					{"f":"CHAR","id":"´"}									
+				],	
+				[
+					{ "f": "CHAR", "id": "," },
+					{ "f": "CHAR", "id": ";" },
+					{ "f": "CHAR", "id": "." },
+					{ "f": "CHAR", "id": ":" },					
+					{ "f": "CHAR", "id": "|" },																
+					{ "f": "CHAR", "id": "@" },																															
+					{ "f": "CHAR", "id": "µ" },
+					{"f":"CHAR","id":"€"},
+					{"f":"CHAR","id":"ẞ"}
+
+				],
+				[
+					{ "f": "BACKSPACE", "size": 2  },
+					{ "f": "SPACE" , "size": 6 },
+					{ "f": "LF", "size":2 }
+				]							
+			]
+		},	
+		{
+			"name": "SON2",
+			"text": "á-ô",
+			"keys": [
+				[
+					{"f":"CHAR","id":"á"},
+					{"f":"CHAR","id":"é"},
+					{"f":"CHAR","id":"ú"},
+					{"f":"CHAR","id":"í"},
+					{"f":"CHAR","id":"ó"},
+					{"f":"CHAR","id":"ý"}
+				],
+				[
+					{"f":"CHAR","id":"à"},
+					{"f":"CHAR","id":"è"},
+					{"f":"CHAR","id":"ù"},
+					{"f":"CHAR","id":"ì"},
+					{"f":"CHAR","id":"ò"}
+				],	
+				[
+					{"f":"CHAR","id":"â"},
+					{"f":"CHAR","id":"ê"},
+					{"f":"CHAR","id":"û"},
+					{"f":"CHAR","id":"î"},
+					{"f":"CHAR","id":"ô"}
+				],
+				[
+					{ "f": "BACKSPACE", "size": 2  },
+					{ "f": "SPACE" , "size": 6 },
+					{ "f": "LF", "size":2 }
+				]		
+			]
+		},	
+		
+		{
+			"name": "SON3",
+			"text": "Á-Ô",
+			"keys": [
+				[
+					{"f":"CHAR","id":"Á"},
+					{"f":"CHAR","id":"É"},
+					{"f":"CHAR","id":"Ú"},
+					{"f":"CHAR","id":"Í"},
+					{"f":"CHAR","id":"Ó"},
+					{"f":"CHAR","id":"Ý"}
+				],
+				[
+					{"f":"CHAR","id":"À"},
+					{"f":"CHAR","id":"È"},
+					{"f":"CHAR","id":"Ù"},
+					{"f":"CHAR","id":"Ì"},
+					{"f":"CHAR","id":"Ò"}								
+				],	
+				[
+					{"f":"CHAR","id":"Â"},
+					{"f":"CHAR","id":"Ê"},
+					{"f":"CHAR","id":"Û"},
+					{"f":"CHAR","id":"Î"},
+					{"f":"CHAR","id":"Ô"}
+				],
+				[
+					{ "f": "BACKSPACE", "size": 2  },
+					{ "f": "SPACE" , "size": 6 },
+					{ "f": "LF", "size":2 }
+				]		
+			]
+		},	
+		
+		{
+			"name": "1TO9",
+			"text": "1-9",
+			"keys": [
+				[
+					{ "f": "CHAR", "id": "1" },
+					{ "f": "CHAR", "id": "2" },
+					{ "f": "CHAR", "id": "3" },
+					{ "f": "CHAR", "id": "4" },
+					{ "f": "CHAR", "id": "5" },
+					{ "f": "CHAR", "id": "6" },
+					{ "f": "CHAR", "id": "7" },
+					{ "f": "CHAR", "id": "8" },
+					{ "f": "CHAR", "id": "9" },
+					{ "f": "CHAR", "id": "0" }					
+				],
+				[
+					{ "f": "CHAR", "id": "+" },
+					{ "f": "CHAR", "id": "-" },
+					{ "f": "CHAR", "id": "*" },
+					{ "f": "CHAR", "id": "/" },
+					{ "f": "CHAR", "id": "<" },
+					{ "f": "CHAR", "id": ">" },
+					{ "f": "CHAR", "id": "(" },
+					{ "f": "CHAR", "id": ")" },
+					{ "f": "CHAR", "id": "[" },
+					{ "f": "CHAR", "id": "]" }				
+				],	
+				[											
+					{ "f": "CHAR", "id": "=" },
+					{ "f": "CHAR", "id": "{" },
+					{ "f": "CHAR", "id": "}" }					
+
+				],
+				[
+					{ "f": "BACKSPACE", "size": 2  },
+					{ "f": "SPACE" , "size": 6 },
+					{ "f": "LF", "size":2 }																
+				]							
+			]
+		}							
+	],
+
+	"generatormaps": [
+		{ "id":"az", "name":"Rnd(8): a-Z",  "charset":"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "len": 8 },		
+		{ "id":"az19", "name":"Rnd(8): a-9",  "charset":"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", "len": 8 },
+		{ "id":"az19%", "name":"Rnd(8): a-ü!",  "charset":"abcdefghijklmnopqrstuvwxyzöäüABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ÖÄÜ!?%&#-_", "len": 8 },
+		{ "id":"hex", "name":"Rnd(8): hex",  "charset":"0123456789abcdef", "len": 8 }
+	]
+}
+
+
+
+
+
+
+

@@ -4,7 +4,6 @@
  *
  * Created on 14. Januar 2023, 16:01
  */
-
 #include "main.h"
 #include "logic.h"
 #include "ui.h"
