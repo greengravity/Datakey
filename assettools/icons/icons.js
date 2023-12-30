@@ -40,6 +40,18 @@
         "icon": "arrowdown.png"   
     },
     { 
+        "name": "SEARCH",
+        "icon": "search.png"
+    },  	
+    { 
+        "name": "SEARCHNEXT",
+        "icon": "searchnext.png"
+    },  		
+    { 
+        "name": "SLASH",
+        "icon": "slash.png"
+    }, 	
+    { 
         "name": "BRIGHTNESS",
         "icon": "brightness.png"   
     },

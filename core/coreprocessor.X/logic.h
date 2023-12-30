@@ -5,6 +5,7 @@
  * Revision history: 
  */
 
+
 #ifndef XC_LOGIC_H
 #define	XC_LOGIC_H
 
@@ -27,13 +28,14 @@
 #define TEXTAREA_WIDTH 150
 #define TEXTAREA_VIEWPORT_LINES 3
 #define TEXTVIEWER_LINES 6
-#define OVERVIEW_LINES 6
+#define OVERVIEW_LINES 5
 #define MAX_TEXTAREA_SPACE_BREAK 80
 //#define TEXTAREA_RINGBUFFER_LEN 64
 #define TOKEN_BLOCK_SIZE 4096  //256*16 
 #define TOKEN_READ_MOD_BUFFERSIZE 512 //TOKEN_BLOCK_SIZE % TOKEN_READ_MOD_BUFFERSIZE must be zero
-#define MAX_OVERVIEW_ENTRY_COUNT 24
-#define OVERVIEW_RELOAD_OFFS (MAX_OVERVIEW_ENTRY_COUNT / 2 - (OVERVIEW_LINES + 1))
+#define MAX_OVERVIEW_ENTRY_COUNT 16
+#define MAX_SEARCH_LEN 20
+//#define OVERVIEW_RELOAD_OFFS (MAX_OVERVIEW_ENTRY_COUNT / 2 - (OVERVIEW_LINES + 1))
 
 typedef enum {   
     PFLD_NOTHING,
@@ -63,6 +65,7 @@ typedef enum {
 
 typedef enum {
     MASTERKEY,
+    SEARCHFIELD,
     TOKEN,                            
 }INPUT_TYPE;
 
@@ -71,20 +74,13 @@ typedef enum {
     USB_MODE_KEYBOARD          
 } USB_MODE;
 
-typedef enum {
-    QUICKKEY_OFF,  
-    QUICKKEY_ON,
-} QUICKKEY_MODE;
-
 typedef struct {
     uint16_t highlight_color1;
     uint16_t highlight_color2;
     uint8_t brightness;
-    USB_MODE umode;
-    QUICKKEY_MODE keymode;
+    USB_MODE umode;    
     uint8_t pin_tries;
-    uint8_t pin_len;
-    uint8_t __pad1;
+    uint8_t pin_len;    
 } DEVICE_OPTIONS;
 
 typedef struct {
@@ -124,18 +120,21 @@ typedef enum {
     USB_PUSH,
     VIEW_TOKEN,
     EDIT_ENTRY,
+    SEARCH_ENTRIES,
     MESSAGEBOX,
     CHOOSEBOX,
-    OPTIONS,
+    DEVICEOPTIONS,            
     PINOPTIONS,
     //OPTIONS2
 } CONTEXT_TYPE;
 
 typedef enum {
     CHBX_ABORT,
+    CHBX_SEARCH_ENTRY,
     CHBX_CREATE_ENTRY,
     CHBX_DELETE_ENTRY,
     CHBX_OPTIONS,
+    CHBX_DEVICEOPTIONS,
     CHBX_PINOPTIONS,
     CHBX_GAMES,
     CHBX_RETURN_OVERVIEW,
@@ -155,6 +154,7 @@ typedef enum {
     MSGB_DELETE_TOKEN_YES,
     MSGB_DELETE_TOKEN_NO,
     MSGB_MKEY_ERROR_OK,
+    MSGB_SEARCHINFO_COMMIT,
 } MSGB_CHOICES;
 
 typedef enum {
@@ -246,14 +246,6 @@ typedef struct {
     IO_CONTEXT io;
     bool error;
     bool haderror;    
-/*  uint8_t newkey[32]; 
-    uint8_t kpos;
-    uint8_t x;
-    uint8_t y;
-    uint8_t oldx;
-    uint8_t oldy;         
-    uint8_t charlocations[64];
-    uint8_t __pad1;    */
 } CTX_KEY_INPUT;
 
 typedef struct {
@@ -266,12 +258,15 @@ typedef struct {
 
 typedef struct {        
     bool initialized;
-    uint8_t ohighlightpos;
-    CTX_OVERVIEW_ENTRY entries[MAX_OVERVIEW_ENTRY_COUNT];    
+    bool needinitsearch;    
+    uint8_t ohighlightpos;  
+    uint8_t searchstr[MAX_SEARCH_LEN];            
+    uint8_t searchsuccessful;
+    CTX_OVERVIEW_ENTRY entries[MAX_OVERVIEW_ENTRY_COUNT];
     uint16_t cursor;
     uint16_t bufferstart;
     uint16_t bufferlen;
-    uint16_t entrycenter;
+    //uint16_t entrycenter;
     uint16_t entrycount;
 } CTX_ENTRY_OVERVIEW;
 
@@ -304,6 +299,13 @@ typedef struct {
     uint16_t overviewcursor;
 } CTX_EDIT_ENTRY;
 
+
+typedef struct {      
+    IO_CONTEXT io;    
+    uint8_t searchstr[MAX_SEARCH_LEN];      
+    uint16_t overviewcursor;
+} CTX_SEARCH_ENTRIES;
+             
 typedef struct {    
     uint8_t text[MAX_TEXT_LEN + TEXT_WORK_TRESHHOLD];
     TOKEN_TYPE type;
@@ -338,7 +340,7 @@ typedef struct {
     uint8_t oselected;    
     uint8_t holdtime;
     uint8_t __pad1;
-} CTX_OPTIONS;
+} CTX_DEVICEOPTIONS;
 
 typedef struct {
     uint8_t selected;
@@ -346,6 +348,7 @@ typedef struct {
     uint8_t pin_len;
     uint8_t __pad1;
 } CTX_PINOPTIONS;
+
 
 //Context storage
 typedef struct {

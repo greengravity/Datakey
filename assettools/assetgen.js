@@ -461,6 +461,49 @@ Promise.all(readpromises).then((values) => {
   outdatac.push('')
 
 
+  calcCaseTranslateMap = ( ) => {
+    let cm = []
+
+    for (let i=0;i<charlist.length;i++) {
+      let ch = charlist[i]
+      let cmv = '0x00'
+
+      if ( !( ch.charval == 'zero' ||
+              ch.charval == ' ' ||
+              ch.charval == 'linefeed' ||
+              ch.charval == 'encodeerr' ) ) {
+        
+        let cv = ch.charval.toLowerCase()
+        if ( cv != ch.charval ) {
+          ch2 = charlist.find( c => c.charval === cv )
+          if ( ch2 ) {
+            cmv = getHexByteVal( ch2.charid )
+          } 
+        }
+
+        cv = ch.charval.toUpperCase()
+        if ( cv != ch.charval ) {
+          ch2 = charlist.find( c => c.charval === cv )
+          if ( ch2 ) {
+            cmv = getHexByteVal( ch2.charid )
+          } 
+        }
+      }
+      cm.push( cmv )
+    }	
+
+    return cm  
+  }
+  let cm = calcCaseTranslateMap()
+
+  outdatac.push('const uint8_t casetranslatelist[] = ')
+  outdatac.push('{')
+    outdatac.push( cm.join(', ') )
+  outdatac.push('};')
+  outdatac.push('')
+
+
+
   //write a sorted lookup table to find characters from there unicode expression
   charlist.sort((a, b) => {
     return a.id - b.id

@@ -59,6 +59,7 @@ extern const __prog__ uint8_t __attribute__((space(prog))) bitmapdata[];
 extern const GFXimage bitmaps[];
 extern const GFXChar gfxchars[];
 extern const Unicodelist unicodes[];
+extern const uint8_t casetranslatelist[];
 extern const Keyboardmaps keymaps[];
 extern const Generatormaps generatormaps[];
 extern const Keylayout keylayouts[];

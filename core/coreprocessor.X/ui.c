@@ -193,6 +193,8 @@ void rndIO(IO_CONTEXT *ioctx) {
                 cWriteTextIntern((const uint8_t*) (textdata + texte[ token_configs[ioctx->type].textid ]));
             } else if ( ioctx->inp == MASTERKEY ) {
                 cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_ENTER_NEW_KEY ]));
+            } else if ( ioctx->inp == SEARCHFIELD ) {
+                cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_ENTER_SEARCHFIELD ]));                
             }
             drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);
                  
@@ -238,31 +240,7 @@ void rndIO(IO_CONTEXT *ioctx) {
                 drawFastHLine(0,(DISPLAY_HEIGHT - 16 * 4) - 1, DISPLAY_WIDTH, device_options.highlight_color1);                
             } else if ( ioctx->selarea == 2 ) {
                 rndPatternMap( ioctx,  km );
-                /*
-                highlightKeyboardKey( ioctx->kbx, ioctx->kby, km, COLOR_GRAY );
-                fillRect(8, (DISPLAY_HEIGHT - 57), 144, 48, COLOR_BLACK );
-                for (int x=0;x<3;x++) {
-                    for (int y=0;y<3;y++) {
-                        int map = y * 3 + x;                        
-                        
-                        if ( keymaps[map].active ) {
-                            int xoff = 8 + x * 48;
-                            int yoff = (DISPLAY_HEIGHT - 57) + y * 16;
-                            drawRect(xoff, yoff, 48, 16, COLOR_WHITE );
-                            
-                            int len = strlen( (const char*)( textdata + keymaps[map].name ) );                      
-                            int plen = 0;
-                            for ( int i=0;i<len;i++ ) {
-                                plen += gfxchars[ textdata[ keymaps[map].name+i ] ].xadv;
-                            }
-                            
-                            locate( xoff + ( ( 48 - plen) / 2 ), yoff+1);                                              
-                            cWriteTextIntern( (const uint8_t *)(textdata + keymaps[map].name ) );                                                                                                                    
-                        }                        
-                    }
-                }
-                highlightPatternmapKey(ioctx->kbmap % 3 ,ioctx->kbmap / 3, COLOR_BLUE);
-                */
+
             }
             break;
         case ONBUTTON_PRESS:
@@ -283,6 +261,15 @@ void rndKeyInput(APP_CONTEXT* ctx) {
         rndIO( &sctx->io );                                   
     }    
 }    
+
+void rndSearchEntries(APP_CONTEXT* ctx) {
+    CTX_SEARCH_ENTRIES *sctx;
+    sctx = (CTX_SEARCH_ENTRIES*) (ctx->ctxbuffer + ctx->ctxptr);
+    
+    if (ctx->rinf == IO_UPDATE) {                
+        rndIO( &sctx->io );                                   
+    }    
+}
 
 void writeNumber(uint8_t* text, long nr) {
     uint8_t i=0;
@@ -455,20 +442,27 @@ void rndEntryOverview(APP_CONTEXT* ctx) {
 
     bool drawdown=true;
     bool drawup = true;
+    uint8_t text[20];
 
     if ( ctx->rinf == REFRESH || ctx->rinf == ANIMATION || ctx->rinf == LOADENTRY ) {
         if (ctx->rinf == REFRESH) {           
             clearScreen(COLOR_BLACK);
             locate(0, 0);
             cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_HEAD_ENTRY_OVERVIEW ]));
-            drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);       
+            drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);
+            drawFastHLine(0,111, DISPLAY_WIDTH, COLOR_GRAY);
+            
+            if ( strlen( (char *)sctx->searchstr ) > 0 ) {                
+                drawImage( 125, 112, &bitmaps[SYSICON_SEARCH] );                
+                drawImage( 142, 112, &bitmaps[SYSICON_SEARCHNEXT] );                                
+            }
         }
          
         if ( sctx->initialized ) {
             int32_t start;
             if ( sctx->entrycount > OVERVIEW_LINES ) {
                 start = sctx->cursor;  
-                start -= ( OVERVIEW_LINES / 2 - 1 );
+                start -= ( OVERVIEW_LINES -1 ) / 2;
                 if ( start <= 0 ) {
                     start = 0;
                     drawup = false;
@@ -487,6 +481,7 @@ void rndEntryOverview(APP_CONTEXT* ctx) {
             }        
 
 
+            uint8_t x;
             uint8_t y = 20;
             uint8_t highlightpos = 0;
 
@@ -494,13 +489,9 @@ void rndEntryOverview(APP_CONTEXT* ctx) {
             for (uint16_t pos = 0; pos < OVERVIEW_LINES; pos ++ ) {
                 locate(0, y);
                 if ( start >= sctx->bufferstart && start < sctx->bufferstart + sctx->bufferlen ) {                
-                    if ( sctx->entries[start].loaded ) {
-                        cWriteTextInternNLB(sctx->entries[start].name );
-                    } else {
-                        cWriteTextInternNLB( textdata+texte[TEXT_LOAD_ENTRY_PLACEHOLDER] );
-                    }                
+                    cWriteTextInternNLB(sctx->entries[start - sctx->bufferstart].name );
                 }
-                uint8_t x = getLocationX();
+                x = getLocationX();
                 fillRect(x,y,(DISPLAY_WIDTH - 5 ) - x, 15, COLOR_BLACK );
 
                 if ( start == sctx->cursor ) highlightpos = pos;                        
@@ -522,13 +513,25 @@ void rndEntryOverview(APP_CONTEXT* ctx) {
                 fillRect( DISPLAY_WIDTH-5, 23, 5,12, COLOR_BLACK );
             }
 
-            start = sctx->cursor;
-            start-= OVERVIEW_LINES / 2;
             if ( drawdown ) {
-                drawImage( DISPLAY_WIDTH-5, 50+60 , &bitmaps[SYSICON_ARROWDOWN] );        
+                drawImage( DISPLAY_WIDTH-5, 93 , &bitmaps[SYSICON_ARROWDOWN] );        
             } else {
-                fillRect( DISPLAY_WIDTH-5, 50+60, 5,12, COLOR_BLACK );
-            }    
+                fillRect( DISPLAY_WIDTH-5, 93, 5,12, COLOR_BLACK );
+            }
+                                   
+            locate(0, 112 );            
+            writeNumber( text, (int) (sctx->cursor + 1) );
+            writeTextIntern( text );
+            x = getLocationX();
+            y = getLocationY();
+            drawImage( x, y, &bitmaps[SYSICON_SLASH] );
+            x += 7;
+            locate(x, y );
+            writeNumber( text, (int) sctx->entrycount );  
+            writeTextIntern( text );
+            x = getLocationX();
+            fillRect( x, y, ( DISPLAY_WIDTH - 35 ) - x, DISPLAY_HEIGHT - y, COLOR_BLACK );
+            
         }
     }
 }
@@ -765,9 +768,10 @@ void writeDateTime( int dt ) {
     }            
 }
 
-void rndOptions(APP_CONTEXT* ctx) {
-    CTX_OPTIONS *sctx;
-    sctx = (CTX_OPTIONS*) (ctx->ctxbuffer + ctx->ctxptr);         
+
+void rndDeviceOptions(APP_CONTEXT* ctx) {
+    CTX_DEVICEOPTIONS *sctx;
+    sctx = (CTX_DEVICEOPTIONS*) (ctx->ctxbuffer + ctx->ctxptr);         
         
     if ( ctx->rinf == REFRESH || ctx->rinf == ANIMATION ) {
         uint32_t positiontab[12];        
@@ -855,8 +859,7 @@ void rndOptions(APP_CONTEXT* ctx) {
         y += 17;
         setPositiontab(9,  3, 0, DISPLAY_WIDTH, positiontab );
         drawImage( 5, y, &bitmaps[SYSICON_BRIGHTNESS] );
-//        fillRect(23, y+1, 2, 13, COLOR_BLACK ); 
-//        fillRect(25+64, y+1, 2, 13, COLOR_BLACK );
+
         int bloc = device_options.brightness;
         bloc = ( bloc * 64 ) / 100;
         
@@ -878,20 +881,7 @@ void rndOptions(APP_CONTEXT* ctx) {
         setPositiontab(10,  4, 0, DISPLAY_WIDTH, positiontab ); 
         drawImage( 5, y, &bitmaps[SYSICON_COLOR] );
         fillRect( 25, y+3, 64, 9, device_options.highlight_color1 );
-
-        
-        y += 17;
-        setPositiontab(11,  5, 0, DISPLAY_WIDTH, positiontab ); 
-        drawImage( 5, y, &bitmaps[SYSICON_SPEED] );
-        locate(25, y);
-        if ( device_options.keymode == QUICKKEY_OFF ) {
-            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_OPTV_QKEYS_OFF ]));
-        } else if ( device_options.keymode == QUICKKEY_ON ) {
-            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_OPTV_QKEYS_ON ]));            
-        }
-        x1 = getLocationX();
-        fillRect(x1, y, DISPLAY_WIDTH-x1, 15, COLOR_BLACK );  
-        
+ 
         if ( sctx->oselected != 0xff && sctx->oselected != sctx->selected ) {
             y =  ( positiontab[sctx->oselected] & 0xff0000 ) >> 16;
             highlightEntryLine( y, COLOR_BLACK, DISPLAY_WIDTH );
@@ -1008,15 +998,8 @@ void rndDeviceStatus( APP_CONTEXT* ctx ) {
             drawImage( DISPLAY_WIDTH-10 , 0, &bitmaps[SYSICON_NOCHARGE] );
         }
         
-        //fillRect(DISPLAY_WIDTH-5, 0, 5, 15, COLOR_BLACK );
-        //fillRect(DISPLAY_WIDTH-25, 0, 5, 15, COLOR_BLACK );
     }
-       
-/*    char text[20];
-    sprintf(text, "%d", ctx->analogtest );
-    locate (10,100);
-    writeText( text ); */
-    
+  
 }
 
 void rndTetris(APP_CONTEXT* ctx) {
@@ -1179,6 +1162,9 @@ void renderUI(APP_CONTEXT* ctx) {
         case EDIT_ENTRY:
             rndEditEntry(ctx);
             break;
+        case SEARCH_ENTRIES:
+            rndSearchEntries(ctx);
+            break;            
         case MESSAGEBOX:
             rndMessagebox(ctx);
             break;
@@ -1188,8 +1174,8 @@ void renderUI(APP_CONTEXT* ctx) {
         case VIEW_TOKEN:
             rndViewToken(ctx);
             break; 
-        case OPTIONS:
-            rndOptions(ctx);
+        case DEVICEOPTIONS:
+            rndDeviceOptions(ctx);
             break;
         case PINOPTIONS:
             rndPinOptions(ctx);
@@ -1223,17 +1209,4 @@ void renderUI(APP_CONTEXT* ctx) {
     spi1_close();
 }
 
-
-/*
- * Wrting Hexdata
-    for (int16_t i = 0; i < 32; i++) {
-        GFXChar ch = gfxchars[ hexchars[ ( hash[ i ] >> 4 ) ] ];                
-        writeChars(&ch, 1);
-
-        GFXChar ch2 = gfxchars[ hexchars[ ( hash[ i ] & 0x0f ) ] ];                
-        writeChars(&ch2, 1);
-
-        GFXChar ch3 = gfxchars[ CHAR_SPACE ];
-        writeChars(&ch3, 1);
-    }            
-*/    
+  

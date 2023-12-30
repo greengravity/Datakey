@@ -125,8 +125,7 @@ DEVICE_OPTIONS device_options = {
     COLOR_YELLOW,
     COLOR_RED,
     100,
-    USB_MODE_OFF,
-    QUICKKEY_OFF
+    USB_MODE_OFF
 };
 
 bool isPinSet() {
@@ -280,6 +279,8 @@ uint16_t _getContextTypeLen(CONTEXT_TYPE type) {
             return sizeof (CTX_ENTRY_OVERVIEW);
         case EDIT_ENTRY:
             return sizeof(CTX_EDIT_ENTRY);
+        case SEARCH_ENTRIES:
+            return sizeof(CTX_SEARCH_ENTRIES);
         case MESSAGEBOX:
             return sizeof(CTX_MSG_BOX);
         case CHOOSEBOX:
@@ -290,8 +291,8 @@ uint16_t _getContextTypeLen(CONTEXT_TYPE type) {
             return sizeof(CTX_USB_PUSH);            
         case VIEW_TOKEN:
             return sizeof(CTX_VIEW_TOKEN);  
-        case OPTIONS:
-            return sizeof(CTX_OPTIONS);  
+        case DEVICEOPTIONS:
+            return sizeof(CTX_DEVICEOPTIONS);  
         case PINOPTIONS:
             return sizeof(CTX_PINOPTIONS);                                      
         case GAME_TETRIS:
@@ -705,7 +706,13 @@ void hctxIORecalcTavccoff( IO_CONTEXT *ioctx ) {
 
 
 uint8_t hctxIOWriteCharacter( IO_CONTEXT *ioctx, uint8_t cid, bool del ) {
-    if ( ioctx->tlen >= MAX_TEXT_LEN && !del ) return 1;                
+    if ( !del ) {
+        if ( ioctx->inp == TOKEN || ioctx->inp == MASTERKEY ) {
+            if ( ioctx->tlen >= MAX_TEXT_LEN ) return 1;                
+        } else if ( ioctx->inp == SEARCHFIELD ) {
+            if ( ioctx->tlen >= MAX_SEARCH_LEN ) return 1;
+        }
+    }
     
     if ( ioctx->tewp < ioctx->tavccoff ) return 2; //error, writepointer out of bounds
     
@@ -898,31 +905,13 @@ HCTX_IO_RESULT hctxIO( IO_CONTEXT *ioctx, APP_CONTEXT* ctx ) {
                         ioctx->text[ioctx->tlen-1] = 0x00;
                         return IOR_OK;
                     }
-                } else if ( ioctx->inp == MASTERKEY ) {
+                } else if ( ioctx->inp == MASTERKEY || ioctx->inp == SEARCHFIELD ) {
                     memmove( ioctx->text, ioctx->text+1, ioctx->tlen ); //remove startlinefeed and add zero termination char to the end to save it properly on disk
                     ioctx->text[ioctx->tlen-1] = 0x00;
                     return IOR_OK;
                 }
             }
-/*               
-            } else if ( k->fkt == KEYCOMMAND_DEL ) {
-                if ( ioctx->type != NEW ) {
 
-                    pushContext(ctx, MESSAGEBOX);
-                    CTX_MSG_BOX *mctx;
-                    mctx = (CTX_MSG_BOX*) (ctx->ctxbuffer + ctx->ctxptr);
-                    mctx->mtype = YES_NO;
-                    mctx->res = MSGB_YES;
-                    
-                    if ( ioctx->type == NAME ) {
-                        memcpy(mctx->msgtxt, (char*)(textdata + texte[TEXT_MSG_DELETE_ENTRY]), strlen( (char*)(textdata + texte[TEXT_MSG_DELETE_ENTRY]) ) + 1 );
-                    } else {
-                        memcpy(mctx->msgtxt, (char*)(textdata + texte[TEXT_MSG_DELETE_TOKEN]), strlen( (char*)(textdata + texte[TEXT_MSG_DELETE_TOKEN]) ) + 1 );
-                    }
-                                        
-                    return IOR_CTX_SWITCH;                                                                                
-                }
-            }*/
         } else if ( isButtonReleased(BUTTON_A) ) {
             ioctx->rinf = ONBUTTON_RELEASE;
         } else if ( isButtonDown(BUTTON_A) ) {
@@ -1532,26 +1521,6 @@ FRESULT readEntryToken( TCHAR *path, TOKEN_TYPE type, uint8_t *text, uint16_t ma
                         }
                     }
                     
-/*                    
-                    uint8_t* boff = memchr(buffer+j, 0x00, 16);
-                    if ( boff != NULL ) {
-                        int len = ( boff - (buffer + j) ) + 1;
-                        memcpy(text+*tlen, buffer+j, len );                        
-                        *tlen += len;
-                        f_close(&file);
-                        endEncryption();
-                        return FR_OK;
-                    } else {
-                        memcpy(text+*tlen, buffer+j, 16 );                        
-                        *tlen += 16;                        
-                    }
-                    if ( *tlen >= maxlen ) {
-                        text[maxlen-1] = 0x00;
-                        f_close(&file);
-                        endEncryption();
-                        return FR_OK;                        
-                    }
- */ 
                 }                 
             }
             return errAbortFileEntryHandling( &file, NULL );
@@ -1825,23 +1794,7 @@ FRESULT loadEntryDetail( APP_CONTEXT* ctx ) {
  
     return FR_OK;
 }
-/*    FRESULT res;  
-    res = readEntryToken( sctx->path, NAME, sctx->name, 80, &tlen );    
-    if ( res != FR_OK ) return res;   
-    
-    readEntryToken( sctx->path, KEY1, sctx->key1, 32, &tlen );    
-    memset( sctx->key1, PASSWORD_REPLACE_CHAR, tlen-1 );
 
-    readEntryToken( sctx->path, KEY2, sctx->key2, 32, &tlen );    
-    memset( sctx->key2, PASSWORD_REPLACE_CHAR, tlen-1 );
-    
-    readEntryToken( sctx->path, URL, sctx->url, 80, &tlen );    
-
-    readEntryToken( sctx->path, INFO, sctx->info, 80, &tlen );    
-    
-    return FR_OK;
-    
-} */
 
 FRESULT hctxEntryOverviewReloadList( APP_CONTEXT* ctx ) {
     CTX_ENTRY_OVERVIEW *sctx;
@@ -1850,39 +1803,60 @@ FRESULT hctxEntryOverviewReloadList( APP_CONTEXT* ctx ) {
     FRESULT res;
     DIR dir;
     static FILINFO fno;
+    TCHAR path[16];
+    uint16_t len;
+    
+    
+    sctx->bufferlen = 0;
+    sctx->bufferstart = 0;
+    if ( sctx->entrycount == 0 ) return FR_OK;
     
     res = f_opendir(&dir, "KS");                       
     if (res == FR_OK) {
         int32_t start = sctx->cursor;
         start = start - MAX_OVERVIEW_ENTRY_COUNT / 2;
-        if ( start < 0 ) start = 0;            
-        uint16_t end = sctx->cursor + ( MAX_OVERVIEW_ENTRY_COUNT / 2 ) - 1;
+        if ( start < 0 ) start = 0;         
+        uint16_t end = start + ( MAX_OVERVIEW_ENTRY_COUNT - 1 );
         if ( end >= sctx->entrycount ) {
-            end = sctx->entrycount;
-        }        
-        sctx->entrycenter = sctx->cursor;
+            end = sctx->entrycount - 1;
+        }
+        if ( end < start ) return FR_OK;
+        
+        //sctx->entrycenter = sctx->cursor;
         
         uint16_t curr = 0;
         while ( true ) {
             res = f_readdir(&dir, &fno);                                                                      
             if ( curr == start ) sctx->bufferstart = curr;
-            if ( curr == end ) {
+            if ( curr > end ) {
                 sctx->bufferlen = curr - sctx->bufferstart;
                 break;
             }
-            if (res != FR_OK || fno.fname[0] == 0) return FR_DISK_ERR;
+            if (res != FR_OK || fno.fname[0] == 0) {
+                sctx->bufferstart = 0;
+                return FR_DISK_ERR;
+            }
                         
-            if ( curr >= start && curr < end ) {                
+            if ( curr >= start ) {
                 memcpy( sctx->entries[ curr - sctx->bufferstart ].path , &fno.fname, strlen( (char*)&fno.fname ) + 1 );
-                sctx->entries[ curr - sctx->bufferstart ].loaded = false;
+                //sctx->entries[ curr - sctx->bufferstart ].loaded = false;     
             }            
             curr++;
         }
         f_closedir(&dir);
-    }  
+    
+        for (curr = 0; curr < sctx->bufferlen; curr ++) {            
+            memcpy( path, &"KS/", 3 );
+            memcpy( path+3, sctx->entries[curr].path, strlen( sctx->entries[curr].path ) + 1 );
+            
+            readEntryToken( path, NAME, sctx->entries[curr].name, 47, &len );
+        }
+    }
+               
     return FR_OK;
 }
 
+/*
 void hctxEntryOverviewLoadNames( APP_CONTEXT* ctx ) {
     CTX_ENTRY_OVERVIEW *sctx;
     sctx = (CTX_ENTRY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr);    
@@ -1919,40 +1893,165 @@ void hctxEntryOverviewLoadNames( APP_CONTEXT* ctx ) {
         direction = !direction;
         if ( offs > MAX_OVERVIEW_ENTRY_COUNT / 2 ) {
             break; //everything loaded
-        }            
+        }
     }    
 }
+*/
+  
+  
+bool compareEntryName(uint8_t *ename, uint8_t elen, uint8_t *searchstr, uint8_t *searchstr2, uint8_t slen, bool cs ) {
+    bool res;
 
+    if ( elen < slen ) return false;
+    uint8_t clen = elen - slen;
+        
+    //case sensitive search, using searchstr and searchstr2  
+    for (uint8_t i=0;i<clen;i++) {
+        res = true;
 
-void hctxEntryOverview(APP_CONTEXT* ctx) {
-    CTX_ENTRY_OVERVIEW *sctx;
-    sctx = (CTX_ENTRY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr);
+        for (uint8_t j=0;j<slen;j++) {
+            if ( ename[i+j] != searchstr[j] ) {
+                if ( searchstr2[j] == 0 || ename[i+j] != searchstr2[j] ) {
+                    res = false;
+                    break;
+                }
+            }
+        }
+        if ( res ) return true;
+    }
  
+    return false;
+}
+
+uint16_t searchNextEntryFrom( CTX_ENTRY_OVERVIEW *sctx, uint16_t from ) {
     FRESULT res;
     DIR dir;
-    static FILINFO fno;
+    static FILINFO fno;    
+ 
+    uint16_t len;
+    TCHAR path[16];
     
-//    uint16_t cursor = sctx->cursor;
-    
-    if ( !sctx->initialized ) {
-        sctx->initialized = true;
+    uint8_t tokendata[48];
         
-        sctx->entrycount = 0;
+    uint16_t pos;
+    uint8_t searchstr2[MAX_SEARCH_LEN];
+    uint8_t slen = strlen( (char *) sctx->searchstr );
+    uint8_t i, j;
+    bool topsearch = true;
+
+    for (i= 0; i<slen; i++) {
+       searchstr2[i] = casetranslatelist[ sctx->searchstr[i] ];
+    }        
+    searchstr2[slen] = sctx->searchstr[slen]; //zero termination
+ 
+        
+    for (j=0;j<2;j++) {
+        topsearch = j == 0;
+        pos=0;
+        
         res = f_opendir(&dir, "KS");                       
         if (res == FR_OK) {
             while ( true ) {
                 res = f_readdir(&dir, &fno);                   
                 if (res != FR_OK || fno.fname[0] == 0) break;  
-                sctx->entrycount++;
+
+                if ( ( pos > from && topsearch ) || ( pos <= from && !topsearch ) ) {
+                    memcpy( path, &"KS/", 3 );                    
+                    memcpy( path+3, fno.fname, strlen( fno.fname ) + 1 );
+
+                    res = readEntryToken( path, NAME, tokendata, 47, &len );
+                    if ( res != FR_OK ) {
+                        return -2;
+                    }
+                    if ( compareEntryName( tokendata, (uint8_t)len, sctx->searchstr, searchstr2, slen, true ) ) {
+                        return pos;
+                    }
+                }
+
+                pos++;       
             }
             f_closedir(&dir);
+        }        
+    }
+    
+    return -1;
+}
+
+uint16_t countTotalEntriesOnDisk() {
+    FRESULT res;
+    DIR dir;
+    static FILINFO fno;
+    
+    uint16_t count = 0;
+    
+    res = f_opendir(&dir, "KS");                       
+    if (res == FR_OK) {
+        while ( true ) {
+            res = f_readdir(&dir, &fno);                   
+            if (res != FR_OK || fno.fname[0] == 0) break;  
+            count++;
         }
+        f_closedir(&dir);
+    }    
+    return count;
+}
+
+void hctxEntryOverview(APP_CONTEXT* ctx) {
+    CTX_ENTRY_OVERVIEW *sctx;
+    sctx = (CTX_ENTRY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr);
+        
+    if ( !sctx->initialized ) {
+        sctx->initialized = true;
+        
+        sctx->entrycount = countTotalEntriesOnDisk();               
         if ( sctx->cursor >= sctx->entrycount ) sctx->cursor = sctx->entrycount > 0 ? sctx->entrycount - 1 : 0;
         
+        if ( sctx->needinitsearch ) {
+            sctx->needinitsearch = false;
+            uint16_t next = searchNextEntryFrom( sctx, -1 );
+            if ( next == -2 ) {
+                setContext(ctx, ERROR_SD_CD);
+                return;
+            } else if ( next >= 0 && next < sctx->entrycount ) {
+                sctx->cursor = next;
+                sctx->searchsuccessful = 1;
+            } else {
+                sctx->searchsuccessful = 2;
+
+            }
+        }        
+        
         hctxEntryOverviewReloadList( ctx );
-        hctxEntryOverviewLoadNames( ctx );       
+        //hctxEntryOverviewLoadNames( ctx );
         ctx->rinf = ANIMATION;
-    } else if ( isButtonPressed(BUTTON_A) || ( isButtonPressed(BUTTON_RIGHT) && device_options.keymode == QUICKKEY_ON ) ) {
+                
+    } else if ( sctx->searchsuccessful == 2 ) {
+        sctx->searchsuccessful = 0;
+        
+        pushContext(ctx, MESSAGEBOX);
+        CTX_MSG_BOX *mctx;
+        mctx = (CTX_MSG_BOX*) (ctx->ctxbuffer + ctx->ctxptr);
+
+        mctx->mchoices[0] = MSGB_SEARCHINFO_COMMIT;
+        mctx->mchoiceicon[0] = SYSICON_OK;
+        mctx->choicecount = 1;
+        mctx->sel = 0;
+
+        memcpy(mctx->msgtxt, (char*)(textdata + texte[TEXT_SEARCH_NO_ENTRIES]), strlen( (char*)(textdata + texte[TEXT_SEARCH_NO_ENTRIES]) ) + 1 );  
+    } else if ( sctx->searchsuccessful == 3 ) {
+        sctx->searchsuccessful = 1;
+        
+        pushContext(ctx, MESSAGEBOX);
+        CTX_MSG_BOX *mctx;
+        mctx = (CTX_MSG_BOX*) (ctx->ctxbuffer + ctx->ctxptr);
+
+        mctx->mchoices[0] = MSGB_SEARCHINFO_COMMIT;
+        mctx->mchoiceicon[0] = SYSICON_OK;
+        mctx->choicecount = 1;
+        mctx->sel = 0;
+
+        memcpy(mctx->msgtxt, (char*)(textdata + texte[TEXT_SEARCH_LAST_ENTRY]), strlen( (char*)(textdata + texte[TEXT_SEARCH_LAST_ENTRY]) ) + 1 );        
+    } else if ( isButtonPressed(BUTTON_A) ) {
         
         if ( sctx->cursor < sctx->entrycount ) {
             TCHAR path[16];
@@ -1989,6 +2088,10 @@ void hctxEntryOverview(APP_CONTEXT* ctx) {
         
         uint8_t s=0;
         
+        cbctx->textid[s] = TEXT_CHB_SEARCH_ENTRY;
+        cbctx->selectid[s] = CHBX_SEARCH_ENTRY;
+        s++;        
+        
         cbctx->textid[s] = TEXT_CHB_CREATE_ENTRY;
         cbctx->selectid[s] = CHBX_CREATE_ENTRY;
         s++;
@@ -2003,9 +2106,6 @@ void hctxEntryOverview(APP_CONTEXT* ctx) {
         cbctx->selectid[s] = CHBX_OPTIONS;
         s++;
         
-        cbctx->textid[s] = TEXT_CHB_PINOPTIONS;
-        cbctx->selectid[s] = CHBX_PINOPTIONS;            
-        s++;
         
         cbctx->textid[s] = TEXT_CHB_GAMES;
         cbctx->selectid[s] = CHBX_GAMES;            
@@ -2016,16 +2116,28 @@ void hctxEntryOverview(APP_CONTEXT* ctx) {
         if ( isButtonPressed(BUTTON_UP) && sctx->cursor > 0 ) sctx->cursor--;
         if ( isButtonPressed(BUTTON_DOWN) && sctx->cursor < ( sctx->entrycount - 1 ) ) sctx->cursor++;
         
-        uint16_t diff;
-        diff = sctx->cursor < sctx->entrycenter ? sctx->entrycenter - sctx->cursor : sctx->cursor - sctx->entrycenter;
-        if ( diff > OVERVIEW_RELOAD_OFFS ) {
+        uint16_t start = sctx->cursor - ( OVERVIEW_LINES - 1 ) / 2;
+        uint16_t end = start + ( OVERVIEW_LINES - 1 );
+        
+        if ( start < sctx->bufferstart || end >= sctx->bufferstart + sctx->bufferlen ) {                
             hctxEntryOverviewReloadList( ctx );
-            hctxEntryOverviewLoadNames( ctx );
+            //hctxEntryOverviewLoadNames( ctx );
         }
+        
         ctx->rinf = ANIMATION;
-    } else {
-        //loadnext entryname
-        hctxEntryOverviewLoadNames( ctx );             
+    } else if ( isButtonPressed(BUTTON_RIGHT) && sctx->searchsuccessful == 1 ) {        
+                  
+        uint16_t from = sctx->cursor;
+        uint16_t next = searchNextEntryFrom( sctx, from );
+        if ( next != -1 ) {
+            sctx->cursor = next;
+            
+            hctxEntryOverviewReloadList( ctx );
+            //hctxEntryOverviewLoadNames( ctx );
+            ctx->rinf = ANIMATION;        
+            
+            if ( next <= from ) sctx->searchsuccessful = 3;
+        }
     }            
 }
 
@@ -2046,53 +2158,7 @@ void hctxEntryDetail(APP_CONTEXT* ctx) {
             sctx->oselected = sctx->selected;
             sctx->selected ++;
             ctx->rinf = ANIMATION;
-        }                
-    } else if ( isButtonPressed(BUTTON_RIGHT) ) {
-        if ( device_options.keymode == QUICKKEY_ON ) {
-                                                    
-            if ( device_options.umode == USB_MODE_KEYBOARD && 
-                 USBGetDeviceState() == CONFIGURED_STATE ) {   
-                 
-                if ( sctx->tokeninfo[ sctx->selected-1 ].isset ) {
-                    pushContext(ctx, USB_PUSH);
-
-                    CTX_USB_PUSH *upctx;
-                    upctx = (CTX_USB_PUSH*) (ctx->ctxbuffer + ctx->ctxptr);                    
-
-                    res = readEntryToken( sctx->path, sctx->selected, upctx->text, MAX_TEXT_LEN, &upctx->tlen ); 
-                    if ( res == FR_OK ) {
-                        USB_WriteCharacterBuffer(upctx->text, upctx->tlen);                    
-                    }
-                }
-            } else {
-                //view token
-                pushContext(ctx, VIEW_TOKEN);
-
-                CTX_VIEW_TOKEN *vtctx;
-                vtctx = (CTX_VIEW_TOKEN*) (ctx->ctxbuffer + ctx->ctxptr); 
-
-                vtctx->type = sctx->selected;
-
-                res = readEntryToken( sctx->path, sctx->selected, vtctx->text, MAX_TEXT_LEN, &vtctx->tlen ); 
-                memmove(vtctx->text+1, vtctx->text, vtctx->tlen);
-                vtctx->text[0] = CHAR_LINEFEED;
-                if ( res != FR_OK ) { 
-                    setContext( ctx, ERROR_SD_FAILURE  );
-                } else {            
-                    uint16_t offs, len;        
-                    vtctx->lines = 1;
-                    offs = 0;
-                    while (true) {
-                        len = getCharactersInLine(vtctx->text, offs, vtctx->tlen-offs );
-                        if ( len < vtctx->tlen-offs ) {
-                            vtctx->lines++;
-                        } else break;
-                        offs += len;
-                    }
-                }                
-            }                    
-        }
-        
+        }                      
     } else if ( isButtonPressed(BUTTON_A) ) {              
         //view token
         pushContext(ctx, VIEW_TOKEN);
@@ -2149,15 +2215,6 @@ void hctxEntryDetail(APP_CONTEXT* ctx) {
             cbctx->options++;
         }
                                       
-    } else if ( isButtonPressed(BUTTON_LEFT) ) {
-        if ( device_options.keymode == QUICKKEY_ON ) {
-            uint16_t cursor = sctx->overviewcursor;
-
-            setContext( ctx, ENTRY_OVERVIEW );
-            CTX_ENTRY_OVERVIEW *ovctx;
-            ovctx = (CTX_ENTRY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr); 
-            ovctx->cursor = cursor; 
-        }
     }
 }
 
@@ -2183,8 +2240,8 @@ void hctxViewToken(APP_CONTEXT* ctx) {
         if ( lines < 0 ) lines = 0;        
         if ( isButtonPressed(BUTTON_DOWN) && sctx->currline < lines ) sctx->currline++;   
         ctx->rinf = ANIMATION;
-    } else if ( isButtonPressed(BUTTON_B) || ( isButtonPressed(BUTTON_LEFT) && device_options.keymode == QUICKKEY_ON ) ) {
-        removeContext(ctx);
+    } else if ( isButtonPressed(BUTTON_B) ) {
+        removeContext(ctx);        
     }
 }
 
@@ -2266,21 +2323,35 @@ void hctxEditEntry(APP_CONTEXT* ctx) {
             }
         }
     }
-/*    } else if ( res == IOR_DELETE ) {
-        //Delete entry
-        memcpy( path, sctx->path, 16 ); 
-        cursor = sctx->overviewcursor;
-        
-        setContext(ctx, ENTRY_OVERVIEW );
-        if ( deleteEntry( path ) != FR_OK ) {
-            setContext( ctx, ERROR_SD_FAILURE  );
-        } else {
-            CTX_ENTRY_OVERVIEW *edctx;
-            edctx = (CTX_ENTRY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr);                                   
-            edctx->cursor = cursor;
-        }
-    }*/
 }
+
+
+
+void hctxSearchEntries(APP_CONTEXT* ctx) {
+    CTX_SEARCH_ENTRIES *sctx;
+    sctx = (CTX_SEARCH_ENTRIES*) (ctx->ctxbuffer + ctx->ctxptr);
+    
+    HCTX_IO_RESULT res = hctxIO( &sctx->io, ctx );
+        
+    if ( res == IOR_UNCHANGED ) {
+        ctx->rinf = UNCHANGED;
+    } else if ( res == IOR_UPDATED ) {
+        ctx->rinf = IO_UPDATE;     
+    } else if ( res == IOR_OK ) {
+        uint8_t searchfield[MAX_SEARCH_LEN];
+        uint16_t len = sctx->io.tlen;
+        memcpy( searchfield, sctx->io.text, len);
+        setContext(ctx, ENTRY_OVERVIEW);
+        
+        CTX_ENTRY_OVERVIEW *evctx;
+        evctx = (CTX_ENTRY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr);
+        
+        memcpy( evctx->searchstr, searchfield, len); 
+        evctx->needinitsearch = true;
+    }
+      
+}
+
 
 void hctxMessagebox(APP_CONTEXT* ctx) {
     CTX_MSG_BOX *sctx;
@@ -2342,9 +2413,41 @@ void hctxMessagebox(APP_CONTEXT* ctx) {
             prevctx = (CTX_KEY_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
             prevctx->io.rinf = REFRESH;            
             ctx->rinf = IO_UPDATE;
+            
+        } else if ( result == MSGB_SEARCHINFO_COMMIT ) {
+            removeContext(ctx);                      
+            ctx->rinf = REFRESH;
         }
                                
     }   
+}
+
+void hctxIOSetStartValuesAfterLoad(IO_CONTEXT* ioctx) {
+    
+    uint16_t currline, currlineoffs, prevlineoffs;
+    uint8_t posline, poslinex, currlinelen;
+               
+    ioctx->tewp = ioctx->tlen;  
+    ioctx->rinf = REFRESH;
+    
+    if ( ioctx->tlen > 1 ) {
+        hctxIOGetCurrCursorPosition(ioctx, &currline, &posline, &poslinex, &currlinelen, &currlineoffs, &prevlineoffs );
+        if ( currline > 0 ) {
+            uint8_t loff = currline;
+            if ( loff >= ( TEXTAREA_VIEWPORT_LINES - 1 ) ) loff = TEXTAREA_VIEWPORT_LINES - 1;
+            for (int i=0;i<loff;i++) {
+                ioctx->tewp -= currlinelen;                        
+                hctxIOGetCurrCursorPosition(ioctx, &currline, &posline, &poslinex, &currlinelen, &currlineoffs, &prevlineoffs );
+            }                 
+            ioctx->tewp = ioctx->tlen;
+        }
+
+        ioctx->tavcloff = currline;
+        hctxIORecalcTavccoff( ioctx );    
+    } else {
+        ioctx->tavcloff = 0;
+    }
+    
 }
 
 void hctxChoosebox(APP_CONTEXT* ctx) {
@@ -2367,8 +2470,33 @@ void hctxChoosebox(APP_CONTEXT* ctx) {
         }  
     } else if ( isButtonPressed(BUTTON_A) ) {
         CHBX_SELECTIONS sel = sctx->selectid[ sctx->selected ];
+        
+        if ( sel == CHBX_SEARCH_ENTRY ) {
+            removeContext(ctx);
+            
+            CTX_ENTRY_OVERVIEW *ovctx;
+            ovctx = (CTX_ENTRY_OVERVIEW*) (ctx->ctxbuffer + ctx->ctxptr);
+            
+            uint8_t searchstr[MAX_SEARCH_LEN];                   
+            memcpy(searchstr, ovctx->searchstr, MAX_SEARCH_LEN);
+                        
+            if ( setContext(ctx, SEARCH_ENTRIES ) ) {
+                CTX_SEARCH_ENTRIES *sectx;
+                sectx = (CTX_SEARCH_ENTRIES*) (ctx->ctxbuffer + ctx->ctxptr);              
+        
+                sectx->io.inp = SEARCHFIELD;
+                sectx->io.type = NEW;
+                sectx->io.kbmap = DEFAULT_KEYMAP;
+                ctx->rinf = IO_UPDATE;
                 
-        if ( sel == CHBX_CREATE_ENTRY ) {
+                sectx->io.text[0] = CHAR_LINEFEED;            
+                sectx->io.tlen = strlen( (char *)searchstr ) + 1;
+                memcpy(sectx->io.text+1, searchstr, sectx->io.tlen);
+
+                hctxIOSetStartValuesAfterLoad(&sectx->io);
+            }          
+
+        } else if ( sel == CHBX_CREATE_ENTRY ) {
             removeContext(ctx);
             
             CTX_ENTRY_OVERVIEW *ovctx;
@@ -2404,8 +2532,25 @@ void hctxChoosebox(APP_CONTEXT* ctx) {
 
             memcpy(mctx->msgtxt, (char*)(textdata + texte[TEXT_MSG_DELETE_ENTRY]), strlen( (char*)(textdata + texte[TEXT_MSG_DELETE_ENTRY]) ) + 1 );
             
-        } else if ( sel == CHBX_OPTIONS ) {
-            setContext( ctx, OPTIONS );   
+        } else if ( sel == CHBX_OPTIONS ) {            
+            pushContext(ctx, CHOOSEBOX );
+
+            CTX_CHOOSE_BOX *cbctx;
+            cbctx = (CTX_CHOOSE_BOX*) (ctx->ctxbuffer + ctx->ctxptr);        
+
+            uint8_t s=0;
+
+            cbctx->textid[s] = TEXT_CHB_DEVICEOPTIONS;
+            cbctx->selectid[s] = CHBX_DEVICEOPTIONS;
+            s++;
+
+            cbctx->textid[s] = TEXT_CHB_PINOPTIONS;
+            cbctx->selectid[s] = CHBX_PINOPTIONS;            
+            s++; 
+
+            cbctx->options = s;
+        } else if ( sel == CHBX_DEVICEOPTIONS ) {
+            setContext( ctx, DEVICEOPTIONS );   
         } else if ( sel == CHBX_PINOPTIONS ) {
             setContext( ctx, PINOPTIONS ); 
             
@@ -2459,29 +2604,9 @@ void hctxChoosebox(APP_CONTEXT* ctx) {
                 ctx->rinf = IO_UPDATE;
 
                 res = readEntryToken( edctx->path, edctx->io.type, edctx->io.text+1, MAX_TEXT_LEN, &edctx->io.tlen );
-                if ( res == FR_OK ) {                   
-                    edctx->io.tewp = edctx->io.tlen;
-                    edctx->io.kbmap = DEFAULT_KEYMAP;
-                    edctx->io.rinf = REFRESH;
-
-
-                    uint16_t currline, currlineoffs, prevlineoffs;
-                    uint8_t posline, poslinex, currlinelen;
-
-                    hctxIOGetCurrCursorPosition(&edctx->io, &currline, &posline, &poslinex, &currlinelen, &currlineoffs, &prevlineoffs );
-                    if ( currline > 0 ) {
-                        uint8_t loff = currline;
-                        if ( loff >= ( TEXTAREA_VIEWPORT_LINES - 1 ) ) loff = TEXTAREA_VIEWPORT_LINES - 1;
-                        for (int i=0;i<loff;i++) {
-                            edctx->io.tewp -= currlinelen;                        
-                            hctxIOGetCurrCursorPosition(&edctx->io, &currline, &posline, &poslinex, &currlinelen, &currlineoffs, &prevlineoffs );
-                        }                 
-                        edctx->io.tewp = edctx->io.tlen;
-                    }
-
-                    edctx->io.tavcloff = currline;
-                    hctxIORecalcTavccoff( &edctx->io );
-
+                if ( res == FR_OK ) {   
+                    hctxIOSetStartValuesAfterLoad(&edctx->io);
+                                    
                 } else {
                     setContext( ctx, ERROR_SD_FAILURE  );
                 }                        
@@ -2560,9 +2685,9 @@ int getMaxDaysOfMonth(int year, int month) {
 }
 
 
-void hctxOptions(APP_CONTEXT* ctx) {
-    CTX_OPTIONS *sctx;
-    sctx = (CTX_OPTIONS*) (ctx->ctxbuffer + ctx->ctxptr);    
+void hctxDeviceOptions(APP_CONTEXT* ctx) {
+    CTX_DEVICEOPTIONS *sctx;
+    sctx = (CTX_DEVICEOPTIONS*) (ctx->ctxbuffer + ctx->ctxptr);    
 
     ctx->rinf = ANIMATION;
     if ( sctx->selected >= 1 && sctx->selected <= 3 ) {
@@ -2579,7 +2704,7 @@ void hctxOptions(APP_CONTEXT* ctx) {
         } else if ( sctx->selected == 4 ) {
             sctx->selected = 8;
         } else if ( sctx->selected >= 8 ) {
-            if ( sctx->selected < 11 ) {
+            if ( sctx->selected < 10 ) {
                 sctx->selected++;
             }            
         } else if ( sctx->selected == 1 ) {
@@ -2650,9 +2775,7 @@ void hctxOptions(APP_CONTEXT* ctx) {
                 } else { 
                     hctxSetColor(sizeof(highlight_color_tab)/sizeof(uint16_t) - 1); 
                 };
-            } else if ( sctx->selected == 11 ) {                
-                device_options.keymode = device_options.keymode == QUICKKEY_OFF ? QUICKKEY_ON : QUICKKEY_OFF;
-            }            
+            } 
                         
         } else if ( sctx->selected != 0 && sctx->selected != 4 ) sctx->selected --;
     } else if ( isButtonPressed( BUTTON_RIGHT ) ) {
@@ -2671,9 +2794,7 @@ void hctxOptions(APP_CONTEXT* ctx) {
                 } else {
                     hctxSetColor(0);
                 }
-            } else if ( sctx->selected == 11 ) {
-                device_options.keymode = device_options.keymode == QUICKKEY_OFF ? QUICKKEY_ON : QUICKKEY_OFF;
-            }       
+            }   
             
         } else if ( sctx->selected != 3 && sctx->selected != 7 ) sctx->selected ++;  
     } else if ( isButtonPressed( BUTTON_B ) ) {
@@ -2770,11 +2891,6 @@ void updateDeviceStatus( APP_CONTEXT* ctx ) {
     }        
 }
 
-/*void testPinGen(APP_CONTEXT* ctx) {
-    CTX_PIN_INPUT *sctx;
-    sctx = (CTX_PIN_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
-    sctx->generatenew = 1;
-}*/
 
 void updateContext(APP_CONTEXT* ctx) {            
     if (SENSE_CASE_GetValue() || ctx->power <= SHUTDOWN_POWER_LIMIT ) {
@@ -2886,14 +3002,17 @@ void updateContext(APP_CONTEXT* ctx) {
         case EDIT_ENTRY:
             hctxEditEntry(ctx);        
             break;            
+        case SEARCH_ENTRIES:
+            hctxSearchEntries(ctx);
+            break;
         case MESSAGEBOX:            
             hctxMessagebox(ctx);        
             break;      
         case CHOOSEBOX:
             hctxChoosebox(ctx);
             break;
-        case OPTIONS:
-            hctxOptions(ctx);        
+        case DEVICEOPTIONS:
+            hctxDeviceOptions(ctx);        
             break;  
         case PINOPTIONS:
             hctxPinOptions(ctx);        
