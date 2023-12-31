@@ -138,6 +138,7 @@ void writeTextIntern( uint8_t *text );
 
 void cWriteText( const char *text );
 void writeText( char *text );
+void writeBitmapAsText(const GFXimage *im );
 
 #endif	/* DISPLAY_DRIVER_H */
 

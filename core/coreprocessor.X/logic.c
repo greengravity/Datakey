@@ -1151,7 +1151,7 @@ void initPinInput( APP_CONTEXT* ctx ) {
     sctx->extrasteps = 0;
     sctx->pinerr = pinerr;
     sctx->errorchecked = false;
-    memcpy(sctx->field, &pinfield , 64 );
+    memcpy(sctx->field, &pinfield , 64 );        
 }
 
 void initKeyInput( APP_CONTEXT* ctx ) {
@@ -1284,15 +1284,11 @@ void hctxPinInput(APP_CONTEXT* ctx) {
                             } else {
                                 //Pin differs from verification pin, retry                                
                                 sctx->error = true;
-                                sctx->verify = false;
-                                sctx->ppos = 0;
-                                memset(sctx->pin, 0x00, device_options.pin_len);
-                                memset(sctx->verifypin, 0x00, device_options.pin_len);
                             }
                         } else {
-                            initPinInput( ctx );
+                            initPinInput( ctx );                            
                             sctx->verify = true;
-                            sctx->ppos = 0;                           
+                            sctx->ppos = 0;                                
                         }
                     } else {
                         if (memcmp(sctx->pin, pin, device_options.pin_len) == 0) {
@@ -1325,8 +1321,13 @@ void hctxPinInput(APP_CONTEXT* ctx) {
                 break;
             } else {
                 sctx->ppos = 0;
-                sctx->error = false;
-                initPinInput( ctx );                     
+                sctx->error = false;                
+                initPinInput( ctx );
+                sctx->verify = false;
+                sctx->ppos = 0;
+                memset(sctx->pin, 0x00, device_options.pin_len);
+                memset(sctx->verifypin, 0x00, device_options.pin_len);                                                                            
+                ctx->rinf = REFRESH;
             }
         }
     }
@@ -2008,16 +2009,20 @@ void hctxEntryOverview(APP_CONTEXT* ctx) {
         
         if ( sctx->needinitsearch ) {
             sctx->needinitsearch = false;
-            uint16_t next = searchNextEntryFrom( sctx, -1 );
-            if ( next == -2 ) {
-                setContext(ctx, ERROR_SD_CD);
-                return;
-            } else if ( next >= 0 && next < sctx->entrycount ) {
-                sctx->cursor = next;
-                sctx->searchsuccessful = 1;
-            } else {
-                sctx->searchsuccessful = 2;
+            if ( strlen( (char *)sctx->searchstr ) > 0 ) { 
+                uint16_t next = searchNextEntryFrom( sctx, -1 );
+                if ( next == -2 ) {
+                    setContext(ctx, ERROR_SD_CD);
+                    return;
+                } else if ( next >= 0 && next < sctx->entrycount ) {
+                    sctx->cursor = next;
+                    sctx->searchsuccessful = 1;
+                } else {
+                    sctx->searchsuccessful = 2;
 
+                }
+            } else {
+                sctx->searchsuccessful = 0;
             }
         }        
         
@@ -2058,7 +2063,7 @@ void hctxEntryOverview(APP_CONTEXT* ctx) {
             uint16_t cursor = sctx->cursor;
                         
             memcpy( path, &"KS/", 3 );                    
-            memcpy( path+3, sctx->entries[cursor].path, strlen( sctx->entries[cursor].path ) + 1 );
+            memcpy( path+3, sctx->entries[cursor - sctx->bufferstart].path, strlen( sctx->entries[cursor - sctx->bufferstart].path ) + 1 );
                         
             replaceContext(ctx, ENTRY_DETAIL );
 
@@ -2072,7 +2077,7 @@ void hctxEntryOverview(APP_CONTEXT* ctx) {
                 edctx->selected = NAME;
                 edctx->overviewcursor = cursor;
             }
-        }         
+        }
         
         
     } else if ( isButtonPressed(BUTTON_B) ) {        
@@ -2114,7 +2119,7 @@ void hctxEntryOverview(APP_CONTEXT* ctx) {
         cbctx->options = s;
     } else if ( isButtonPressed(BUTTON_UP) || isButtonPressed(BUTTON_DOWN) ) {
         if ( isButtonPressed(BUTTON_UP) && sctx->cursor > 0 ) sctx->cursor--;
-        if ( isButtonPressed(BUTTON_DOWN) && sctx->cursor < ( sctx->entrycount - 1 ) ) sctx->cursor++;
+        if ( isButtonPressed(BUTTON_DOWN) && ( sctx->cursor + 1 )  < sctx->entrycount ) sctx->cursor++;
         
         uint16_t start = sctx->cursor - ( OVERVIEW_LINES - 1 ) / 2;
         uint16_t end = start + ( OVERVIEW_LINES - 1 );
@@ -2386,7 +2391,7 @@ void hctxMessagebox(APP_CONTEXT* ctx) {
                 //Delete entry            
                 TCHAR path[16];
                 memcpy(path, &"KS/", 3);                
-                memcpy(path+3, prevctx->entries[prevctx->cursor].path, strlen(prevctx->entries[prevctx->cursor].path) + 1 );
+                memcpy(path+3, prevctx->entries[prevctx->cursor - prevctx->bufferstart].path, strlen(prevctx->entries[prevctx->cursor - prevctx->bufferstart].path) + 1 );
 
                 if ( deleteEntry( path ) != FR_OK ) {
                     setContext( ctx, ERROR_SD_FAILURE  );
@@ -2600,9 +2605,10 @@ void hctxChoosebox(APP_CONTEXT* ctx) {
                 memcpy( edctx->path, path, 16 ); 
                 edctx->io.inp = TOKEN;
                 edctx->io.type = currtoken;
-                edctx->io.text[0] = CHAR_LINEFEED;            
+                edctx->io.text[0] = CHAR_LINEFEED;  
+                edctx->io.kbmap = DEFAULT_KEYMAP;
                 ctx->rinf = IO_UPDATE;
-
+  
                 res = readEntryToken( edctx->path, edctx->io.type, edctx->io.text+1, MAX_TEXT_LEN, &edctx->io.tlen );
                 if ( res == FR_OK ) {   
                     hctxIOSetStartValuesAfterLoad(&edctx->io);

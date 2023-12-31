@@ -179,6 +179,31 @@
     { 
         "name": "TETRIS_Z",
         "icon": "tetris_z.png"
+    },
+	
+    { 
+        "name": "BUTTON_A",
+        "icon": "button_a.png"
+    },
+    { 
+        "name": "BUTTON_B",
+        "icon": "button_b.png"
+    },
+    { 
+        "name": "BUTTON_LEFT",
+        "icon": "button_left.png"
+    },
+    { 
+        "name": "BUTTON_RIGHT",
+        "icon": "button_right.png"
+    },
+    { 
+        "name": "BUTTON_UP",
+        "icon": "button_up.png"
+    },
+    { 
+        "name": "BUTTON_DOWN",
+        "icon": "button_down.png"
     }
 
 ]

@@ -604,3 +604,12 @@ void writeText( char *text ) {
         writeChar( &gfxchars[ unicodeLookup(ct) ] );
     }    
 }
+
+void writeBitmapAsText(const GFXimage *im ) {    
+    if ( ( _charx + im->width ) > _endwrite ) {
+        _charx = _startwrite;
+        _chary += CHAR_HEIGHT;
+    }
+    drawImage( _charx, _chary, im );
+    _charx += im->width;
+}

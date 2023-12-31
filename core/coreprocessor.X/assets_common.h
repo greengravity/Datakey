@@ -66,6 +66,7 @@ extern const Keylayout keylayouts[];
 extern const uint8_t textdata[];
 extern const uint16_t texte[];
 extern const uint8_t hexchars[];
+extern const uint16_t buttonimages[];
 
 uint8_t unicodeLookup(uint16_t ct);
 

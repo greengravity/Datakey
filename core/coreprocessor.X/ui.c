@@ -304,78 +304,109 @@ void rndPinInput(APP_CONTEXT* ctx) {
         if ( ctx->rinf == REFRESH ) {
             clearScreen(COLOR_BLACK);
         }        
-        //Drawfield
-        for ( int x=0;x<8;x++) {
-            for ( int y=0;y<8;y++) {
-                uint16_t icon = SYSICON_PIN_GROUND;
-                if ( sctx->px == x && sctx->py == y ) {                    
-                    icon = SYSICON_PIN_MARKER;
-                } else {                                                             
-                    switch ( sctx->field[x + y * 8] ) {
-                        case PFLD_OWL:
-                            icon = SYSICON_PIN_OBS1;
-                            break;
-                        case PFLD_LITTLEDRAGON:
-                            icon = SYSICON_PIN_OBS2;
-                            break;
-                        case PFLD_TREE:
-                            icon = SYSICON_PIN_OBS3;
-                            break;
-                        case PFLD_STONE:
-                            icon = SYSICON_PIN_OBS4;
-                            break;
-                        case PFLD_SHIELD:
-                            icon = SYSICON_PIN_OBS5;
-                            break;
-                        case PFLD_DRAGON:
-                            icon = SYSICON_PIN_OBS6;
-                            break; 
-                        case PFLD_CRACKSTONE:
-                            icon = SYSICON_PIN_OBS7;
-                            break; 
-                        case PFLD_SWORD:
-                            icon = SYSICON_PIN_OBS8;
-                            break; 
-                        case PFLD_GRAIL:
-                            icon = SYSICON_PIN_OBS9;
-                            break;                 
-                    }                                       
-                }
-                
-                drawImage( x*15, y*15 , &bitmaps[icon] );                
-            }
-        } 
-        drawFastVLine(120, 0, DISPLAY_HEIGHT, COLOR_WHITE);
         
-        //Drawstats        
         if ( sctx->generatenew ) {
-            locate( 124,20 );   
-            setWritebounds( 124, DISPLAY_WIDTH );
-            if ( sctx->verify ) {
-                cWriteTextInternLinebreak((const uint8_t*) (textdata + texte[ TEXT_PIN_INF_GE_VERIFY_PIN ]));
-            } else {
-                cWriteTextInternLinebreak((const uint8_t*) (textdata + texte[ TEXT_PIN_INF_GE_ENTER_PIN ]));
+            if ( ctx->rinf == REFRESH ) {
+                drawFastHLine(0,16, DISPLAY_WIDTH, COLOR_GRAY);
             }
-                        
-            locate( 124,80 );
-            cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_PIN_INF_STEPS ]));
-            locate( 124,95 );            
-            writeNumber(text, device_options.pin_len - sctx->ppos );            
+                       
+            uint8_t xm, ym;
+                    
+            //store location and set back after pin count got written
+            xm = getLocationX();
+            ym = getLocationY();
+                                    
+            locate(0, 0 );
+            writeNumber( text, (int) ( sctx->ppos ) );
+            writeTextIntern( text );            
+            writeBitmapAsText(&bitmaps[SYSICON_SLASH] );
+            writeNumber( text, (int) device_options.pin_len );  
             writeTextIntern( text );
             x = getLocationX();
-            fillRect(x, 95, DISPLAY_WIDTH - x, 15, COLOR_BLACK);            
+            fillRect( x, 0, ( DISPLAY_WIDTH - 50 ) - x, 15, COLOR_BLACK );
+                                        
+            locate(xm, ym );
                         
-            if ( sctx->error ) {
+            if ( !sctx->error ) {
+                if ( !sctx->verify ) {
+                    if ( sctx->ppos == 0 ) {
+                        locate( 0,20 ); 
+                        cWriteTextInternLinebreak((const uint8_t*) (textdata + texte[ TEXT_PIN_INF_GE_ENTER_PIN ]));
+                        locate( 0,35 );
+                    } else {
+                        writeBitmapAsText(&bitmaps[ buttonimages[sctx->pin[sctx->ppos - 1] ] ] );
+                    }               
+                } else {
+                    if ( sctx->ppos == 0 ) {
+                        //write last symbol of pin1
+                        writeBitmapAsText(&bitmaps[ buttonimages[sctx->pin[ device_options.pin_len - 1 ] ] ] );
+
+                        locate( 0,70 ); 
+                        cWriteTextInternLinebreak((const uint8_t*) (textdata + texte[ TEXT_PIN_INF_GE_VERIFY_PIN ]));
+                        locate( 0,85 );
+                    } else {
+                        writeBitmapAsText(&bitmaps[ buttonimages[sctx->verifypin[sctx->ppos - 1] ] ] );
+                    }                               
+                }
+
+            } else {            
+                //write last symbol of pin2
+                writeBitmapAsText(&bitmaps[ buttonimages[sctx->verifypin[ device_options.pin_len - 1 ] ] ] );                
+                
                 fillRect( 10, 28, 150, 64, COLOR_BLACK );
                 drawRect( 10, 28, 150, 64, COLOR_WHITE );
                 locate( 14, 30 );
                 setWritebounds( 14, 146 );
-                cWriteTextInternLinebreak((const uint8_t*) (textdata + texte[ TEXT_PIN_INF_GE_PIN_ERROR ]));                
-            }            
+                cWriteTextInternLinebreak((const uint8_t*) (textdata + texte[ TEXT_PIN_INF_GE_PIN_ERROR ]));                                            
+            }         
             
-            setWritebounds( 0, DISPLAY_WIDTH );
+            setWritebounds( 0, DISPLAY_WIDTH );            
+            
+        } else {        
+            //Drawfield
+            for ( int x=0;x<8;x++) {
+                for ( int y=0;y<8;y++) {
+                    uint16_t icon = SYSICON_PIN_GROUND;
+                    if ( sctx->px == x && sctx->py == y ) {                    
+                        icon = SYSICON_PIN_MARKER;
+                    } else {                                                             
+                        switch ( sctx->field[x + y * 8] ) {
+                            case PFLD_OWL:
+                                icon = SYSICON_PIN_OBS1;
+                                break;
+                            case PFLD_LITTLEDRAGON:
+                                icon = SYSICON_PIN_OBS2;
+                                break;
+                            case PFLD_TREE:
+                                icon = SYSICON_PIN_OBS3;
+                                break;
+                            case PFLD_STONE:
+                                icon = SYSICON_PIN_OBS4;
+                                break;
+                            case PFLD_SHIELD:
+                                icon = SYSICON_PIN_OBS5;
+                                break;
+                            case PFLD_DRAGON:
+                                icon = SYSICON_PIN_OBS6;
+                                break; 
+                            case PFLD_CRACKSTONE:
+                                icon = SYSICON_PIN_OBS7;
+                                break; 
+                            case PFLD_SWORD:
+                                icon = SYSICON_PIN_OBS8;
+                                break; 
+                            case PFLD_GRAIL:
+                                icon = SYSICON_PIN_OBS9;
+                                break;                 
+                        }                                       
+                    }
 
-        } else {          
+                    drawImage( x*15, y*15 , &bitmaps[icon] );                
+                }
+            } 
+            drawFastVLine(120, 0, DISPLAY_HEIGHT, COLOR_WHITE);
+        
+            //Drawstats               
             locate( 124,20 );            
             cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_PIN_INF_LEVEL ]));
             locate( 124,35 );
@@ -390,7 +421,7 @@ void rndPinInput(APP_CONTEXT* ctx) {
                 cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_PIN_INF_SPLIT_STEPS ]));
                 writeNumber(text, sctx->extrasteps );            
                 writeTextIntern( text );                                                  
-            }            
+            }
             x = getLocationX();              
             fillRect(x, 70, DISPLAY_WIDTH - x, 15, COLOR_BLACK);
                                     

@@ -732,9 +732,11 @@ Promise.all(readpromises).then((values) => {
   }
   outdatac.push('};')
   outdatac.push('')
+
+  outdatac.push('const uint16_t buttonimages[] = { SYSICON_BUTTON_LEFT, SYSICON_BUTTON_UP, SYSICON_BUTTON_RIGHT, SYSICON_BUTTON_DOWN, SYSICON_BUTTON_A, SYSICON_BUTTON_B  };' )
+  outdatac.push('')
+
   outdatac.push('#endif')
-
-
 
   // Generating .H Assetfile
   outdatah.push('#if ASSETPACK == ASSETPACK_' + fontname.replace('-', '_') )
