@@ -191,8 +191,12 @@ void rndIO(IO_CONTEXT *ioctx) {
             locate(0,0);
             if ( ioctx->inp == TOKEN ) {
                 cWriteTextIntern((const uint8_t*) (textdata + texte[ token_configs[ioctx->type].textid ]));
-            } else if ( ioctx->inp == MASTERKEY ) {
+            } else if ( ioctx->inp == MASTERKEY_GEN ) {
                 cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_ENTER_NEW_KEY ]));
+            } else if (  ioctx->inp == MASTERKEY_VERIFY ) {
+                cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_ENTER_VERIFY_KEY ]));
+            } else if (  ioctx->inp == MASTERKEY_CHECK ) {
+                cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_ENTER_CHECK_KEY ]));                
             } else if ( ioctx->inp == SEARCHFIELD ) {
                 cWriteTextIntern((const uint8_t*) (textdata + texte[ TEXT_ENTER_SEARCHFIELD ]));                
             }
@@ -257,9 +261,11 @@ void rndKeyInput(APP_CONTEXT* ctx) {
     CTX_KEY_INPUT *sctx;
     sctx = (CTX_KEY_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
     
-    if (ctx->rinf == IO_UPDATE) {                
-        rndIO( &sctx->io );                                   
-    }    
+    if ( sctx->fschecked ) {
+        if (ctx->rinf == IO_UPDATE) {
+            rndIO( &sctx->io );
+        }
+    }
 }    
 
 void rndSearchEntries(APP_CONTEXT* ctx) {

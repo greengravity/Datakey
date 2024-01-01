@@ -176,7 +176,7 @@ void swipeKeys() {
     pinerr = 0;    
 }
 
-uint8_t verifyMasterKey( bool createInitialStructure  ) {        
+uint8_t verifyMasterKey( ) {        
     UINT rwbytes;
     uint8_t data[48];
     uint8_t cipher[16];
@@ -187,7 +187,7 @@ uint8_t verifyMasterKey( bool createInitialStructure  ) {
     
     uint8_t result = 0;
     
-    if ( f_stat( "VERIFY", &fno ) == FR_OK && f_open(&file, "VERIFY", FA_READ ) == FR_OK ) {                        
+    if ( f_stat( "VERIFY", &fno ) == FR_OK && f_open(&file, "VERIFY", FA_READ ) == FR_OK && fno.fsize == 48 ) {                        
         if ( f_read(&file, data,48, &rwbytes) == FR_OK && rwbytes == 48 ) {
             memset(&iv, 0x00, 16);
 
@@ -213,6 +213,10 @@ uint8_t verifyMasterKey( bool createInitialStructure  ) {
             result = 2;
         }                                                
     } else {
+        result = 1;
+    }
+    
+/*
         if ( createInitialStructure ) {
             if ( f_open(&file, "VERIFY", FA_WRITE | FA_CREATE_ALWAYS ) == FR_OK ) {
 
@@ -262,10 +266,92 @@ uint8_t verifyMasterKey( bool createInitialStructure  ) {
             result = 1;
         }
     }
-    
+ */
     
     return result;
 }
+
+uint8_t fsCreateInitialKeystoreStructure() {
+    UINT rwbytes;
+    uint8_t data[48];
+    uint8_t iv[16];
+
+    FIL file;
+    FILINFO fno;
+    
+    uint8_t result = 0;    
+    
+    
+    if ( f_stat("KS", &fno) == FR_OK && !( fno.fattrib & AM_DIR ) ) {
+        //if KS is a file rather than a directory, delete it
+        f_unlink("KS");
+    }
+    
+    if ( f_stat("KS", &fno) != FR_OK ) {
+        //create Keystore directory if not exits
+        f_mkdir( "KS" );
+        if ( f_stat("KS", &fno) == FR_OK && ( fno.fattrib & AM_DIR ) ) {
+            result = 0;
+        } else {
+            result = 2;
+        }
+    }
+    
+    if ( result ==  0 ) {    
+        if ( f_open(&file, "VERIFY", FA_WRITE | FA_CREATE_ALWAYS ) == FR_OK ) {
+            //create new verifikation file
+            generateRND(data);
+            generateRND(data+16);
+
+            memset(&iv, 0x00, 16);
+            for (int i=0;i<16;i++) {
+                data[i+32] = data[i] ^ data[i+16];                
+            }
+
+            //encrypt all 3 blocks
+            prepareAES128BitCBC();            
+            prepare128bitEncryption( iv );
+
+            for (int i=0;i<3;i++) {
+                encrypt128bit( data+(i*16), data+(i*16) );                
+            }
+
+            endEncryption( );
+
+            //after encryption, the 3rd block should only calculate right if the correct key is used
+            if ( f_write(&file, data, 48, &rwbytes) == FR_OK && rwbytes == 48 ) {               
+                result = 0;
+            } else {
+                result = 2;
+            }
+            f_close(&file);
+        } else {
+            result = 2;
+        }
+    }
+   
+    
+    return result;
+}
+
+bool hasFsKeystoreStructureAvailable() {
+    FIL file;
+    FILINFO fno;
+          
+    //Directory available
+    if ( f_stat("KS", &fno) == FR_OK && ( fno.fattrib & AM_DIR ) ) {
+        //Verification file available and correct length
+        if ( f_stat( "VERIFY", &fno ) == FR_OK && 
+             f_open(&file, "VERIFY", FA_READ ) == FR_OK && 
+             fno.fsize == 48 ) {      
+
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 
 uint16_t _getContextTypeLen(CONTEXT_TYPE type) {
     switch (type) {
@@ -707,7 +793,10 @@ void hctxIORecalcTavccoff( IO_CONTEXT *ioctx ) {
 
 uint8_t hctxIOWriteCharacter( IO_CONTEXT *ioctx, uint8_t cid, bool del ) {
     if ( !del ) {
-        if ( ioctx->inp == TOKEN || ioctx->inp == MASTERKEY ) {
+        if ( ioctx->inp == TOKEN || 
+             ioctx->inp == MASTERKEY_GEN || 
+             ioctx->inp == MASTERKEY_VERIFY ||
+             ioctx->inp == MASTERKEY_CHECK ) {
             if ( ioctx->tlen >= MAX_TEXT_LEN ) return 1;                
         } else if ( ioctx->inp == SEARCHFIELD ) {
             if ( ioctx->tlen >= MAX_SEARCH_LEN ) return 1;
@@ -905,7 +994,10 @@ HCTX_IO_RESULT hctxIO( IO_CONTEXT *ioctx, APP_CONTEXT* ctx ) {
                         ioctx->text[ioctx->tlen-1] = 0x00;
                         return IOR_OK;
                     }
-                } else if ( ioctx->inp == MASTERKEY || ioctx->inp == SEARCHFIELD ) {
+                } else if ( ioctx->inp == MASTERKEY_GEN || 
+                            ioctx->inp == MASTERKEY_VERIFY || 
+                            ioctx->inp == MASTERKEY_CHECK || 
+                            ioctx->inp == SEARCHFIELD ) {
                     memmove( ioctx->text, ioctx->text+1, ioctx->tlen ); //remove startlinefeed and add zero termination char to the end to save it properly on disk
                     ioctx->text[ioctx->tlen-1] = 0x00;
                     return IOR_OK;
@@ -1156,17 +1248,7 @@ void initPinInput( APP_CONTEXT* ctx ) {
 
 void initKeyInput( APP_CONTEXT* ctx ) {
     CTX_KEY_INPUT *sctx;
-    sctx = (CTX_KEY_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
-        
-    sctx->io.inp = MASTERKEY; 
-    sctx->io.type = NEW;
-    sctx->io.rinf = REFRESH;
-    sctx->io.kbmap = DEFAULT_KEYMAP;
-    sctx->io.text[0] = CHAR_LINEFEED;
-    sctx->io.tlen = 1;
-    sctx->io.tewp = 1;        
-    ctx->rinf = IO_UPDATE;
-    
+    sctx = (CTX_KEY_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);            
 }
 
 PINFIELD getPinfieldObj(APP_CONTEXT* ctx, uint8_t x, uint8_t y) {
@@ -1356,7 +1438,7 @@ void hctxVerifyKeyAfterPin(APP_CONTEXT* ctx) {
         setKeyEncr(false);
     }    
     
-    uint8_t keyres = verifyMasterKey( false );
+    uint8_t keyres = verifyMasterKey( );
     if ( keyres == 0 ) {
         setContext(ctx, ENTRY_OVERVIEW);
     } else if ( keyres == 1 ) {
@@ -1390,52 +1472,121 @@ void hctxKeyInput(APP_CONTEXT* ctx) {
     CTX_KEY_INPUT *sctx;
     sctx = (CTX_KEY_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
 
-    sctx->haderror = sctx->error;
-    HCTX_IO_RESULT res = hctxIO( &sctx->io, ctx );
+    if ( !sctx->fschecked ) {
+        sctx->fschecked = true;
         
-    if ( res == IOR_UNCHANGED ) {
-        ctx->rinf = UNCHANGED;
-    } else if ( res == IOR_UPDATED ) {
-        ctx->rinf = IO_UPDATE;     
-    } else if ( res == IOR_OK ) {
-        uint8_t newkey[32];
-        
-        if ( sctx->io.tlen > 0 ) {     
-            calcKeyFromText( sctx->io.text, sctx->io.tlen, newkey );
-            setMasterKey(newkey);
-
-            uint8_t keyres = verifyMasterKey( true );
-            if ( keyres == 0 ) {
-                setContext(ctx, ENTRY_OVERVIEW);
-                pushContext(ctx, PIN_INPUT);
-                CTX_PIN_INPUT *pctx;
-                pctx = (CTX_PIN_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
-                pctx->generatenew = 1;
-                initPinInput( ctx );
-            } else if ( keyres == 1 ) {
-                //add startlinefeed again to prepare the editor
-                memmove( sctx->io.text+1, sctx->io.text, sctx->io.tlen ); 
-                sctx->io.text[0] = CHAR_LINEFEED;
-
-                pushContext(ctx, MESSAGEBOX);
-                CTX_MSG_BOX *mctx;
-                mctx = (CTX_MSG_BOX*) (ctx->ctxbuffer + ctx->ctxptr);
-
-                mctx->mchoices[0] = MSGB_MKEY_ERROR_OK;
-                mctx->mchoiceicon[0] = SYSICON_OK;
-                mctx->choicecount = 1;
-                mctx->sel = 0;
-
-                memcpy(mctx->msgtxt, (char*)(textdata + texte[TEXT_ENTER_NEW_KEY_ERROR]), strlen( (char*)(textdata + texte[TEXT_ENTER_NEW_KEY_ERROR]) ) + 1 );
-
-                ctx->rinf = REFRESH;
-            } else if ( keyres == 2 ) {
-                setContext(ctx, ERROR_SD_FAILURE);
-            }                
+        if ( !hasFsKeystoreStructureAvailable() ) {
+            sctx->generatemode = true;            
+            sctx->io.inp = MASTERKEY_GEN;
         } else {
-            memmove( sctx->io.text+1, sctx->io.text, sctx->io.tlen );
+            sctx->io.inp = MASTERKEY_CHECK; 
         }
-    }        
+                
+        sctx->io.type = NEW;
+        sctx->io.rinf = REFRESH;
+        sctx->io.kbmap = DEFAULT_KEYMAP;
+        sctx->io.text[0] = CHAR_LINEFEED;
+        sctx->io.tlen = 1;
+        sctx->io.tewp = 1;        
+        ctx->rinf = IO_UPDATE;     
+                
+    } else {            
+        sctx->haderror = sctx->error;
+        HCTX_IO_RESULT res = hctxIO( &sctx->io, ctx );
+
+        if ( res == IOR_UNCHANGED ) {
+            ctx->rinf = UNCHANGED;
+        } else if ( res == IOR_UPDATED ) {
+            ctx->rinf = IO_UPDATE;
+        } else if ( res == IOR_OK ) {
+            uint8_t newkey[16];
+                       
+            if ( sctx->io.tlen > 1 ) {   
+                    
+                if ( sctx->generatemode ) {
+                    if ( sctx->io.inp == MASTERKEY_GEN ) {                        
+                        calcKeyFromText( sctx->io.text, sctx->io.tlen, sctx->generatedkey );
+                        sctx->io.inp = MASTERKEY_VERIFY;
+                        sctx->io.rinf = REFRESH;
+                        sctx->io.kbmap = DEFAULT_KEYMAP;
+                        sctx->io.text[0] = CHAR_LINEFEED;
+                        sctx->io.tlen = 1;
+                        sctx->io.tewp = 1;
+                        ctx->rinf = IO_UPDATE;                          
+                    } else {
+                        calcKeyFromText( sctx->io.text, sctx->io.tlen, newkey );
+                        if ( memcmp( sctx->generatedkey, newkey, 16 ) == 0 ) {
+                            setMasterKey(newkey);
+                            
+                            fsCreateInitialKeystoreStructure();
+                            
+                            setContext(ctx, ENTRY_OVERVIEW);
+                            pushContext(ctx, PIN_INPUT);
+                            CTX_PIN_INPUT *pctx;
+                            pctx = (CTX_PIN_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
+                            pctx->generatenew = 1;
+                            initPinInput( ctx );                            
+                        } else {
+
+                            sctx->io.inp = MASTERKEY_GEN;
+                            sctx->io.rinf = REFRESH;
+                            sctx->io.kbmap = DEFAULT_KEYMAP;
+                            sctx->io.text[0] = CHAR_LINEFEED;
+                            sctx->io.tlen = 1;
+                            sctx->io.tewp = 1;
+                                                        
+                            pushContext(ctx, MESSAGEBOX);
+                            CTX_MSG_BOX *mctx;
+                            mctx = (CTX_MSG_BOX*) (ctx->ctxbuffer + ctx->ctxptr);
+
+                            mctx->mchoices[0] = MSGB_MKEY_ERROR_OK;
+                            mctx->mchoiceicon[0] = SYSICON_OK;
+                            mctx->choicecount = 1;
+                            mctx->sel = 0;
+
+                            memcpy(mctx->msgtxt, (char*)(textdata + texte[TEXT_ENTER_NEW_KEY_ERROR]), strlen( (char*)(textdata + texte[TEXT_ENTER_NEW_KEY_ERROR]) ) + 1 );                             
+                        }
+                    }
+
+                } else {                                                            
+                    calcKeyFromText( sctx->io.text, sctx->io.tlen, newkey );
+                    setMasterKey(newkey);
+
+                    uint8_t keyres = verifyMasterKey( );
+                    if ( keyres == 0 ) {
+                        setContext(ctx, ENTRY_OVERVIEW);
+                        pushContext(ctx, PIN_INPUT);
+                        CTX_PIN_INPUT *pctx;
+                        pctx = (CTX_PIN_INPUT*) (ctx->ctxbuffer + ctx->ctxptr);
+                        pctx->generatenew = 1;
+                        initPinInput( ctx );
+                    } else if ( keyres == 1 ) {
+                        //add startlinefeed again to prepare the editor
+                        memmove( sctx->io.text+1, sctx->io.text, sctx->io.tlen ); 
+                        sctx->io.text[0] = CHAR_LINEFEED;
+
+                        pushContext(ctx, MESSAGEBOX);
+                        CTX_MSG_BOX *mctx;
+                        mctx = (CTX_MSG_BOX*) (ctx->ctxbuffer + ctx->ctxptr);
+
+                        mctx->mchoices[0] = MSGB_MKEY_ERROR_OK;
+                        mctx->mchoiceicon[0] = SYSICON_OK;
+                        mctx->choicecount = 1;
+                        mctx->sel = 0;
+
+                        memcpy(mctx->msgtxt, (char*)(textdata + texte[TEXT_ENTER_KEY_ERROR]), strlen( (char*)(textdata + texte[TEXT_ENTER_KEY_ERROR]) ) + 1 );
+
+                        ctx->rinf = REFRESH;
+                    } else if ( keyres == 2 ) {
+                        setContext(ctx, ERROR_SD_FAILURE);
+                    }                
+                }
+            } else {
+                memmove( sctx->io.text+1, sctx->io.text, sctx->io.tlen );
+            }
+            
+        }        
+    }
 }
 
 FRESULT errAbortFileEntryHandling(FIL *file, TCHAR* unlinkpath ) {
@@ -1456,10 +1607,12 @@ FRESULT readEntryToken( TCHAR *path, TOKEN_TYPE type, uint8_t *text, uint16_t ma
     uint8_t buffer[TOKEN_READ_MOD_BUFFERSIZE];
     int i, j, k;    
     uint8_t tokenpos;
-    FSIZE_t readoffs;   
+    FSIZE_t readoffs;
+    uint32_t filelen;
     
     res = f_stat( path, &fno);
-    if ( res == FR_OK && fno.fsize >= 48  && fno.fsize % 16 == 0 ) {
+    filelen = fno.fsize;
+    if ( res == FR_OK && filelen >= 48  && filelen % 16 == 0 ) {
         res = f_open( &file, path, FA_READ | FA_WRITE );
         if ( res == FR_OK ) {
             res = f_read( &file, buffer, 48, &affected );
@@ -1481,16 +1634,19 @@ FRESULT readEntryToken( TCHAR *path, TOKEN_TYPE type, uint8_t *text, uint16_t ma
                 }                    
             }
             
-            *tlen = 0;
-            if ( tokenpos == 0xff ) {
+            *tlen = 0;                                    
+            readoffs = tokenpos;
+            
+            if ( tokenpos == 0xff || filelen < ( readoffs * TOKEN_BLOCK_SIZE + 48 ) ) {
+                //Token not found, or file too small/corrupted
+                //return an empty token anyway
                 text[0] = 0x00;
                 *tlen = 1;
                 f_close(&file);
                 endEncryption();
                 return FR_OK;
             }
-                                   
-            readoffs = tokenpos;
+            
             readoffs = readoffs * TOKEN_BLOCK_SIZE + (48 - 16);
             f_lseek( &file, readoffs );
             
@@ -1784,13 +1940,13 @@ FRESULT loadEntryDetail( APP_CONTEXT* ctx ) {
         sctx->tokeninfo[i].isset = false;
         
         res = readEntryToken( sctx->path, sctx->tokeninfo[i].type, sctx->tokeninfo[i].text, 48, &tlen );
+        if ( res != FR_OK ) return res;   
+        
         if (tlen > 1) sctx->tokeninfo[i].isset = true;
         
         if ( sctx->tokeninfo[i].type == KEY1 || sctx->tokeninfo[i].type == KEY2 ) {
             memset( sctx->tokeninfo[i].text, PASSWORD_REPLACE_CHAR, tlen-1 );
-        }
-        
-        if ( res != FR_OK ) return res;                    
+        }                                 
     }
  
     return FR_OK;
@@ -1850,7 +2006,9 @@ FRESULT hctxEntryOverviewReloadList( APP_CONTEXT* ctx ) {
             memcpy( path, &"KS/", 3 );
             memcpy( path+3, sctx->entries[curr].path, strlen( sctx->entries[curr].path ) + 1 );
             
-            readEntryToken( path, NAME, sctx->entries[curr].name, 47, &len );
+            if ( readEntryToken( path, NAME, sctx->entries[curr].name, 47, &len ) != FR_OK ) {
+                sctx->entries[curr].name[0] = 0;
+            } 
         }
     }
                
@@ -2408,8 +2566,10 @@ void hctxMessagebox(APP_CONTEXT* ctx) {
             if ( result == MSGB_DELETE_TOKEN_YES ) {                              
                 uint8_t emptytext[0];
                 modifyEntry( prevctx->path, emptytext, 0, prevctx->selected );
-                
-                loadEntryDetail( ctx );
+                                
+                if ( loadEntryDetail( ctx ) != FR_OK ) {
+                    setContext( ctx, ERROR_SD_FAILURE  );
+                }
             }            
         } else if ( result == MSGB_MKEY_ERROR_OK ) {
             removeContext(ctx);
@@ -2952,7 +3112,8 @@ void updateContext(APP_CONTEXT* ctx) {
             setInitialContext( ctx );
         } else {                
             if (!ctx->fsmounted) {
-                if ( ctx->ctxtype != INITIAL && ctx->ctxtype != PIN_INPUT ) {
+                if ( ctx->ctxtype != INITIAL && 
+                     ctx->ctxtype != PIN_INPUT ) {
                     mountFS( ctx );
                     if ( !ctx->fsmounted ) {                        
                         setContext(ctx, ERROR_SD_FAILURE);
@@ -2970,7 +3131,7 @@ void updateContext(APP_CONTEXT* ctx) {
         {
             
 //            setMasterTestKey( );
-            if (isKeySet()) {
+            if ( isKeySet() ) {
                 setContext(ctx, PIN_INPUT);
                 initPinInput( ctx );
 //                testPinGen( ctx);

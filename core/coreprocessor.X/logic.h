@@ -64,7 +64,9 @@ typedef enum {
 } TOKEN_TYPE;
 
 typedef enum {
-    MASTERKEY,
+    MASTERKEY_GEN,
+    MASTERKEY_VERIFY,
+    MASTERKEY_CHECK,
     SEARCHFIELD,
     TOKEN,                            
 }INPUT_TYPE;
@@ -244,6 +246,9 @@ typedef struct {
 
 typedef struct { 
     IO_CONTEXT io;
+    bool fschecked;
+    bool generatemode;
+    uint8_t generatedkey[16];
     bool error;
     bool haderror;    
 } CTX_KEY_INPUT;
@@ -378,7 +383,7 @@ bool isKeySet( );
 void setMasterKey(uint8_t *key);
 uint8_t* getMasterKey();
 void swipeKeys();
-uint8_t verifyMasterKey( bool createInitialStructure );
+uint8_t verifyMasterKey( );
 bool isKeyEncr();
 void setKeyEncr(bool encr);
 

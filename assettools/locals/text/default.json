@@ -5,8 +5,11 @@
         { "name":"ERROR_SD_CD",				"text": "insert sd-card\nto proceed" },
         { "name":"ERROR_SD_FAILURE",		"text": "error,\ncannot read\nsd-card" },
         { "name":"TEST",					"text": "Test" },
-        { "name":"ENTER_NEW_KEY",			"text": "enter masterkey:" },
-        { "name":"ENTER_NEW_KEY_ERROR",		"text": "masterkey wrong!" },
+        { "name":"ENTER_NEW_KEY",			"text": "create masterkey:" },
+        { "name":"ENTER_VERIFY_KEY",		"text": "verify masterkey:" },
+        { "name":"ENTER_CHECK_KEY",		    "text": "enter masterkey:" },
+        { "name":"ENTER_KEY_ERROR",         "text": "masterkey wrong!" },
+        { "name":"ENTER_NEW_KEY_ERROR",		"text": "masterkey wrong!\nplease enter\nagain" },
 		{ "name":"ENTER_SEARCHFIELD",		"text": "search..." },
 		{ "name":"SEARCH_NO_ENTRIES",		"text": "No entries found" },
 		{ "name":"SEARCH_LAST_ENTRY",		"text": "No more entries\nback to\nfirst match" },		
@@ -72,8 +75,7 @@
         { "name":"TETRIS_GAME_START2",		"text": "to start!" },
         { "name":"TETRIS_SCORE",			"text": "Score" },
         { "name":"TETRIS_LINES",			"text": "Lines" },
-        { "name":"TETRIS_LEVEL",			"text": "Lvl" }
-        
+        { "name":"TETRIS_LEVEL",			"text": "Lvl" }        
     ],
     "hexchars": "0123456789abcdef",
     "passwordreplacechar": "*"    

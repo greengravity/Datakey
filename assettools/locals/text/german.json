@@ -5,8 +5,11 @@
         { "name":"ERROR_SD_CD",				"text": "SD-Karte einfügen\num fortzufahren" },
         { "name":"ERROR_SD_FAILURE",		"text": "Fehler,\nSD-Karte kann nicht\ngelesen werden" },
         { "name":"TEST",					"text": "Test" },
-        { "name":"ENTER_NEW_KEY",			"text": "Masterkey eingeben:" },
-        { "name":"ENTER_NEW_KEY_ERROR",		"text": "Masterkey falsch!" },
+        { "name":"ENTER_NEW_KEY",			"text": "Masterkey erstellen:" },
+        { "name":"ENTER_VERIFY_KEY",		"text": "Masterkey überprüfen:" },
+        { "name":"ENTER_CHECK_KEY",         "text": "Masterkey eingeben:" },
+        { "name":"ENTER_KEY_ERROR",		    "text": "Masterkey falsch!" },
+        { "name":"ENTER_NEW_KEY_ERROR",		"text": "Masterkey falsch!\nBitte neu\neingeben" },
 		{ "name":"ENTER_SEARCHFIELD",		"text": "Suche nach..." },
 		{ "name":"SEARCH_NO_ENTRIES",		"text": "Keine Einträge\ngefunden" },
 		{ "name":"SEARCH_LAST_ENTRY",		"text": "Keine weiteren\nEinträge, zurück\nzum 1. Treffer" },
@@ -73,7 +76,6 @@
         { "name":"TETRIS_SCORE",			"text": "Score" },
         { "name":"TETRIS_LINES",			"text": "Lines" },
         { "name":"TETRIS_LEVEL",			"text": "Lvl" }
-        
     ],
     "hexchars": "0123456789abcdef",
     "passwordreplacechar": "*"    
